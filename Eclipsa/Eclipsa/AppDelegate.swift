@@ -19,6 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window.rootViewController = GameViewController()
         window.makeKeyAndVisible()
         self.window = window
+        
         return true
     }
 
