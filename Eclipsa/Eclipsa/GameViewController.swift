@@ -29,14 +29,22 @@ class GameViewController: UIViewController {
                 sceneNode.scaleMode = .aspectFill
                 
                 // Present the scene
-                if let view = self.view as! SKView? {
-                    view.presentScene(sceneNode)
-                    
-                    view.ignoresSiblingOrder = true
-                    
-                    view.showsFPS = true
-                    view.showsNodeCount = true
-                }
+                let skView = SKView(frame: view.bounds)
+                skView.translatesAutoresizingMaskIntoConstraints = false
+                
+                view.addSubview(skView)
+                
+                skView.presentScene(sceneNode)
+                skView.ignoresSiblingOrder = true
+                skView.showsFPS = true
+                skView.showsNodeCount = true
+                
+                NSLayoutConstraint.activate([
+                    skView.topAnchor.constraint(equalTo: view.topAnchor),
+                    skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+                    skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+                    skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                ])
             }
         }
     }
