@@ -7,6 +7,7 @@ final class ECSManager {
     var movementComponents: [EntityID: MovementComponent] = [:]
     var positionComponents: [EntityID: PositionComponent] = [:]
     var nodeReferences: [EntityID: SKNode] = [:]
+    var controllerComponents: [EntityID: ControllerComponent] = [:]
 
     func createEntity() -> EntityID {
         return UUID()
