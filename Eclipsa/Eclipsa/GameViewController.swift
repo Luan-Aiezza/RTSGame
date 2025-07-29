@@ -24,10 +24,6 @@ class GameViewController: UIViewController {
             // Get the SKScene from the loaded GKScene
             if let sceneNode = scene.rootNode as! GameScene? {
                 
-                // Copy gameplay related content over to the scene
-                sceneNode.entities = scene.entities
-                sceneNode.graphs = scene.graphs
-                
                 // Set the scale mode to scale to fit the window
                 sceneNode.scaleMode = .aspectFill
                 
@@ -41,6 +37,7 @@ class GameViewController: UIViewController {
                 skView.ignoresSiblingOrder = true
                 skView.showsFPS = true
                 skView.showsNodeCount = true
+                skView.showsDrawCount = true
                 
                 NSLayoutConstraint.activate([
                     skView.topAnchor.constraint(equalTo: view.topAnchor),
