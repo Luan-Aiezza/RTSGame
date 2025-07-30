@@ -20,6 +20,11 @@ public class UnitEntity: GKEntity {
         self.addComponent(GKSKNodeComponent(node: square))
 
         self.addComponent(ControlableComponent(delegate: self))
+        self.addComponent(MovementComponent(moveSpeed: 2))
+    }
+    
+    var moveComponent: MovementComponent? {
+        return self.component(ofType: MovementComponent.self)
     }
 
     required init?(coder: NSCoder) {
@@ -30,11 +35,7 @@ public class UnitEntity: GKEntity {
 
 extension UnitEntity: ControlableDelegate {
     public func handleMovement(direction: CGPoint) {
-        if let node = component(ofType: GKSKNodeComponent.self)?.node {
-            
-            node.run(.move(by: .init(dx: direction.x, dy: direction.y), duration: 0.1))
-            
-        }
+        moveComponent?.change(direction: direction)
     }
     
     public func handleButtonAPressed() {
