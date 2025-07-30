@@ -18,13 +18,10 @@ class GameViewController: UIViewController {
         
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
-        #warning("Alteração da Cena chamada: Usando TestGameScene")
-//        if let scene = GKScene(fileNamed: "GameScene") {
-        let scene = GKScene()
-        scene.rootNode = TestGameScene(size: .init(width: 1920/2, height: 1080/2))
+        if let scene = GKScene(fileNamed: "GameScene") {
             
             // Get the SKScene from the loaded GKScene
-            if let sceneNode = scene.rootNode as! TestGameScene? {
+            if let sceneNode = scene.rootNode as! GameScene? {
                 
                 
                 // Set the scale mode to scale to fit the window
@@ -49,7 +46,7 @@ class GameViewController: UIViewController {
                     skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
                 ])
             }
-//        }
+        }
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
