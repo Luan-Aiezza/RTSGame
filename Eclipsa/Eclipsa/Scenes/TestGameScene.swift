@@ -6,3 +6,12 @@
 //
 
 import Foundation
+import BehindGameKit
+
+class TestGameScene: SKGameScene {
+    
+    override func sceneDidLoad() {
+        super.sceneDidLoad()
+        setupVirtualController()
+    }
+}
