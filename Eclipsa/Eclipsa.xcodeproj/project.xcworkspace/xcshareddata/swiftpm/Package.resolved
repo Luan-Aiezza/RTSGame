@@ -1,0 +1,15 @@
+{
+  "originHash" : "30fe954b2789f9fb19fa1790210e6b0c9a7850c2c7d7b2ee7f0ff1d00304aa4e",
+  "pins" : [
+    {
+      "identity" : "behindgamekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/victorabroum/BehindGameKit.git",
+      "state" : {
+        "branch" : "master",
+        "revision" : "d4163098c71e40418bb08e6aae74ad96e56f0586"
+      }
+    }
+  ],
+  "version" : 3
+}

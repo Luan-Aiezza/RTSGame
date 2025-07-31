@@ -8,11 +8,13 @@
 import UIKit
 import SpriteKit
 import GameplayKit
+import GameController
 
 class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+//        self.setupVirtualController()
         
         // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
         // including entities and graphs.
@@ -20,6 +22,7 @@ class GameViewController: UIViewController {
             
             // Get the SKScene from the loaded GKScene
             if let sceneNode = scene.rootNode as! GameScene? {
+                
                 
                 // Set the scale mode to scale to fit the window
                 sceneNode.scaleMode = .aspectFill
