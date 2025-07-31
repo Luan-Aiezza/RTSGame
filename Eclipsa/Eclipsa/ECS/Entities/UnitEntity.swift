@@ -31,11 +31,11 @@ public class UnitEntity: GKEntity {
     public override init() {
         super.init()
 
-        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
+        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 96, height: 64))
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
-        let idleTextures = (1...11).map { SKTexture(imageNamed: "citizen_idle_\($0)") }
+        let idleTextures = (1...12).map { SKTexture(imageNamed: "Hero_Idle_\($0)") }
         let walkTextures = (1...8).map { SKTexture(imageNamed: "citizen_walk_\($0)") }
 
         // Componente de animação
@@ -52,7 +52,12 @@ public class UnitEntity: GKEntity {
         self.addComponent(stateMachineComponent)
 
         self.addComponent(ControlableComponent(delegate: self))
-        self.addComponent(MovementComponent(moveSpeed: 1))
+
+        self.addComponent(MovementComponent(moveSpeed: 2))
+        
+        let rangeComponent = RangeComponent(radius: 120)
+        self.addComponent(rangeComponent)
+
     }
     
     var moveComponent: MovementComponent? {
