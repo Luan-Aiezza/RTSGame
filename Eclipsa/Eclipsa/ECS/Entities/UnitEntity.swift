@@ -9,7 +9,25 @@ import SpriteKit
 import GameplayKit
 import BehindGameKit
 
+class IdleState: GKState {
+    unowned let entity: GKEntity
+    init(entity: GKEntity) { self.entity = entity }
+    override func didEnter(from previousState: GKState?) {
+        (entity.component(ofType: AnimationComponent.self))?.runAnimation(for: .idle)
+    }
+}
+
+class WalkingState: GKState {
+    unowned let entity: GKEntity
+    init(entity: GKEntity) { self.entity = entity }
+    override func didEnter(from previousState: GKState?) {
+        (entity.component(ofType: AnimationComponent.self))?.runAnimation(for: .walk)
+    }
+}
+
 public class UnitEntity: GKEntity {
+    private var stateMachineComponent: StateMachineComponent!
+
     public override init() {
         super.init()
 
@@ -26,9 +44,12 @@ public class UnitEntity: GKEntity {
         animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
         self.addComponent(animationComponent)
 
-        // Componente de estado
-        let stateComponent = StateComponent()
-        self.addComponent(stateComponent)
+        // Estado e máquina de estados
+        let idleState = IdleState(entity: self)
+        let walkingState = WalkingState(entity: self)
+        let stateMachine = GKStateMachine(states: [idleState, walkingState])
+        self.stateMachineComponent = StateMachineComponent(stateMachine)
+        self.addComponent(stateMachineComponent)
 
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(MovementComponent(moveSpeed: 2))
@@ -48,11 +69,14 @@ extension UnitEntity: ControlableDelegate {
     public func handleMovement(direction: CGPoint) {
         moveComponent?.change(direction: direction)
         let isMoving = direction != .zero
-        self.component(ofType: StateComponent.self)?.updateState(moving: isMoving)
+        if isMoving {
+            stateMachineComponent.stateMachine.enter(WalkingState.self)
+        } else {
+            stateMachineComponent.stateMachine.enter(IdleState.self)
+        }
     }
     
     public func handleButtonAPressed() {
         
     }
 }
-

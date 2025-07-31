@@ -21,7 +21,13 @@ class GameScene: SKGameScene {
         if let controlledEntity = controlledEntity as? UnitEntity,
            let moveComponent = controlledEntity.moveComponent {
             let isMoving = moveComponent.direction != .zero
-            controlledEntity.component(ofType: StateComponent.self)?.updateState(moving: isMoving)
+            if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
+                if isMoving {
+                    stateMachineComponent.stateMachine.enter(WalkingState.self)
+                } else {
+                    stateMachineComponent.stateMachine.enter(IdleState.self)
+                }
+            }
         }
     }
 }
