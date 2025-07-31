@@ -15,4 +15,13 @@ class GameScene: SKGameScene {
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
     }
+    
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+        if let controlledEntity = controlledEntity as? UnitEntity,
+           let moveComponent = controlledEntity.moveComponent {
+            let isMoving = moveComponent.direction != .zero
+            controlledEntity.component(ofType: StateComponent.self)?.updateState(moving: isMoving)
+        }
+    }
 }

@@ -26,7 +26,7 @@ public class SpriteRenderComponent: GKComponent {
 
     public override func didAddToEntity() {
         super.didAddToEntity()
-        // Adiciona o node ao parent se existir um componente de node
+        // Adiciona o node ao parent - apenas este componente deve fazer isso para evitar conflitos.
         if let nodeComponent = entity?.component(ofType: GKSKNodeComponent.self) {
             nodeComponent.node.addChild(spriteNode)
         }
@@ -37,3 +37,4 @@ public class SpriteRenderComponent: GKComponent {
         spriteNode.removeFromParent()
     }
 }
+
