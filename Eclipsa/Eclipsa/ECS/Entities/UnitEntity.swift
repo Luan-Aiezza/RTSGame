@@ -53,6 +53,9 @@ public class UnitEntity: GKEntity {
 
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(MovementComponent(moveSpeed: 2))
+        
+        let rangeComponent = RangeComponent(radius: 120)
+        self.addComponent(rangeComponent)
     }
     
     var moveComponent: MovementComponent? {

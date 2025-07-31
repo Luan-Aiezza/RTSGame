@@ -43,6 +43,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         block.physicsBody = blockBody
         addChild(block)
         testBlockNode = block
+        
+        let troop = SKSpriteNode(color: .blue, size: CGSize(width: 48, height: 48))
+        troop.position = CGPoint(x: -200, y: 0)
+        let troopBody = SKPhysicsBody(rectangleOf: troop.size)
+        troopBody.isDynamic = true
+        troopBody.affectedByGravity = false
+        troopBody.categoryBitMask = PhysicsCategory.troop
+        troopBody.collisionBitMask = 0
+        troopBody.contactTestBitMask = PhysicsCategory.range
+        troop.physicsBody = troopBody
+        addChild(troop)
+        // Store as property if needed for further use
 
         // Configura delegate de contato
         self.physicsWorld.contactDelegate = self
@@ -69,6 +81,16 @@ extension GameScene {
         let maskA = contact.bodyA.categoryBitMask
         let maskB = contact.bodyB.categoryBitMask
 
+        let rangeCategory = PhysicsCategory.range
+        let troopCategory = PhysicsCategory.troop
+        if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
+            // Get the range node
+            if let entity = controlledEntity as? UnitEntity,
+               let rangeComponent = entity.component(ofType: RangeComponent.self) {
+                rangeComponent.setContactColor(.green.withAlphaComponent(0.25))
+            }
+        }
+
         // Checa colisão entre player e bloco de teste
         if (maskA == .player && maskB == .wall) || (maskA == .wall && maskB == .player) {
             if let block = testBlockNode {
@@ -77,6 +99,19 @@ extension GameScene {
                     .wait(forDuration: 0.2),
                     .run { [weak block] in block?.color = .red }
                 ]))
+            }
+        }
+    }
+
+    func didEnd(_ contact: SKPhysicsContact) {
+        let maskA = contact.bodyA.categoryBitMask
+        let maskB = contact.bodyB.categoryBitMask
+        let rangeCategory = PhysicsCategory.range
+        let troopCategory = PhysicsCategory.troop
+        if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
+            if let entity = controlledEntity as? UnitEntity,
+               let rangeComponent = entity.component(ofType: RangeComponent.self) {
+                rangeComponent.resetColor()
             }
         }
     }
