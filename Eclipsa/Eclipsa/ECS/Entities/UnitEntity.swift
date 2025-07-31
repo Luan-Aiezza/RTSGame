@@ -52,15 +52,22 @@ public class UnitEntity: GKEntity {
         self.addComponent(stateMachineComponent)
 
         self.addComponent(ControlableComponent(delegate: self))
-        self.addComponent(MovementComponent(moveSpeed: 2))
+        self.addComponent(MovementComponent(moveSpeed: 1))
     }
     
     var moveComponent: MovementComponent? {
         return self.component(ofType: MovementComponent.self)
     }
+    var cameraComponent: CameraComponent? {
+        return self.component(ofType: CameraComponent.self)
+    }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupCameraComponent(cameraNode: SKCameraNode) {
+        self.addComponent(CameraComponent(moveSpeed: 1, cameraNode: cameraNode))
     }
 }
 
@@ -68,6 +75,8 @@ public class UnitEntity: GKEntity {
 extension UnitEntity: ControlableDelegate {
     public func handleMovement(direction: CGPoint) {
         moveComponent?.change(direction: direction)
+        cameraComponent?.changeDirection(to: direction)
+        
         let isMoving = direction != .zero
         if isMoving {
             stateMachineComponent.stateMachine.enter(WalkingState.self)

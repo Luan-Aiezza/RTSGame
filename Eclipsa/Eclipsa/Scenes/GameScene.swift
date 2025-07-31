@@ -3,7 +3,7 @@ import BehindGameKit
 import GameplayKit
 
 class GameScene: SKGameScene {
-    private var controlledEntity: GKEntity!
+    private var controlledEntity: UnitEntity!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -14,12 +14,15 @@ class GameScene: SKGameScene {
         SKEntityManager.shared.add(controlledEntity)
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
+       
+        if let camera = self.camera {
+            controlledEntity.setupCameraComponent(cameraNode: camera)
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
-        if let controlledEntity = controlledEntity as? UnitEntity,
-           let moveComponent = controlledEntity.moveComponent {
+        if let moveComponent = controlledEntity.moveComponent {
             let isMoving = moveComponent.direction != .zero
             if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
                 if isMoving {
