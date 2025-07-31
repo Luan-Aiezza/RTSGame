@@ -6,7 +6,7 @@ import GameplayKit
 //import UInt32_PhysicsMasks
 
 class GameScene: SKGameScene, SKPhysicsContactDelegate {
-    private var controlledEntity: GKEntity!
+    private var controlledEntity: UnitEntity!
     private var testBlockNode: SKSpriteNode?
     
     override func sceneDidLoad() {
@@ -18,6 +18,10 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         SKEntityManager.shared.add(controlledEntity)
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
+       
+        if let camera = self.camera {
+            controlledEntity.setupCameraComponent(cameraNode: camera)
+        }
 
         // Corpo físico do herói
         if let nodeComponent = controlledEntity.component(ofType: GKSKNodeComponent.self),
@@ -62,8 +66,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
-        if let controlledEntity = controlledEntity as? UnitEntity,
-           let moveComponent = controlledEntity.moveComponent {
+        if let moveComponent = controlledEntity.moveComponent {
             let isMoving = moveComponent.direction != .zero
             if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
                 if isMoving {
