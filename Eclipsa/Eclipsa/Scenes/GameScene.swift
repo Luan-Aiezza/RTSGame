@@ -7,6 +7,7 @@ import GameplayKit
 
 class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var controlledEntity: UnitEntity!
+    private var cameraEntity: CameraEntity!
     private var testBlockNode: SKSpriteNode?
     
     override func sceneDidLoad() {
@@ -20,7 +21,11 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
        
         if let camera = self.camera {
-            controlledEntity.setupCameraComponent(cameraNode: camera)
+            cameraEntity = CameraEntity()
+            cameraEntity.setupComponents(cameraNode: camera)
+            cameraEntity.followPlayer(player: controlledEntity)
+            SKEntityManager.shared.add(cameraEntity)
+            
         }
 
         // Corpo físico do herói
@@ -88,8 +93,7 @@ extension GameScene {
         let troopCategory = PhysicsCategory.troop
         if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
             // Get the range node
-            if let entity = controlledEntity as? UnitEntity,
-               let rangeComponent = entity.component(ofType: RangeComponent.self) {
+               if let rangeComponent = controlledEntity.component(ofType: RangeComponent.self) {
                 rangeComponent.setContactColor(.green.withAlphaComponent(0.25))
             }
         }
@@ -112,8 +116,7 @@ extension GameScene {
         let rangeCategory = PhysicsCategory.range
         let troopCategory = PhysicsCategory.troop
         if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
-            if let entity = controlledEntity as? UnitEntity,
-               let rangeComponent = entity.component(ofType: RangeComponent.self) {
+            if let rangeComponent = controlledEntity.component(ofType: RangeComponent.self) {
                 rangeComponent.resetColor()
             }
         }
