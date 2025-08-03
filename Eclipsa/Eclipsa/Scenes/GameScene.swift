@@ -9,6 +9,10 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var controlledEntity: UnitEntity!
     private var cameraEntity: CameraEntity!
     private var testBlockNode: SKSpriteNode?
+    private var troopNode: SKSpriteNode?
+    
+    private var physicsSystem = PhysicsSystem()
+    private var collisionSystem: CollisionSystem!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -25,46 +29,20 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             cameraEntity.setupComponents(cameraNode: camera)
             cameraEntity.followPlayer(player: controlledEntity)
             SKEntityManager.shared.add(cameraEntity)
-            
         }
-
-        // Corpo físico do herói
-        if let nodeComponent = controlledEntity.component(ofType: GKSKNodeComponent.self),
-           nodeComponent.node.physicsBody == nil {
-            let heroBody = SKPhysicsBody(rectangleOf: CGSize(width: 64, height: 64))
-            heroBody.affectedByGravity = false
-            heroBody.allowsRotation = false
-            heroBody.categoryBitMask = .player
-            heroBody.collisionBitMask = .ground | .wall
-            heroBody.contactTestBitMask = UInt32.contactWithAllCategories()
-            let heroPhysics = SKPhysicsBodyComponent(physicsBody: heroBody)
-            controlledEntity.addComponent(heroPhysics)
-        }
-
-        // Bloco de teste
-        let block = SKSpriteNode(color: .red, size: CGSize(width: 80, height: 40))
-        block.position = CGPoint(x: 200, y: 0)
-        let blockBody = SKPhysicsBody(rectangleOf: block.size)
-        blockBody.isDynamic = false
-        blockBody.categoryBitMask = .wall
-        blockBody.collisionBitMask = .player
-        blockBody.contactTestBitMask = .player
-        block.physicsBody = blockBody
+        
+        physicsSystem.setupHeroPhysics(for: controlledEntity)
+        
+        let block = physicsSystem.makeTestBlock(position: CGPoint(x: 200, y: 0))
         addChild(block)
         testBlockNode = block
         
-        let troop = SKSpriteNode(color: .blue, size: CGSize(width: 48, height: 48))
-        troop.position = CGPoint(x: -200, y: 0)
-        let troopBody = SKPhysicsBody(rectangleOf: troop.size)
-        troopBody.isDynamic = true
-        troopBody.affectedByGravity = false
-        troopBody.categoryBitMask = PhysicsCategory.troop
-        troopBody.collisionBitMask = 0
-        troopBody.contactTestBitMask = PhysicsCategory.range
-        troop.physicsBody = troopBody
+        let troop = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
         addChild(troop)
-        // Store as property if needed for further use
-
+        troopNode = troop
+        
+        collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: testBlockNode)
+        
         // Configura delegate de contato
         self.physicsWorld.contactDelegate = self
     }
@@ -86,39 +64,10 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
 
 extension GameScene {
     func didBegin(_ contact: SKPhysicsContact) {
-        let maskA = contact.bodyA.categoryBitMask
-        let maskB = contact.bodyB.categoryBitMask
-
-        let rangeCategory = PhysicsCategory.range
-        let troopCategory = PhysicsCategory.troop
-        if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
-            // Get the range node
-               if let rangeComponent = controlledEntity.component(ofType: RangeComponent.self) {
-                rangeComponent.setContactColor(.green.withAlphaComponent(0.25))
-            }
-        }
-
-        // Checa colisão entre player e bloco de teste
-        if (maskA == .player && maskB == .wall) || (maskA == .wall && maskB == .player) {
-            if let block = testBlockNode {
-                block.color = .green
-                block.run(.sequence([
-                    .wait(forDuration: 0.2),
-                    .run { [weak block] in block?.color = .red }
-                ]))
-            }
-        }
+        collisionSystem.handleDidBegin(contact)
     }
 
     func didEnd(_ contact: SKPhysicsContact) {
-        let maskA = contact.bodyA.categoryBitMask
-        let maskB = contact.bodyB.categoryBitMask
-        let rangeCategory = PhysicsCategory.range
-        let troopCategory = PhysicsCategory.troop
-        if (maskA == rangeCategory && maskB == troopCategory) || (maskB == rangeCategory && maskA == troopCategory) {
-            if let rangeComponent = controlledEntity.component(ofType: RangeComponent.self) {
-                rangeComponent.resetColor()
-            }
-        }
+        collisionSystem.handleDidEnd(contact)
     }
 }

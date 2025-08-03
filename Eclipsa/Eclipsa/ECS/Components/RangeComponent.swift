@@ -1,12 +1,6 @@
 import SpriteKit
 import GameplayKit
 
-/// Categoria de bitmask para o range
-public struct PhysicsCategory {
-    public static let range: UInt32 = 0x1 << 16
-    public static let troop: UInt32 = 0x1 << 17
-}
-
 /// Componente de range genérico para entidades
 public class RangeComponent: GKComponent {
     public let radius: CGFloat
