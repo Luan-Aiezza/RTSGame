@@ -36,7 +36,7 @@ public class UnitEntity: GKEntity {
 
         // Criação das texturas
         let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle\($0)") }
-        let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Run_\($0)") }
+        let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
 
         // Componente de animação
         let animationComponent = AnimationComponent(spriteNode: spriteNode)
