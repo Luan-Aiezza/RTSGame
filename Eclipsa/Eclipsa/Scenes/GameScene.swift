@@ -147,7 +147,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         virtualController?.touchesCancelled(touches, with: event)
 //        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
-#endif
 }
 
 extension GameScene {
