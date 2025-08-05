@@ -35,7 +35,7 @@ public class UnitEntity: GKEntity {
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
-        let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle\($0)") }
+        let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle_\($0)") }
         let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
 
         // Componente de animação

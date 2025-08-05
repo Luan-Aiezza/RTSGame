@@ -15,9 +15,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     // Lista de tropas para controle coletivo
     private var troops: [TroopEntity] = []
-
-    private var followButton: SKSpriteNode!
-    private var releaseButton: SKSpriteNode!
+    
+    private var troopControlButtons: TroopControlButtons!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -34,6 +33,11 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             cameraEntity.setupComponents(cameraNode: camera)
             cameraEntity.followPlayer(player: controlledEntity)
             SKEntityManager.shared.add(cameraEntity)
+            
+            troopControlButtons = TroopControlButtons(size: self.size)
+            troopControlButtons.onFollow = { [weak self] in self?.troopControlSystem.commandTroopsToFollow() }
+            troopControlButtons.onRelease = { [weak self] in self?.troopControlSystem.commandTroopsToStop() }
+            camera.addChild(troopControlButtons)
         }
         
         physicsSystem.setupHeroPhysics(for: controlledEntity)
@@ -74,33 +78,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         // Configura delegate de contato
         self.physicsWorld.contactDelegate = self
-
-        let buttonSize = CGSize(width: 64, height: 64)
-        followButton = SKSpriteNode(color: .green, size: buttonSize)
-        followButton.alpha = 0.7
-        followButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 160)
-        followButton.zPosition = 1000
-        followButton.name = "followButton"
-        let followLabel = SKLabelNode(text: "Follow")
-        followLabel.fontName = "Avenir-Black"
-        followLabel.fontSize = 22
-        followLabel.fontColor = .white
-        followLabel.verticalAlignmentMode = .center
-        followButton.addChild(followLabel)
-        addChild(followButton)
-
-        releaseButton = SKSpriteNode(color: .red, size: buttonSize)
-        releaseButton.alpha = 0.7
-        releaseButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 80)
-        releaseButton.zPosition = 1000
-        releaseButton.name = "releaseButton"
-        let releaseLabel = SKLabelNode(text: "Release")
-        releaseLabel.fontName = "Avenir-Black"
-        releaseLabel.fontSize = 22
-        releaseLabel.fontColor = .white
-        releaseLabel.verticalAlignmentMode = .center
-        releaseButton.addChild(releaseLabel)
-        addChild(releaseButton)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -123,13 +100,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.touchesBegan(touches, with: event)
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        let nodes = nodes(at: location)
-        for node in nodes {
-            if node.name == "followButton" {
-                troopControlSystem.commandTroopsToFollow()
-            } else if node.name == "releaseButton" {
-                troopControlSystem.commandTroopsToStop()
-            }
+        if let camera = self.camera {
+            let locInCamera = convert(location, to: camera)
+            troopControlButtons.handleTouch(locInCamera)
         }
     }
 }
