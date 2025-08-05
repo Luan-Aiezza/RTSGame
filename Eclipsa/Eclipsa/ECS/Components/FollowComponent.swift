@@ -37,10 +37,9 @@ class FollowComponent: GKComponent {
         }
         
         let distance = calcDistance(from: targetComponent.node.position, to: followerComponent.node.position)
-        let duration = calcDuration(from: distance)
-//        print(duration)
+        let calcDuration = calcDuration(from: distance)
+        let duration = calcDuration > 0.3 ? 0.3 : calcDuration
         
-//        followerComponent.node.run(.move(to: targetComponent.node.position, duration: 0.25))
         followerComponent.node.run(.move(to: targetComponent.node.position, duration: duration))
     }
     
