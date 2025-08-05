@@ -14,7 +14,7 @@ class CameraEntity: GKEntity {
     func setupComponents(cameraNode: SKCameraNode) {
         self.addComponent(GKSKNodeComponent(node: cameraNode))
         self.addComponent(CameraComponent(moveSpeed: 1, cameraNode: cameraNode))
-        self.addComponent(FollowComponent( speed: 1))
+        self.addComponent(FollowComponent( speed: 90))
     }
     
     var cameraComponent: CameraComponent? {

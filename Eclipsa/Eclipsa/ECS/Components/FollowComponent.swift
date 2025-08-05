@@ -37,19 +37,19 @@ class FollowComponent: GKComponent {
         }
         
         let distance = calcDistance(from: targetComponent.node.position, to: followerComponent.node.position)
-        let duration = calcDuration(from: distance, at: 70)
-//        print(duration
+        let duration = calcDuration(from: distance)
+//        print(duration)
         
 //        followerComponent.node.run(.move(to: targetComponent.node.position, duration: 0.25))
         followerComponent.node.run(.move(to: targetComponent.node.position, duration: duration))
     }
     
     private func calcDistance(from follower: CGPoint, to target: CGPoint) -> CGPoint {
-        let distance = follower - target
+        let distance = target - follower
         return distance
     }
     
-    private func calcDuration(from distance: CGPoint,at speed: CGFloat) -> TimeInterval {
+    private func calcDuration(from distance: CGPoint) -> TimeInterval {
         let scalar = sqrt((pow(distance.x, 2) + pow(distance.y, 2)))
         let duration: TimeInterval = scalar / speed
         return duration
