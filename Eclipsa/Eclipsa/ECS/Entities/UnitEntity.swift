@@ -28,15 +28,15 @@ class WalkingState: GKState {
 public class UnitEntity: GKEntity {
     private var stateMachineComponent: StateMachineComponent!
 
-    public override init() {
+    public init(team: Team = .sun) {
         super.init()
 
-        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 96, height: 64))
+        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
-        let idleTextures = (1...12).map { SKTexture(imageNamed: "Hero_Idle_\($0)") }
-        let walkTextures = (1...8).map { SKTexture(imageNamed: "citizen_walk_\($0)") }
+        let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle\($0)") }
+        let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
 
         // Componente de animação
         let animationComponent = AnimationComponent(spriteNode: spriteNode)
@@ -58,6 +58,7 @@ public class UnitEntity: GKEntity {
         let rangeComponent = RangeComponent(radius: 120)
         self.addComponent(rangeComponent)
 
+        self.addComponent(TeamComponent(team: team))
     }
     
     var moveComponent: MovementComponent? {
@@ -90,3 +91,49 @@ extension UnitEntity: ControlableDelegate {
         
     }
 }
+
+// Entidade de Tropa baseada em UnitEntity, sem controle manual do jogador
+public class TroopEntity: UnitEntity {
+    public override init(team: Team = .sun) {
+        super.init(team: team)
+        
+        if self.component(ofType: MovementComponent.self) == nil {
+            self.addComponent(MovementComponent(moveSpeed: 2))
+        }
+        
+        // Troca as animações para as animações específicas da tropa
+        if let animationComponent = self.component(ofType: AnimationComponent.self) {
+            let idleTextures = (1...11).map { SKTexture(imageNamed: "Sun_Troop_Idle_\($0)") }
+            let walkTextures = (1...7).map { SKTexture(imageNamed: "Sun_Troop_Walk_\($0)") }
+            animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
+            animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
+        }
+        // Garante que a tropa começa em idle e já anima
+        if let stateMachineComponent = self.component(ofType: StateMachineComponent.self) {
+            stateMachineComponent.stateMachine.enter(IdleState.self)
+        }
+        self.removeComponent(ofType: ControlableComponent.self)
+        // Adicione mais componentes ou lógica específica das tropas se necessário
+    }
+    
+    public required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    // Ativa o follow ao herói
+    public func startFollowing(_ target: UnitEntity, withSpeed speed: CGFloat = 2.0) {
+        if self.component(ofType: FollowComponent.self) == nil {
+            let follow = FollowComponent(speed: speed)
+            follow.target = target
+            self.addComponent(follow)
+        } else {
+            self.component(ofType: FollowComponent.self)?.target = target
+        }
+    }
+    
+    // Para de seguir
+    public func stopFollowing() {
+        self.removeComponent(ofType: FollowComponent.self)
+    }
+}
+

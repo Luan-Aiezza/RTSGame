@@ -48,4 +48,12 @@ public class RangeComponent: GKComponent {
         node.fillColor = self.color
         node.strokeColor = self.color.withAlphaComponent(0.9)
     }
+    
+    /// Check if a given point is inside the range circle
+    public func contains(point: CGPoint) -> Bool {
+        guard let scene = node.scene, let parent = node.parent else { return false }
+        let center = scene.convert(node.position, from: parent)
+        let distance = hypot(point.x - center.x, point.y - center.y)
+        return distance <= radius
+    }
 }

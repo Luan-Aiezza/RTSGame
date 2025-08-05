@@ -2,23 +2,28 @@ import Foundation
 import SpriteKit
 import BehindGameKit
 import GameplayKit
-//import PhysicsBodyComponent
-//import UInt32_PhysicsMasks
 
 class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var controlledEntity: UnitEntity!
     private var cameraEntity: CameraEntity!
-    private var testBlockNode: SKSpriteNode?
     private var troopNode: SKSpriteNode?
+    private var enemyNode: SKSpriteNode?
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
+    private var troopControlSystem: TroopControlSystem!  // Adicionado
+    
+    // Lista de tropas para controle coletivo
+    private var troops: [TroopEntity] = []
+
+    private var followButton: SKSpriteNode!
+    private var releaseButton: SKSpriteNode!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
         setupVirtualController()
         
-        controlledEntity = UnitEntity()
+        controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
@@ -32,41 +37,69 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         physicsSystem.setupHeroPhysics(for: controlledEntity)
         
-        let block = physicsSystem.makeTestBlock(position: CGPoint(x: 200, y: 0))
-        addChild(block)
-        testBlockNode = block
+        // Criar e adicionar 3 tropas próximas ao herói
+        let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
+        let startingPositions = [
+            CGPoint(x: basePosition.x + 50, y: basePosition.y),
+            CGPoint(x: basePosition.x + 70, y: basePosition.y + 30),
+            CGPoint(x: basePosition.x + 90, y: basePosition.y - 30)
+        ]
+        
+        for position in startingPositions {
+            let troop = TroopEntity(team: .sun)
+            troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
+            SKEntityManager.shared.add(troop)
+            troops.append(troop)
+            if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
+                addChild(node)
+            }
+        }
+        
+        // Inicializar troopControlSystem após adicionar tropas
+        troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
         
         let troop = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
         addChild(troop)
         troopNode = troop
         
-        collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: testBlockNode)
+        let enemyEntity = UnitEntity(team: .moon)
+        SKEntityManager.shared.add(enemyEntity)
+        let enemy = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
+        addChild(enemy)
+        enemyNode = enemy
+        
+        // Ajustar collisionSystem para trabalhar com tropas ao invés do bloco de teste
+        collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         
         // Configura delegate de contato
         self.physicsWorld.contactDelegate = self
-        
-        addNonControlableEntity()
-        guard let somePoint = scene?.view?.frame.size else {return}
-        let point = CGPoint(
-            x: -somePoint.width/4,
-            y: -somePoint.height/4)
-        virtualController?.changePosition(point)
-    }
-    
-    func addNonControlableEntity() {
-        let unit1 = UnitEntity()
-        let unit2 = UnitEntity()
-        unit1.removeComponent(ofType: ControlableComponent.self)
-        unit2.removeComponent(ofType: ControlableComponent.self)
-        
-        unit1.addComponent(FollowComponent(speed: 20))
-        unit2.addComponent(FollowComponent(speed: 10))
-        
-        unit1.component(ofType: FollowComponent.self)?.target = controlledEntity
-        unit2.component(ofType: FollowComponent.self)?.target = controlledEntity
-        
-        SKEntityManager.shared.add(unit1)
-        SKEntityManager.shared.add(unit2)
+
+        let buttonSize = CGSize(width: 64, height: 64)
+        followButton = SKSpriteNode(color: .green, size: buttonSize)
+        followButton.alpha = 0.7
+        followButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 160)
+        followButton.zPosition = 1000
+        followButton.name = "followButton"
+        let followLabel = SKLabelNode(text: "Follow")
+        followLabel.fontName = "Avenir-Black"
+        followLabel.fontSize = 22
+        followLabel.fontColor = .white
+        followLabel.verticalAlignmentMode = .center
+        followButton.addChild(followLabel)
+        addChild(followButton)
+
+        releaseButton = SKSpriteNode(color: .red, size: buttonSize)
+        releaseButton.alpha = 0.7
+        releaseButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 80)
+        releaseButton.zPosition = 1000
+        releaseButton.name = "releaseButton"
+        let releaseLabel = SKLabelNode(text: "Release")
+        releaseLabel.fontName = "Avenir-Black"
+        releaseLabel.fontSize = 22
+        releaseLabel.fontColor = .white
+        releaseLabel.verticalAlignmentMode = .center
+        releaseButton.addChild(releaseLabel)
+        addChild(releaseButton)
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -83,23 +116,19 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         }
     }
     
-    override func setupVirtualController() {
-        virtualController = .init(scene: self, analogRadius: 25)
-        virtualController?.setAnalogVisible(value: false)
-    }
-#if os(iOS)
+    // Removidos os métodos commandTroopsToFollow e commandTroopsToStop conforme instruções
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera, let location = touches.first?.location(in: camera) else { return }
-        
-        if location.x <= 0 {
-//            virtualController?.setAnalogVisible(value: true)
-//            virtualController?.changePosition(location)
-            guard let somePoint = scene?.view?.frame.size else {return}
-            let point = CGPoint(
-                x: -somePoint.width/3,
-                y: -somePoint.height/4)
-            virtualController?.changePosition(point)
-            virtualController?.touchBegan(touches, with: event)
+        super.touchesBegan(touches, with: event)
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+        let nodes = nodes(at: location)
+        for node in nodes {
+            if node.name == "followButton" {
+                troopControlSystem.commandTroopsToFollow()
+            } else if node.name == "releaseButton" {
+                troopControlSystem.commandTroopsToStop()
+            }
         }
     }
     
