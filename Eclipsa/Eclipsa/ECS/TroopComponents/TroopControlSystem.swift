@@ -27,7 +27,14 @@ class TroopControlSystem {
                rangeComponent.contains(point: troopPosition),
                let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
                troopTeam == playerTeam {
-                troop.startFollowing(controlledEntity)
+                // Ativa comportamento de seguir usando TroopBehaviorComponent
+                if troop.component(ofType: TroopBehaviorComponent.self) == nil {
+                    troop.addComponent(TroopBehaviorComponent(
+                        troop: troop,
+                        player: controlledEntity,
+                        allTroops: { [weak self] in self?.troops ?? [] }
+                    ))
+                }
             }
         }
     }
@@ -42,9 +49,9 @@ class TroopControlSystem {
                rangeComponent.contains(point: troopPosition),
                let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
                troopTeam == playerTeam {
-                troop.stopFollowing()
+                // Remove comportamento de seguir, fazendo a tropa parar no local
+                troop.removeComponent(ofType: TroopBehaviorComponent.self)
             }
         }
     }
 }
-

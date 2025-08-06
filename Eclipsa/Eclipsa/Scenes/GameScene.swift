@@ -18,6 +18,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     private var troopControlButtons: TroopControlButtons!
     
+    private var customLastUpdateTime: TimeInterval?
+    
     override func sceneDidLoad() {
         super.sceneDidLoad()
         setupVirtualController()
@@ -53,6 +55,13 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             let troop = TroopEntity(team: .sun)
             troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
             physicsSystem.setupTroopPhysics(for: troop)
+            
+            troop.addComponent(TroopBehaviorComponent(
+                troop: troop,
+                player: controlledEntity,
+                allTroops: { [weak self] in self?.troops ?? [] }
+            ))
+            
             SKEntityManager.shared.add(troop)
             troops.append(troop)
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
@@ -76,6 +85,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+        
+        let deltaTime = currentTime - (customLastUpdateTime ?? currentTime)
+        customLastUpdateTime = currentTime
+        if let agentComponent = controlledEntity.component(ofType: AgentComponent.self) {
+            agentComponent.agent.update(deltaTime: deltaTime)
+        }
+        for troop in troops {
+            if let agentComponent = troop.component(ofType: AgentComponent.self) {
+                agentComponent.agent.update(deltaTime: deltaTime)
+            }
+        }
+        
         if let moveComponent = controlledEntity.moveComponent {
             let isMoving = moveComponent.direction != .zero
             if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
