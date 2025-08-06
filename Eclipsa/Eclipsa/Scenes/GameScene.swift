@@ -7,7 +7,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var controlledEntity: UnitEntity!
     private var cameraEntity: CameraEntity!
     private var troopNode: SKSpriteNode?
-    private var enemyNode: SKSpriteNode?
+    private var wallNode: SKSpriteNode?
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -46,13 +46,14 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
         let startingPositions = [
             CGPoint(x: basePosition.x + 50, y: basePosition.y),
-            CGPoint(x: basePosition.x + 70, y: basePosition.y + 30),
-            CGPoint(x: basePosition.x + 90, y: basePosition.y - 30)
+            CGPoint(x: basePosition.x + 90, y: basePosition.y + 90),
+            CGPoint(x: basePosition.x + 120, y: basePosition.y - 90)
         ]
         
         for position in startingPositions {
             let troop = TroopEntity(team: .sun)
             troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
+            physicsSystem.setupTroopPhysics(for: troop)
             SKEntityManager.shared.add(troop)
             troops.append(troop)
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
@@ -63,15 +64,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         // Inicializar troopControlSystem após adicionar tropas
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
         
-        let troop = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
-        addChild(troop)
-        troopNode = troop
-        
-        let enemyEntity = UnitEntity(team: .moon)
-        SKEntityManager.shared.add(enemyEntity)
-        let enemy = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
-        addChild(enemy)
-        enemyNode = enemy
+        let wall = physicsSystem.makeTestBlock(position: CGPoint(x: -200, y: 0))
+        addChild(wall)
+        wallNode = wall
         
         // Ajustar collisionSystem para trabalhar com tropas ao invés do bloco de teste
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
