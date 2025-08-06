@@ -68,10 +68,6 @@ public class UnitEntity: GKEntity {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    func setupCameraComponent(cameraNode: SKCameraNode) {
-        self.addComponent(CameraComponent(moveSpeed: 1, cameraNode: cameraNode))
-    }
 }
 
 
