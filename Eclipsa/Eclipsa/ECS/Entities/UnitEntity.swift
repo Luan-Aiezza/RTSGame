@@ -35,7 +35,7 @@ public class UnitEntity: GKEntity {
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
-        let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle\($0)") }
+        let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle_\($0)") }
         let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
 
         // Componente de animação
@@ -59,6 +59,13 @@ public class UnitEntity: GKEntity {
         self.addComponent(rangeComponent)
 
         self.addComponent(TeamComponent(team: team))
+        
+        // Adiciona AgentComponent para controlar movimentação via GKAgent2D e comportamentos
+        let agent = AgentComponent(node: spriteNode)
+        agent.agent.radius = 32
+        agent.agent.maxSpeed = 100
+        agent.agent.maxAcceleration = 300
+        self.addComponent(agent)
     }
     
     var moveComponent: MovementComponent? {
@@ -109,27 +116,22 @@ public class TroopEntity: UnitEntity {
             stateMachineComponent.stateMachine.enter(IdleState.self)
         }
         self.removeComponent(ofType: ControlableComponent.self)
-        // Adicione mais componentes ou lógica específica das tropas se necessário
+        
+        // Movimentação das tropas agora será feita via GKAgent2D e comportamentos (GKBehavior).
+        // Comportamentos como seguir e evitar serão adicionados em etapas futuras.
+        
+        // Adiciona AgentComponent para controle de movimentação por IA
+        if let node = self.component(ofType: AnimationComponent.self)?.node,
+           self.component(ofType: AgentComponent.self) == nil {
+            let agent = AgentComponent(node: node)
+            agent.agent.radius = 32
+            agent.agent.maxSpeed = 80
+            agent.agent.maxAcceleration = 250
+            self.addComponent(agent)
+        }
     }
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    // Ativa o follow ao herói
-    public func startFollowing(_ target: UnitEntity, withSpeed speed: CGFloat = 2.0) {
-        if self.component(ofType: FollowComponent.self) == nil {
-            let follow = FollowComponent(speed: speed)
-            follow.target = target
-            self.addComponent(follow)
-        } else {
-            self.component(ofType: FollowComponent.self)?.target = target
-        }
-    }
-    
-    // Para de seguir
-    public func stopFollowing() {
-        self.removeComponent(ofType: FollowComponent.self)
-    }
 }
-

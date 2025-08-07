@@ -12,7 +12,7 @@ public class RangeComponent: GKComponent {
     /// Handler chamado ao terminar contato
     public var didEndContact: ((SKNode) -> Void)?
 
-    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.25)) {
+    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.05)) {
         self.radius = radius
         self.color = color
         self.node = SKShapeNode(circleOfRadius: radius)
@@ -34,10 +34,24 @@ public class RangeComponent: GKComponent {
 
     public override func didAddToEntity() {
         super.didAddToEntity()
-        if let parent = entity?.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
-            parent.addChild(node)
-            node.position = .zero
+        // Remove adding the node as child of the entity's node
+        // The node will be added to the scene later in update.
+    }
+    
+    override public func update(deltaTime: TimeInterval) {
+        guard let entity = entity,
+              let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
+              let scene = nodeComponent.node.scene else { return }
+        let positionInScene = nodeComponent.node.convert(CGPoint.zero, to: scene)
+        node.position = positionInScene
+        if node.parent !== scene {
+            scene.addChild(node)
         }
+    }
+    
+    override public func willRemoveFromEntity() {
+        super.willRemoveFromEntity()
+        node.removeFromParent()
     }
 
     public func setContactColor(_ color: SKColor) {
@@ -51,9 +65,10 @@ public class RangeComponent: GKComponent {
     
     /// Check if a given point is inside the range circle
     public func contains(point: CGPoint) -> Bool {
-        guard let scene = node.scene, let parent = node.parent else { return false }
-        let center = scene.convert(node.position, from: parent)
+        guard node.scene != nil else { return false }
+        let center = node.position
         let distance = hypot(point.x - center.x, point.y - center.y)
         return distance <= radius
     }
 }
+
