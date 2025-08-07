@@ -36,11 +36,10 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48))
-            troopBody.isDynamic = true
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false
             troopBody.categoryBitMask = PhysicsCategory.troop
-            troopBody.collisionBitMask = PhysicsCategory.wall | PhysicsCategory.player | PhysicsCategory.troop
+            troopBody.collisionBitMask = PhysicsCategory.wall | PhysicsCategory.troop
             troopBody.contactTestBitMask = PhysicsCategory.range
             let troopPhysics = SKPhysicsBodyComponent(physicsBody: troopBody)
             entity.addComponent(troopPhysics)

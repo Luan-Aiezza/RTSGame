@@ -107,6 +107,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
                 }
             }
         }
+        
+        // --- Depth sorting: nodes with lower Y appear in front (higher zPosition) ---
+        if let playerNode = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node {
+            // The base (e.g. 1000) must be high enough to keep all characters above the background
+            playerNode.zPosition = 1000 - playerNode.position.y
+        }
+        for troop in troops {
+            if let troopNode = troop.component(ofType: GKSKNodeComponent.self)?.node {
+                troopNode.zPosition = 1000 - troopNode.position.y
+            }
+        }
+        // This ensures sprites overlap correctly: those lower on the screen (smaller Y) are drawn on top.
     }
     
     // Removidos os métodos commandTroopsToFollow e commandTroopsToStop conforme instruções
