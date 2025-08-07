@@ -8,6 +8,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var cameraEntity: CameraEntity!
     private var troopNode: SKSpriteNode?
     private var enemyNode: SKSpriteNode?
+    private var commandController: VirtualController?
+    private var commandInput: InputHandler?
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -28,6 +30,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
        
+        //MARK: SetupCamera
         if let camera = self.camera {
             cameraEntity = CameraEntity()
             cameraEntity.setupComponents(cameraNode: camera)
@@ -132,20 +135,25 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         }
     }
     
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let camera, let location = touches.first?.location(in: camera) else { return }
+        
+        if location.x < 0 {
+            virtualController?.touchMoved(touches, with: event)
+        } else {
+            virtualController?.touchesCancelled(touches, with: event)
+            virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
+        }
+    }
+    
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera,
-                let location = touches.first?.location(in: camera),
-              location.x <= 0 else { return }
         virtualController?.touchesEnded(touches, with: event)
-//        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
+        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera,
-                let location = touches.first?.location(in: camera),
-              location.x <= 0 else { return }
         virtualController?.touchesCancelled(touches, with: event)
-//        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
+        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
 
