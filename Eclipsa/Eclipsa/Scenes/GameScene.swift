@@ -8,9 +8,12 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var cameraEntity: CameraEntity!
     private var troopNode: SKSpriteNode?
     private var enemyNode: SKSpriteNode?
-    private var commandController: VirtualController?
-    private var commandInput: InputHandler?
+    var commandController: VirtualController?
+    var commandInput = InputHandler()
     private var wallNode: SKSpriteNode?
+    
+    private var aimingSystem: AimingSystem?
+    private var touchHandler: RTSTouchHandler?
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -27,11 +30,22 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.sceneDidLoad()
         setupVirtualController()
         
+        
+        //MARK: Create Dummy
+        commandController = .init(scene: self, analogRadius: 25)
+        commandController?.setAnalogVisible(value: false)
+        commandInput.observeGameController()
+//        let dummy = DummyEntity()
+//        dummy.component(ofType: ControlableComponent.self)?.setupController(inputHandler: commandInput, virtualController: commandController)
+//        SKEntityManager.shared.add(dummy)
+        
+        //MARK: Create Player
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
         
         controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
        
+        setupRTSAiming()
         //MARK: SetupCamera
         if let camera = self.camera {
             cameraEntity = CameraEntity()
@@ -128,21 +142,40 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Removidos os métodos commandTroopsToFollow e commandTroopsToStop conforme instruções
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        super.touchesBegan(touches, with: event)
-        guard let touch = touches.first else { return }
-        let location = touch.location(in: self)
-        if let camera = self.camera {
-            let locInCamera = convert(location, to: camera)
-            troopControlButtons.handleTouch(locInCamera)
+        guard let camera, let location = touches.first?.location(in: camera) else { return }
+        
+        touchHandler?.touchesBegan(touches, with: event)
+        
+        if location.x <= 0 {
+            virtualController?.setAnalogVisible(value: true)
+            virtualController?.changePosition(location)
+            virtualController?.touchBegan(touches, with: event)
+        } else {
+//            commandController?.setAnalogVisible(value: true)
+//            commandController?.changePosition(location)
+//            commandController?.touchBegan(touches, with: event)
         }
+//        guard let touch = touches.first else { return }
+//        
+//        let location = touch.location(in: self)
+//        if let camera = self.camera {
+//            let locInCamera = convert(location, to: camera)
+//            troopControlButtons.handleTouch(locInCamera)
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let camera, let location = touches.first?.location(in: camera) else { return }
+        touchHandler?.touchesMoved(touches, with: event)
         
         if location.x < 0 {
             virtualController?.touchMoved(touches, with: event)
+            
+//            commandController?.touchesCancelled(touches, with: event)
+//            commandController?.setAnalogVisible(value: false, withDuration: 0.6)
         } else {
+//            commandController?.touchMoved(touches, with: event)
+            
             virtualController?.touchesCancelled(touches, with: event)
             virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
         }
@@ -151,11 +184,17 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         virtualController?.touchesEnded(touches, with: event)
         virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
+//        commandController?.touchesEnded(touches, with: event)
+//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        
+        touchHandler?.touchesEnded(touches, with: event)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         virtualController?.touchesCancelled(touches, with: event)
         virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
+//        commandController?.touchesCancelled(touches, with: event)
+//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
 
@@ -166,5 +205,13 @@ extension GameScene {
 
     func didEnd(_ contact: SKPhysicsContact) {
         collisionSystem.handleDidEnd(contact)
+    }
+}
+
+extension GameScene {
+    func setupRTSAiming() {
+        let aimingSystem = AimingSystem(scene: self)
+        self.aimingSystem = aimingSystem
+        touchHandler = RTSTouchHandler(scene: self, aimingSystem: aimingSystem)
     }
 }

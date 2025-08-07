@@ -30,6 +30,8 @@ public class UnitEntity: GKEntity {
 
     public init(team: Team = .sun) {
         super.init()
+        
+        self.addComponent(AimingComponent())
 
         let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
         self.addComponent(GKSKNodeComponent(node: spriteNode))

@@ -16,7 +16,7 @@ public class DummyEntity: GKEntity {
     public override init() {
         super.init()
 
-        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
+        let spriteNode = SKSpriteNode(texture: nil, color: .green, size: CGSize(width: 64, height: 64))
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         self.addComponent(ControlableComponent(delegate: self))

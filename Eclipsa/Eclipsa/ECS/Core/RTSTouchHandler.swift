@@ -34,7 +34,8 @@ class RTSTouchHandler {
     func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first,
               let scene = scene,
-              let entity = selectedEntity else { return }
+              let entity = selectedEntity
+        else { return }
         let location = touch.location(in: scene)
         aimingSystem.updateAiming(to: location, for: entity)
     }
