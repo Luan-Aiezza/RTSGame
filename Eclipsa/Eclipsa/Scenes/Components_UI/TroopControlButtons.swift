@@ -2,13 +2,16 @@ import SpriteKit
 
 /// Este componente UI cria e gerencia os botões de controle de tropas, para serem adicionados ao SKCameraNode.
 class TroopControlButtons: SKNode {
+    private weak var troopControlSystem: TroopControlSystem?
     private let followButton: SKSpriteNode
     private let releaseButton: SKSpriteNode
     
     var onFollow: (() -> Void)?
     var onRelease: (() -> Void)?
     
-    init(size: CGSize) {
+    init(size: CGSize, troopControlSystem: TroopControlSystem? = nil) {
+        self.troopControlSystem = troopControlSystem
+
         // Tamanhos e posições relativas ao centro da câmera
         let buttonSize = CGSize(width: 64, height: 64)
         
@@ -40,6 +43,13 @@ class TroopControlButtons: SKNode {
         
         addChild(followButton)
         addChild(releaseButton)
+        
+        self.onFollow = { [weak self] in
+            self?.troopControlSystem?.commandTroopsToFollow()
+        }
+        self.onRelease = { [weak self] in
+            self?.troopControlSystem?.commandTroopsToStop()
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
