@@ -7,7 +7,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var controlledEntity: UnitEntity!
     private var cameraEntity: CameraEntity!
     private var troopNode: SKSpriteNode?
-    private var enemyNode: SKSpriteNode?
+    private var wallNode: SKSpriteNode?
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -15,9 +15,10 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     // Lista de tropas para controle coletivo
     private var troops: [TroopEntity] = []
-
-    private var followButton: SKSpriteNode!
-    private var releaseButton: SKSpriteNode!
+    
+    private var troopControlButtons: TroopControlButtons!
+    
+    private var customLastUpdateTime: TimeInterval?
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -33,6 +34,11 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             cameraEntity.setupComponents(cameraNode: camera)
             cameraEntity.followPlayer(player: controlledEntity)
             SKEntityManager.shared.add(cameraEntity)
+            
+            troopControlButtons = TroopControlButtons(size: self.size)
+            troopControlButtons.onFollow = { [weak self] in self?.troopControlSystem.commandTroopsToFollow() }
+            troopControlButtons.onRelease = { [weak self] in self?.troopControlSystem.commandTroopsToStop() }
+            camera.addChild(troopControlButtons)
         }
         
         physicsSystem.setupHeroPhysics(for: controlledEntity)
@@ -41,13 +47,21 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
         let startingPositions = [
             CGPoint(x: basePosition.x + 50, y: basePosition.y),
-            CGPoint(x: basePosition.x + 70, y: basePosition.y + 30),
-            CGPoint(x: basePosition.x + 90, y: basePosition.y - 30)
+            CGPoint(x: basePosition.x + 90, y: basePosition.y + 90),
+            CGPoint(x: basePosition.x + 120, y: basePosition.y - 90)
         ]
         
         for position in startingPositions {
             let troop = TroopEntity(team: .sun)
             troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
+            physicsSystem.setupTroopPhysics(for: troop)
+            
+            troop.addComponent(TroopBehaviorComponent(
+                troop: troop,
+                player: controlledEntity,
+                allTroops: { [weak self] in self?.troops ?? [] }
+            ))
+            
             SKEntityManager.shared.add(troop)
             troops.append(troop)
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
@@ -58,52 +72,31 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         // Inicializar troopControlSystem após adicionar tropas
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
         
-        let troop = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
-        addChild(troop)
-        troopNode = troop
-        
-        let enemyEntity = UnitEntity(team: .moon)
-        SKEntityManager.shared.add(enemyEntity)
-        let enemy = physicsSystem.makeTroop(position: CGPoint(x: -200, y: 0))
-        addChild(enemy)
-        enemyNode = enemy
+        let wall = physicsSystem.makeTestBlock(position: CGPoint(x: -200, y: 0))
+        addChild(wall)
+        wallNode = wall
         
         // Ajustar collisionSystem para trabalhar com tropas ao invés do bloco de teste
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         
         // Configura delegate de contato
         self.physicsWorld.contactDelegate = self
-
-        let buttonSize = CGSize(width: 64, height: 64)
-        followButton = SKSpriteNode(color: .green, size: buttonSize)
-        followButton.alpha = 0.7
-        followButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 160)
-        followButton.zPosition = 1000
-        followButton.name = "followButton"
-        let followLabel = SKLabelNode(text: "Follow")
-        followLabel.fontName = "Avenir-Black"
-        followLabel.fontSize = 22
-        followLabel.fontColor = .white
-        followLabel.verticalAlignmentMode = .center
-        followButton.addChild(followLabel)
-        addChild(followButton)
-
-        releaseButton = SKSpriteNode(color: .red, size: buttonSize)
-        releaseButton.alpha = 0.7
-        releaseButton.position = CGPoint(x: self.size.width/2 - 80, y: -self.size.height/2 + 80)
-        releaseButton.zPosition = 1000
-        releaseButton.name = "releaseButton"
-        let releaseLabel = SKLabelNode(text: "Release")
-        releaseLabel.fontName = "Avenir-Black"
-        releaseLabel.fontSize = 22
-        releaseLabel.fontColor = .white
-        releaseLabel.verticalAlignmentMode = .center
-        releaseButton.addChild(releaseLabel)
-        addChild(releaseButton)
     }
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+        
+        let deltaTime = currentTime - (customLastUpdateTime ?? currentTime)
+        customLastUpdateTime = currentTime
+        if let agentComponent = controlledEntity.component(ofType: AgentComponent.self) {
+            agentComponent.agent.update(deltaTime: deltaTime)
+        }
+        for troop in troops {
+            if let agentComponent = troop.component(ofType: AgentComponent.self) {
+                agentComponent.agent.update(deltaTime: deltaTime)
+            }
+        }
+        
         if let moveComponent = controlledEntity.moveComponent {
             let isMoving = moveComponent.direction != .zero
             if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
@@ -114,6 +107,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
                 }
             }
         }
+        
+        // --- Depth sorting: nodes with lower Y appear in front (higher zPosition) ---
+        if let playerNode = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node {
+            // The base (e.g. 1000) must be high enough to keep all characters above the background
+            playerNode.zPosition = 1000 - playerNode.position.y
+        }
+        for troop in troops {
+            if let troopNode = troop.component(ofType: GKSKNodeComponent.self)?.node {
+                troopNode.zPosition = 1000 - troopNode.position.y
+            }
+        }
+        // This ensures sprites overlap correctly: those lower on the screen (smaller Y) are drawn on top.
     }
     
     // Removidos os métodos commandTroopsToFollow e commandTroopsToStop conforme instruções
@@ -122,13 +127,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.touchesBegan(touches, with: event)
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
-        let nodes = nodes(at: location)
-        for node in nodes {
-            if node.name == "followButton" {
-                troopControlSystem.commandTroopsToFollow()
-            } else if node.name == "releaseButton" {
-                troopControlSystem.commandTroopsToStop()
-            }
+        if let camera = self.camera {
+            let locInCamera = convert(location, to: camera)
+            troopControlButtons.handleTouch(locInCamera)
         }
     }
     

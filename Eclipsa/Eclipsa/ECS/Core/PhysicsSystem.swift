@@ -12,7 +12,7 @@ struct PhysicsCategory {
 
 extension UInt32 {
     static func contactWithAllCategories() -> UInt32 {
-        return PhysicsCategory.player | PhysicsCategory.ground | PhysicsCategory.wall | PhysicsCategory.troop | PhysicsCategory.range
+        return PhysicsCategory.player | PhysicsCategory.wall | PhysicsCategory.troop | PhysicsCategory.range
     }
 }
 
@@ -25,10 +25,24 @@ final class PhysicsSystem {
             heroBody.affectedByGravity = false
             heroBody.allowsRotation = false
             heroBody.categoryBitMask = PhysicsCategory.player
-            heroBody.collisionBitMask = PhysicsCategory.ground | PhysicsCategory.wall
+            heroBody.collisionBitMask = PhysicsCategory.wall
             heroBody.contactTestBitMask = UInt32.contactWithAllCategories()
             let heroPhysics = SKPhysicsBodyComponent(physicsBody: heroBody)
             entity.addComponent(heroPhysics)
+        }
+    }
+
+    func setupTroopPhysics(for entity: UnitEntity) {
+        if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
+           nodeComponent.node.physicsBody == nil {
+            let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48))
+            troopBody.affectedByGravity = false
+            troopBody.allowsRotation = false
+            troopBody.categoryBitMask = PhysicsCategory.troop
+            troopBody.collisionBitMask = PhysicsCategory.wall | PhysicsCategory.troop
+            troopBody.contactTestBitMask = PhysicsCategory.range
+            let troopPhysics = SKPhysicsBodyComponent(physicsBody: troopBody)
+            entity.addComponent(troopPhysics)
         }
     }
 
@@ -43,19 +57,5 @@ final class PhysicsSystem {
         blockBody.contactTestBitMask = PhysicsCategory.player
         block.physicsBody = blockBody
         return block
-    }
-
-    // Cria tropa já com corpo físico
-    func makeTroop(position: CGPoint) -> SKSpriteNode {
-        let troop = SKSpriteNode(color: .blue, size: CGSize(width: 48, height: 48))
-        troop.position = position
-        let troopBody = SKPhysicsBody(rectangleOf: troop.size)
-        troopBody.isDynamic = true
-        troopBody.affectedByGravity = false
-        troopBody.categoryBitMask = PhysicsCategory.troop
-        troopBody.collisionBitMask = 0
-        troopBody.contactTestBitMask = PhysicsCategory.range
-        troop.physicsBody = troopBody
-        return troop
     }
 }
