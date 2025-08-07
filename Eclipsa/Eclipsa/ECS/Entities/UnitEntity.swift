@@ -55,6 +55,8 @@ public class UnitEntity: GKEntity {
 
         self.addComponent(MovementComponent(moveSpeed: 2))
         
+        self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
+        
         // Componente de Vida (padrão 100)
         let healthComponent = HealthComponent(maxHealth: 100)
         self.addComponent(healthComponent)
@@ -71,8 +73,6 @@ public class UnitEntity: GKEntity {
 
         let rangeComponent = RangeComponent(radius: 120)
         self.addComponent(rangeComponent)
-
-        self.addComponent(TeamComponent(team: team))
         
         // Adiciona AgentComponent para controlar movimentação via GKAgent2D e comportamentos
         let agent = AgentComponent(node: spriteNode)
@@ -114,6 +114,8 @@ public class TroopEntity: UnitEntity {
     public override init(team: Team = .sun) {
         super.init(team: team)
         
+        self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
+
         // Garante componente de Vida e barra
         if self.component(ofType: HealthComponent.self) == nil {
             let healthComponent = HealthComponent(maxHealth: 60)
