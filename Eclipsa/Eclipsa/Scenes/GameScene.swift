@@ -17,8 +17,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     private var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
-    private var troopControlSystem: TroopControlSystem!  // Adicionado
-    
+    private var troopControlSystem: TroopControlSystem!
     // Lista de tropas para controle coletivo
     private var troops: [TroopEntity] = []
     
@@ -52,11 +51,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             cameraEntity.setupComponents(cameraNode: camera)
             cameraEntity.followPlayer(player: controlledEntity)
             SKEntityManager.shared.add(cameraEntity)
-            
-            troopControlButtons = TroopControlButtons(size: self.size)
-            troopControlButtons.onFollow = { [weak self] in self?.troopControlSystem.commandTroopsToFollow() }
-            troopControlButtons.onRelease = { [weak self] in self?.troopControlSystem.commandTroopsToStop() }
-            camera.addChild(troopControlButtons)
         }
         
         physicsSystem.setupHeroPhysics(for: controlledEntity)
@@ -74,12 +68,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
             physicsSystem.setupTroopPhysics(for: troop)
             
-            troop.addComponent(TroopBehaviorComponent(
-                troop: troop,
-                player: controlledEntity,
-                allTroops: { [weak self] in self?.troops ?? [] }
-            ))
-            
             SKEntityManager.shared.add(troop)
             troops.append(troop)
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
@@ -87,8 +75,13 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             }
         }
         
-        // Inicializar troopControlSystem após adicionar tropas
+        // Inicializar troopControlSystem antes da criação dos botões
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
+        
+        troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
+        if let camera = self.camera {
+            camera.addChild(troopControlButtons)
+        }
         
         let wall = physicsSystem.makeTestBlock(position: CGPoint(x: -200, y: 0))
         addChild(wall)
@@ -136,7 +129,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
                 troopNode.zPosition = 1000 - troopNode.position.y
             }
         }
-        // This ensures sprites overlap correctly: those lower on the screen (smaller Y) are drawn on top.
     }
     
     // Removidos os métodos commandTroopsToFollow e commandTroopsToStop conforme instruções
