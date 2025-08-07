@@ -55,6 +55,20 @@ public class UnitEntity: GKEntity {
 
         self.addComponent(MovementComponent(moveSpeed: 2))
         
+        // Componente de Vida (padrão 100)
+        let healthComponent = HealthComponent(maxHealth: 100)
+        self.addComponent(healthComponent)
+        
+        let healthBar = HealthBarComponent()
+        self.addComponent(healthBar)
+        
+        // Sincroniza barra com componente de vida
+        healthComponent.onHealthChanged = { [weak healthBar] health, max in
+            healthBar?.updateBar(health: health, max: max)
+        }
+        // Inicializa barra com valor cheio
+        healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+
         let rangeComponent = RangeComponent(radius: 120)
         self.addComponent(rangeComponent)
 
@@ -100,6 +114,18 @@ public class TroopEntity: UnitEntity {
     public override init(team: Team = .sun) {
         super.init(team: team)
         
+        // Garante componente de Vida e barra
+        if self.component(ofType: HealthComponent.self) == nil {
+            let healthComponent = HealthComponent(maxHealth: 60)
+            self.addComponent(healthComponent)
+            let healthBar = HealthBarComponent()
+            self.addComponent(healthBar)
+            healthComponent.onHealthChanged = { [weak healthBar] health, max in
+                healthBar?.updateBar(health: health, max: max)
+            }
+            healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+        }
+        
         if self.component(ofType: MovementComponent.self) == nil {
             self.addComponent(MovementComponent(moveSpeed: 2))
         }
@@ -135,3 +161,4 @@ public class TroopEntity: UnitEntity {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
