@@ -29,14 +29,10 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.sceneDidLoad()
         setupVirtualController()
         
-        
         //MARK: Create Dummy
         commandController = .init(scene: self, analogRadius: 25)
         commandController?.setAnalogVisible(value: false)
         commandInput.observeGameController()
-//        let dummy = DummyEntity()
-//        dummy.component(ofType: ControlableComponent.self)?.setupController(inputHandler: commandInput, virtualController: commandController)
-//        SKEntityManager.shared.add(dummy)
         
         //MARK: Create Player
         controlledEntity = UnitEntity(team: .sun)
@@ -174,12 +170,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         if location.x < 0 {
             virtualController?.touchMoved(touches, with: event)
-            
-//            commandController?.touchesCancelled(touches, with: event)
-//            commandController?.setAnalogVisible(value: false, withDuration: 0.6)
         } else {
-//            commandController?.touchMoved(touches, with: event)
-            
             virtualController?.touchesCancelled(touches, with: event)
             virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
         }
@@ -188,17 +179,12 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         virtualController?.touchesEnded(touches, with: event)
         virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
-//        commandController?.touchesEnded(touches, with: event)
-//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
-        
         touchHandler?.touchesEnded(touches, with: event)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         virtualController?.touchesCancelled(touches, with: event)
         virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
-//        commandController?.touchesCancelled(touches, with: event)
-//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
 
