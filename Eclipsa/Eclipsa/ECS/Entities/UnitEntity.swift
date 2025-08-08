@@ -31,7 +31,7 @@ public class UnitEntity: GKEntity {
     public init(team: Team = .sun) {
         super.init()
 
-        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
+        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 48, height: 48))
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
@@ -113,6 +113,11 @@ extension UnitEntity: ControlableDelegate {
 public class TroopEntity: UnitEntity {
     public override init(team: Team = .sun) {
         super.init(team: team)
+        
+        // 🔧 Ajusta o tamanho do sprite para 32x32
+        if let spriteNode = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
+            spriteNode.size = CGSize(width: 32, height: 32)
+        }
         
         self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
 
