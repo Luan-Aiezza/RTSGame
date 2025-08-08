@@ -118,7 +118,7 @@ public class TroopEntity: UnitEntity {
         
         // 🔧 Ajusta o tamanho do sprite para 32x32
         if let spriteNode = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
-            spriteNode.size = CGSize(width: 32, height: 32)
+            spriteNode.size = CGSize(width: 48, height: 48)
         }
         
         self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
@@ -141,8 +141,8 @@ public class TroopEntity: UnitEntity {
         
         // Troca as animações para as animações específicas da tropa
         if let animationComponent = self.component(ofType: AnimationComponent.self) {
-            let idleTextures = (1...11).map { SKTexture(imageNamed: "Sun_Troop_Idle_\($0)") }
-            let walkTextures = (1...7).map { SKTexture(imageNamed: "Sun_Troop_Walk_\($0)") }
+            let idleTextures = (1...12).map { SKTexture(imageNamed: "Sun_Soldier_Idle_\($0)") }
+            let walkTextures = (1...8).map { SKTexture(imageNamed: "Sun_Soldier_Walk_\($0)") }
             animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
             animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
         }
