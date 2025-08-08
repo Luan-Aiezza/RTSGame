@@ -5,12 +5,12 @@ import GameplayKit
 class TroopControlSystem {
     private weak var scene: SKScene?
     private(set) var troops: [TroopEntity]
-    private(set) weak var controlledEntity: UnitEntity?
+    private(set) weak var targetEntity: UnitEntity?
     
-    init(scene: SKScene?, troops: [TroopEntity], controlledEntity: UnitEntity?) {
+    init(scene: SKScene?, troops: [TroopEntity], targetEntity: UnitEntity?) {
         self.scene = scene
         self.troops = troops
-        self.controlledEntity = controlledEntity
+        self.targetEntity = targetEntity
     }
 
     func updateTroops(_ troops: [TroopEntity]) {
@@ -18,9 +18,9 @@ class TroopControlSystem {
     }
     
     func commandTroopsToFollow() {
-        guard let controlledEntity = controlledEntity,
-              let rangeComponent = controlledEntity.component(ofType: RangeComponent.self),
-              let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team
+        guard let targetEntity = targetEntity,
+              let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
+              let playerTeam = targetEntity.component(ofType: TeamComponent.self)?.team
         else { return }
         for troop in troops {
             if let troopPosition = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
@@ -31,7 +31,7 @@ class TroopControlSystem {
                 if troop.component(ofType: TroopBehaviorComponent.self) == nil {
                     troop.addComponent(TroopBehaviorComponent(
                         troop: troop,
-                        player: controlledEntity,
+                        target: targetEntity,
                         allTroops: { [weak self] in self?.troops ?? [] }
                     ))
                 }
@@ -40,9 +40,9 @@ class TroopControlSystem {
     }
 
     func commandTroopsToStop() {
-        guard let controlledEntity = controlledEntity,
-              let rangeComponent = controlledEntity.component(ofType: RangeComponent.self),
-              let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team
+        guard let targetEntity = targetEntity,
+              let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
+              let playerTeam = targetEntity.component(ofType: TeamComponent.self)?.team
         else { return }
         for troop in troops {
             if let troopPosition = troop.component(ofType: GKSKNodeComponent.self)?.node.position,

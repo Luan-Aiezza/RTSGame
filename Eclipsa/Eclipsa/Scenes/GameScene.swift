@@ -74,7 +74,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         }
         
         // Inicializar troopControlSystem antes da criação dos botões
-        troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
+        troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)
         
         troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
         if let camera = self.camera {
