@@ -154,22 +154,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         touchHandler?.touchesBegan(touches, with: event)
         
+        // Lógica dos controles virtuais
         if location.x <= 0 {
             virtualController?.setAnalogVisible(value: true)
             virtualController?.changePosition(location)
             virtualController?.touchBegan(touches, with: event)
         } else {
-//            commandController?.setAnalogVisible(value: true)
-//            commandController?.changePosition(location)
-//            commandController?.touchBegan(touches, with: event)
+            // comandos do commandController (comentados)
         }
-//        guard let touch = touches.first else { return }
-//        
-//        let location = touch.location(in: self)
-//        if let camera = self.camera {
-//            let locInCamera = convert(location, to: camera)
-//            troopControlButtons.handleTouch(locInCamera)
-//        }
+        
+        // --- ADICIONADO: Dispara comandos de botão de tropa ---
+        // Passa a posição do toque no sistema de coordenadas da câmera para troopControlButtons
+        troopControlButtons.handleTouch(location)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
