@@ -33,7 +33,7 @@ public class UnitEntity: GKEntity {
         
         self.addComponent(AimingComponent())
 
-        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 64, height: 64))
+        let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: CGSize(width: 48, height: 48))
         self.addComponent(GKSKNodeComponent(node: spriteNode))
 
         // Criação das texturas
@@ -57,10 +57,24 @@ public class UnitEntity: GKEntity {
 
         self.addComponent(MovementComponent(moveSpeed: 2))
         
+        self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
+        
+        // Componente de Vida (padrão 100)
+        let healthComponent = HealthComponent(maxHealth: 100)
+        self.addComponent(healthComponent)
+        
+        let healthBar = HealthBarComponent()
+        self.addComponent(healthBar)
+        
+        // Sincroniza barra com componente de vida
+        healthComponent.onHealthChanged = { [weak healthBar] health, max in
+            healthBar?.updateBar(health: health, max: max)
+        }
+        // Inicializa barra com valor cheio
+        healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+
         let rangeComponent = RangeComponent(radius: 120)
         self.addComponent(rangeComponent)
-
-        self.addComponent(TeamComponent(team: team))
         
         // Adiciona AgentComponent para controlar movimentação via GKAgent2D e comportamentos
         let agent = AgentComponent(node: spriteNode)
@@ -102,6 +116,25 @@ public class TroopEntity: UnitEntity {
     public override init(team: Team = .sun) {
         super.init(team: team)
         
+        // 🔧 Ajusta o tamanho do sprite para 32x32
+        if let spriteNode = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
+            spriteNode.size = CGSize(width: 32, height: 32)
+        }
+        
+        self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
+
+        // Garante componente de Vida e barra
+        if self.component(ofType: HealthComponent.self) == nil {
+            let healthComponent = HealthComponent(maxHealth: 60)
+            self.addComponent(healthComponent)
+            let healthBar = HealthBarComponent()
+            self.addComponent(healthBar)
+            healthComponent.onHealthChanged = { [weak healthBar] health, max in
+                healthBar?.updateBar(health: health, max: max)
+            }
+            healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+        }
+        
         if self.component(ofType: MovementComponent.self) == nil {
             self.addComponent(MovementComponent(moveSpeed: 2))
         }
@@ -137,3 +170,4 @@ public class TroopEntity: UnitEntity {
         fatalError("init(coder:) has not been implemented")
     }
 }
+

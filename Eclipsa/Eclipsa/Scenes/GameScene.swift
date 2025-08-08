@@ -75,8 +75,24 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             }
         }
         
+        let enemyPositions = [
+            CGPoint(x: basePosition.x - 50, y: basePosition.y),
+            CGPoint(x: basePosition.x - 90, y: basePosition.y - 90),
+            CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
+        ]
+        for position in enemyPositions {
+            let enemyTroop = TroopEntity(team: .moon)
+            enemyTroop.component(ofType: GKSKNodeComponent.self)?.node.position = position
+            physicsSystem.setupTroopPhysics(for: enemyTroop)
+            SKEntityManager.shared.add(enemyTroop)
+            troops.append(enemyTroop)
+            if let node = enemyTroop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
+                addChild(node)
+            }
+        }
+        
         // Inicializar troopControlSystem antes da criação dos botões
-        troopControlSystem = TroopControlSystem(scene: self, troops: troops, controlledEntity: controlledEntity)
+        troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)
         
         troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
         if let camera = self.camera {

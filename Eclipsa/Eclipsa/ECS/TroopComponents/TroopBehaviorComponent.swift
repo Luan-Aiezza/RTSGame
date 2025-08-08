@@ -6,12 +6,14 @@ import GameplayKit
 
 public class TroopBehaviorComponent: GKComponent {
     unowned let troop: TroopEntity
-    unowned let player: UnitEntity
+    public var target: GKEntity
     let allTroops: () -> [TroopEntity]
     
-    public init(troop: TroopEntity, player: UnitEntity, allTroops: @escaping () -> [TroopEntity]) {
+    /// Inicializa o componente com a tropa controlada, o alvo a seguir, e uma função que retorna todas as tropas para evitar colisões.
+    /// Agora o alvo pode ser qualquer entidade, não apenas o jogador.
+    public init(troop: TroopEntity, target: GKEntity, allTroops: @escaping () -> [TroopEntity]) {
         self.troop = troop
-        self.player = player
+        self.target = target
         self.allTroops = allTroops
         super.init()
         configureBehavior()
@@ -19,11 +21,11 @@ public class TroopBehaviorComponent: GKComponent {
     
     private func configureBehavior() {
         guard let agentComponent = troop.component(ofType: AgentComponent.self),
-              let playerAgent = player.component(ofType: AgentComponent.self)?.agent else { return }
+              let targetAgent = target.component(ofType: AgentComponent.self)?.agent else { return }
         
         let behavior = GKBehavior()
-        // Seguir o jogador
-        let seekGoal = GKGoal(toSeekAgent: playerAgent)
+        // Seguir o target (agora pode ser qualquer entidade)
+        let seekGoal = GKGoal(toSeekAgent: targetAgent)
         behavior.setWeight(1.0, for: seekGoal)
         
         // Evitar outras tropas
@@ -35,8 +37,14 @@ public class TroopBehaviorComponent: GKComponent {
         agentComponent.agent.behavior = behavior
     }
     
+    /// Atualiza o alvo a ser seguido em tempo de execução.
+    public func setTarget(_ newTarget: GKEntity) {
+        self.target = newTarget
+        configureBehavior()
+    }
+    
     public override func update(deltaTime seconds: TimeInterval) {
-        // Atualiza goals dinamicamente caso o grupo mude
+        // Atualiza goals dinamicamente caso o grupo ou o alvo mudem
         configureBehavior()
     }
     
