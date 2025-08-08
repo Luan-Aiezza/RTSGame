@@ -25,6 +25,26 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     private var customLastUpdateTime: TimeInterval?
     
+    private func nearestEnemyTroop(inRangeOf troop: TroopEntity) -> TroopEntity? {
+        guard let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+              let position = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let range = troop.component(ofType: RangeComponent.self)?.radius else { return nil }
+        var nearest: (troop: TroopEntity, dist2: CGFloat)? = nil
+        for other in troops {
+            if other === troop { continue }
+            guard let otherTeam = other.component(ofType: TeamComponent.self)?.team,
+                  otherTeam != troopTeam,
+                  let otherPos = other.component(ofType: GKSKNodeComponent.self)?.node.position else { continue }
+            let d2 = (position.x - otherPos.x) * (position.x - otherPos.x) + (position.y - otherPos.y) * (position.y - otherPos.y)
+            if d2 <= range * range {
+                if nearest == nil || d2 < nearest!.dist2 {
+                    nearest = (other, d2)
+                }
+            }
+        }
+        return nearest?.troop
+    }
+    
     override func sceneDidLoad() {
         super.sceneDidLoad()
         setupVirtualController()
@@ -117,6 +137,20 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         for troop in troops {
             if let agentComponent = troop.component(ofType: AgentComponent.self) {
                 agentComponent.agent.update(deltaTime: deltaTime)
+            }
+        }
+        
+        for troop in troops {
+            guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+                  let player = controlledEntity else { continue }
+            if let enemy = nearestEnemyTroop(inRangeOf: troop) {
+                if behavior.target !== enemy {
+                    behavior.setTarget(enemy)
+                }
+            } else {
+                if behavior.target !== player {
+                    behavior.setTarget(player)
+                }
             }
         }
         
