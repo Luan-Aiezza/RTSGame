@@ -10,14 +10,15 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var enemyNode: SKSpriteNode?
     var commandController: VirtualController?
     var commandInput = InputHandler()
-    public var wallNode: SKSpriteNode?
+    private var wallNode: SKSpriteNode?
     
-    public var aimingSystem: AimingSystem?
-    public var touchHandler: RTSTouchHandler?
+    var gameController: AdaptedVirtualController?
+    private var aimingSystem: AimingSystem?
+    var touchHandler: RTSTouchHandler?
     
-    public var physicsSystem = PhysicsSystem()
-    public var collisionSystem: CollisionSystem!
-    public var troopControlSystem: TroopControlSystem!
+    var physicsSystem = PhysicsSystem()
+    private var collisionSystem: CollisionSystem!
+    var troopControlSystem: TroopControlSystem!
     // Lista de tropas para controle coletivo
     public var troops: [TroopEntity] = []
     
@@ -81,5 +82,13 @@ extension GameScene {
         let aimingSystem = AimingSystem(scene: self)
         self.aimingSystem = aimingSystem
         touchHandler = RTSTouchHandler(scene: self, aimingSystem: aimingSystem)
+    }
+}
+
+extension GameScene {
+    func setupAdatpedVirtualController() {
+        gameController = AdaptedVirtualController(scene: self, analogRadius: 50)
+        gameController?.setAnalogVisible(value: false)
+        controlledEntity.component(ofType: AdaptedControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: gameController)
     }
 }
