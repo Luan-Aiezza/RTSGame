@@ -118,7 +118,7 @@ public class TroopEntity: UnitEntity {
         
         // 🔧 Ajusta o tamanho do sprite para 32x32
         if let spriteNode = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
-            spriteNode.size = CGSize(width: 48, height: 48)
+            spriteNode.size = CGSize(width: 64, height: 64)
         }
         
         self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
