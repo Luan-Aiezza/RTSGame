@@ -1,33 +1,85 @@
 import Foundation
+import SpriteKit
 import BehindGameKit
 import GameplayKit
 
-class GameScene: SKGameScene {
-    private var controlledEntity: GKEntity!
+class GameScene: SKGameScene, SKPhysicsContactDelegate {
+    public var controlledEntity: UnitEntity!
+    public var cameraEntity: CameraEntity!
+    public var troopNode: SKSpriteNode?
+    public var enemyNode: SKSpriteNode?
+    var commandController: VirtualController?
+    var commandInput = InputHandler()
+    public var wallNode: SKSpriteNode?
+    
+    public var aimingSystem: AimingSystem?
+    public var touchHandler: RTSTouchHandler?
+    
+    public var physicsSystem = PhysicsSystem()
+    public var collisionSystem: CollisionSystem!
+    public var troopControlSystem: TroopControlSystem!
+    // Lista de tropas para controle coletivo
+    public var troops: [TroopEntity] = []
+    
+    public var troopControlButtons: TroopControlButtons!
+    
+    public var customLastUpdateTime: TimeInterval?
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
-        setupVirtualController()
-        
-        controlledEntity = UnitEntity()
-        SKEntityManager.shared.add(controlledEntity)
-        
-        controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
+        setupVirtualController() // precisa vir ANTES do player
+        commandController = .init(scene: self, analogRadius: 25)
+        commandController?.setAnalogVisible(value: false)
+        commandInput.observeGameController()
+
+        setupPlayer()
+        setupCamera()
+        setupRTSAiming()
+        setupTroops()
+        setupUI()
+
+        let wall = physicsSystem.makeTestBlock(position: CGPoint(x: -200, y: 0))
+        addChild(wall)
+        wallNode = wall
+
+        collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
+        physicsWorld.contactDelegate = self
     }
-    
+
+
     override func update(_ currentTime: TimeInterval) {
-        super.update(currentTime)
-        if let controlledEntity = controlledEntity as? UnitEntity,
-           let moveComponent = controlledEntity.moveComponent {
-            let isMoving = moveComponent.direction != .zero
-            if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
-                if isMoving {
-                    stateMachineComponent.stateMachine.enter(WalkingState.self)
-                } else {
-                    stateMachineComponent.stateMachine.enter(IdleState.self)
-                }
-            }
-        }
+        let deltaTime = currentTime - lastUpdateTime
+        lastUpdateTime = currentTime
+
+        controlledEntity?.update(deltaTime: deltaTime)
+        troops.forEach { $0.update(deltaTime: deltaTime) }
+        cameraEntity?.followPlayer(player: controlledEntity)
+        cameraEntity?.update(deltaTime: deltaTime)
+        controlledEntity.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
+        troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
+        updateTroopTargets()
+        updatePlayerState()
+        updateTroopState()
+        depthSortNodes()
+    }
+
+}
+
+extension GameScene {
+    func didBegin(_ contact: SKPhysicsContact) {
+        collisionSystem.handleDidBegin(contact)
+    }
+
+    func didEnd(_ contact: SKPhysicsContact) {
+        collisionSystem.handleDidEnd(contact)
+    }
+}
+
+extension GameScene {
+    func setupRTSAiming() {
+        let aimingSystem = AimingSystem(scene: self)
+        self.aimingSystem = aimingSystem
+        touchHandler = RTSTouchHandler(scene: self, aimingSystem: aimingSystem)
     }
 }
