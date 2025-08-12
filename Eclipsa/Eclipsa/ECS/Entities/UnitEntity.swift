@@ -53,6 +53,7 @@ public class UnitEntity: GKEntity {
         self.stateMachineComponent = StateMachineComponent(stateMachine)
         self.addComponent(stateMachineComponent)
 
+        self.addComponent(AimControlComponent(delegate: self))
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(AdaptedControlableComponent(delegate: self))
 
@@ -173,3 +174,11 @@ public class TroopEntity: UnitEntity {
     }
 }
 
+
+extension UnitEntity: AimingDelegate {
+    func handleAim(direction: CGPoint, distance: CGFloat) {
+        self.component(ofType: AimingComponent.self)
+    }
+    
+    
+}
