@@ -54,6 +54,7 @@ public class UnitEntity: GKEntity {
         self.addComponent(stateMachineComponent)
 
         self.addComponent(ControlableComponent(delegate: self))
+        self.addComponent(AdaptedControlableComponent(delegate: self))
 
         self.addComponent(MovementComponent(moveSpeed: 2))
         
@@ -151,6 +152,7 @@ public class TroopEntity: UnitEntity {
             stateMachineComponent.stateMachine.enter(IdleState.self)
         }
         self.removeComponent(ofType: ControlableComponent.self)
+        self.removeComponent(ofType: AdaptedControlableComponent.self)
         
         // Movimentação das tropas agora será feita via GKAgent2D e comportamentos (GKBehavior).
         // Comportamentos como seguir e evitar serão adicionados em etapas futuras.

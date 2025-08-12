@@ -12,6 +12,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     var commandInput = InputHandler()
     private var wallNode: SKSpriteNode?
     
+    var gameController: AdaptedVirtualController?
     private var aimingSystem: AimingSystem?
     private var touchHandler: RTSTouchHandler?
     
@@ -41,8 +42,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         //MARK: Create Player
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
-        
-        controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
+        setupAdatpedVirtualController()
+//        controlledEntity.component(ofType: ControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: virtualController)
        
         setupRTSAiming()
         //MARK: SetupCamera
@@ -155,9 +156,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         touchHandler?.touchesBegan(touches, with: event)
         
         if location.x <= 0 {
-            virtualController?.setAnalogVisible(value: true)
-            virtualController?.changePosition(location)
-            virtualController?.touchBegan(touches, with: event)
+            gameController?.setAnalogVisible(value: true)
+            gameController?.changePosition(location)
+            gameController?.touchBegan(touches, with: event)
         } else {
 //            commandController?.setAnalogVisible(value: true)
 //            commandController?.changePosition(location)
@@ -173,36 +174,22 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera, let location = touches.first?.location(in: camera) else { return }
+//        guard let camera, let location = touches.first?.location(in: camera) else { return }
         touchHandler?.touchesMoved(touches, with: event)
         
-        if location.x < 0 {
-            virtualController?.touchMoved(touches, with: event)
-            
-//            commandController?.touchesCancelled(touches, with: event)
-//            commandController?.setAnalogVisible(value: false, withDuration: 0.6)
-        } else {
-//            commandController?.touchMoved(touches, with: event)
-            
-            virtualController?.touchesCancelled(touches, with: event)
-            virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
-        }
+        gameController?.touchMoved(touches, with: event)
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        virtualController?.touchesEnded(touches, with: event)
-        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
-//        commandController?.touchesEnded(touches, with: event)
-//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        gameController?.touchesEnded(touches, with: event)
+        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         
         touchHandler?.touchesEnded(touches, with: event)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
-        virtualController?.touchesCancelled(touches, with: event)
-        virtualController?.setAnalogVisible(value: false, withDuration: 0.6)
-//        commandController?.touchesCancelled(touches, with: event)
-//        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        gameController?.touchesCancelled(touches, with: event)
+        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
 
@@ -221,5 +208,13 @@ extension GameScene {
         let aimingSystem = AimingSystem(scene: self)
         self.aimingSystem = aimingSystem
         touchHandler = RTSTouchHandler(scene: self, aimingSystem: aimingSystem)
+    }
+}
+
+extension GameScene {
+    func setupAdatpedVirtualController() {
+        gameController = AdaptedVirtualController(scene: self, analogRadius: 50)
+        gameController?.setAnalogVisible(value: false)
+        controlledEntity.component(ofType: AdaptedControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: gameController)
     }
 }
