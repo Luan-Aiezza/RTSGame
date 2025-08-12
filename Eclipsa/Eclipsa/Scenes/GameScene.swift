@@ -14,11 +14,11 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     var gameController: AdaptedVirtualController?
     private var aimingSystem: AimingSystem?
-    private var touchHandler: RTSTouchHandler?
+    var touchHandler: RTSTouchHandler?
     
-    private var physicsSystem = PhysicsSystem()
+    var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
-    private var troopControlSystem: TroopControlSystem!
+    var troopControlSystem: TroopControlSystem!
     // Lista de tropas para controle coletivo
     public var troops: [TroopEntity] = []
     
