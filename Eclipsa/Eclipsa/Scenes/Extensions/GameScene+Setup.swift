@@ -14,8 +14,9 @@ extension GameScene {
         setupInputControllerIfNeeded()
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
-        controlledEntity.component(ofType: ControlableComponent.self)?
-            .setupController(inputHandler: commandInput, virtualController: commandController)
+//        controlledEntity.component(ofType: ControlableComponent.self)?
+//            .setupController(inputHandler: commandInput, virtualController: commandController)
+        setupAdatpedVirtualController()
         physicsSystem.setupHeroPhysics(for: controlledEntity)
         if let rangeComp = controlledEntity.component(ofType: RangeComponent.self),
            let nodeComp = controlledEntity.component(ofType: GKSKNodeComponent.self) {
