@@ -4,10 +4,8 @@ import SpriteKit
 class TroopControlButtons: SKNode {
     private weak var troopControlSystem: TroopControlSystem?
     private let followButton: SKSpriteNode
-    private let releaseButton: SKSpriteNode
     
     var onFollow: (() -> Void)?
-    var onRelease: (() -> Void)?
     
     init(size: CGSize, troopControlSystem: TroopControlSystem? = nil) {
         self.troopControlSystem = troopControlSystem
@@ -17,7 +15,7 @@ class TroopControlButtons: SKNode {
         
         followButton = SKSpriteNode(color: .green, size: buttonSize)
         followButton.alpha = 0.7
-        followButton.position = CGPoint(x: size.width/2 - 80, y: -size.height/2 + 160)
+        followButton.position = CGPoint(x: size.width/2 - 80, y: -size.height/2 + 80)
         followButton.zPosition = 1000
         followButton.name = "followButton"
         let followLabel = SKLabelNode(text: "Follow")
@@ -27,28 +25,12 @@ class TroopControlButtons: SKNode {
         followLabel.verticalAlignmentMode = .center
         followButton.addChild(followLabel)
         
-        releaseButton = SKSpriteNode(color: .red, size: buttonSize)
-        releaseButton.alpha = 0.7
-        releaseButton.position = CGPoint(x: size.width/2 - 80, y: -size.height/2 + 80)
-        releaseButton.zPosition = 1000
-        releaseButton.name = "releaseButton"
-        let releaseLabel = SKLabelNode(text: "Release")
-        releaseLabel.fontName = "Avenir-Black"
-        releaseLabel.fontSize = 22
-        releaseLabel.fontColor = .white
-        releaseLabel.verticalAlignmentMode = .center
-        releaseButton.addChild(releaseLabel)
-        
         super.init()
         
         addChild(followButton)
-        addChild(releaseButton)
         
         self.onFollow = { [weak self] in
             self?.troopControlSystem?.commandTroopsToFollow()
-        }
-        self.onRelease = { [weak self] in
-            self?.troopControlSystem?.commandTroopsToStop()
         }
     }
     
@@ -61,7 +43,6 @@ class TroopControlButtons: SKNode {
         let nodes = self.nodes(at: location)
         for node in nodes {
             if node.name == "followButton" { onFollow?() }
-            if node.name == "releaseButton" { onRelease?() }
         }
     }
 }
