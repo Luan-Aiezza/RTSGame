@@ -8,7 +8,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var cameraEntity: CameraEntity!
     public var troopNode: SKSpriteNode?
     public var enemyNode: SKSpriteNode?
-    var commandController: VirtualController?
+    var commandController: AdaptedVirtualController?
     var commandInput = InputHandler()
     private var wallNode: SKSpriteNode?
     

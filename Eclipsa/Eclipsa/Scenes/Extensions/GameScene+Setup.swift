@@ -6,7 +6,7 @@ import BehindGameKit
 extension GameScene {
     func setupInputControllerIfNeeded() {
         if commandController == nil {
-            commandController = VirtualController(scene: self)
+            commandController = AdaptedVirtualController(scene: self)
         }
     }
 
@@ -16,6 +16,8 @@ extension GameScene {
         SKEntityManager.shared.add(controlledEntity)
 //        controlledEntity.component(ofType: ControlableComponent.self)?
 //            .setupController(inputHandler: commandInput, virtualController: commandController)
+        controlledEntity.component(ofType: AimControlComponent.self)?.setupController(inputHandler: commandInput, virtualController: commandController)
+        
         setupAdatpedVirtualController()
         physicsSystem.setupHeroPhysics(for: controlledEntity)
         if let rangeComp = controlledEntity.component(ofType: RangeComponent.self),

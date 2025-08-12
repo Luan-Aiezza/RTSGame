@@ -8,13 +8,16 @@ public class AdaptedAnalogNode: SKNode, ObservableObject {
     var background: SKShapeNode
     var knob: SKShapeNode
     var isVisible: Bool
+    var radius: CGFloat
     
     @Published public var direction: CGPoint = .zero
+    @Published public var distance: CGFloat = 0
     
     public init(radius: CGFloat = 20) {
         background = SKShapeNode(circleOfRadius: radius)
         knob = SKShapeNode(circleOfRadius: radius * 0.5)
         isVisible = false
+        self.radius = radius
         super.init()
         
         self.addChild(background)
@@ -67,6 +70,7 @@ public class AdaptedAnalogNode: SKNode, ObservableObject {
         
         let center = background.position
         let distance = location.distance(to: center)
+        self.distance = distance
         let radius = abs(background.frame.width - knob.frame.width)
         
         if distance <= radius || location == .zero {

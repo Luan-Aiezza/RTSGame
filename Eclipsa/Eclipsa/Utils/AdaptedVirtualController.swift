@@ -3,7 +3,7 @@ import SpriteKit
 import Combine
 import BehindGameKit
 
-public class AdaptedVirtualController: ObservableObject {
+public class AdaptedVirtualController: ObservableObject, AimAdapter{
     
     private var analogNode: AdaptedAnalogNode
     
@@ -61,5 +61,18 @@ public class AdaptedVirtualController: ObservableObject {
     
     public func touchesCancelled(_ touches: SetTouches, with event: UIEventAlias?) {
         analogNode.touchesCancelledAlias(touches, with: event)
+    }
+}
+
+protocol AimAdapter {
+    func creatAimObserver(completion: @escaping (CGPoint, CGFloat) -> Void) -> AnyCancellable
+}
+
+// MARK: criar observadores para Mira
+extension AdaptedVirtualController {
+    public func creatAimObserver(completion: @escaping (CGPoint, CGFloat) -> Void) -> AnyCancellable {
+        return Publishers.CombineLatest(analogNode.$direction, analogNode.$distance).sink{ direction, distance in
+            completion(direction, distance)
+        }
     }
 }
