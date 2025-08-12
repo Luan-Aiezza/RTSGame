@@ -69,9 +69,9 @@ extension GameScene {
 
         // Aliados
         let allyPositions = [
-            CGPoint(x: basePosition.x + 50, y: basePosition.y),
-            CGPoint(x: basePosition.x + 90, y: basePosition.y + 90),
-            CGPoint(x: basePosition.x + 120, y: basePosition.y - 90)
+            CGPoint(x: basePosition.x + 100, y: basePosition.y),
+            CGPoint(x: basePosition.x + 140, y: basePosition.y + 90),
+            CGPoint(x: basePosition.x + 170, y: basePosition.y - 90)
         ]
         troops += allyPositions.map { createTroop(at: $0, team: .sun) }
 
