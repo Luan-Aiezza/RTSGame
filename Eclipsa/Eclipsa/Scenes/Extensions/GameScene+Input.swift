@@ -14,7 +14,6 @@ extension GameScene {
             gameController?.changePosition(location)
             gameController?.touchBegan(touches, with: event)
         } else if location.x > 0 {
-            aimingSystem?.startAiming()
             commandController?.setAnalogVisible(value: true)
             commandController?.changePosition(location)
             commandController?.touchBegan(touches, with: event)
@@ -45,6 +44,7 @@ extension GameScene {
         gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
         commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        aimingSystem?.cancelAiming()
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {

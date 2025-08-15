@@ -11,7 +11,7 @@ class AimingComponent: GKComponent {
     var isAiming: Bool = false
     var startPoint: CGPoint = .zero
     var endPoint: CGPoint = .zero
-    var maxRange: Float = 200
+    var maxRange: CGFloat = 200
 }
 
 
