@@ -9,8 +9,6 @@ extension GameScene {
         // Converter o ponto de toque da coordenada da câmera para a cena global
         let locationInScene = camera.convert(location, to: self)
         
-        touchHandler?.touchesBegan(touches, with: event)
-        
         if location.x <= 0 {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)
@@ -38,7 +36,6 @@ extension GameScene {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let camera, let _ = touches.first?.location(in: camera) else { return }
-//        touchHandler?.touchesMoved(touches, with: event)
         gameController?.touchMoved(touches, with: event)
         commandController?.touchMoved(touches, with: event)
     }
@@ -48,7 +45,6 @@ extension GameScene {
         gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
         commandController?.setAnalogVisible(value: false, withDuration: 0.6)
-//        touchHandler?.touchesEnded(touches, with: event)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
