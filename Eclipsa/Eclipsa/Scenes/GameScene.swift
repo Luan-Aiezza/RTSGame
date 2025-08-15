@@ -30,7 +30,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.sceneDidLoad()
         
         setupVirtualController() // precisa vir ANTES do player
-        commandController = .init(scene: self, analogRadius: 25)
+        commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)
         commandInput.observeGameController()
         setupPlayer()
