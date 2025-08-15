@@ -45,18 +45,17 @@ public class UnitEntity: GKEntity {
         animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
         animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
         self.addComponent(animationComponent)
-
+        
         // Estado e máquina de estados
         let idleState = IdleState(entity: self)
         let walkingState = WalkingState(entity: self)
         let stateMachine = GKStateMachine(states: [idleState, walkingState])
         self.stateMachineComponent = StateMachineComponent(stateMachine)
         self.addComponent(stateMachineComponent)
-
-        self.addComponent(AimControlComponent(delegate: self))
+        
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(AdaptedControlableComponent(delegate: self))
-
+        
         self.addComponent(MovementComponent(moveSpeed: 2))
         
         self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
@@ -74,7 +73,7 @@ public class UnitEntity: GKEntity {
         }
         // Inicializa barra com valor cheio
         healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
-
+        
         let rangeComponent = RangeComponent(radius: 120)
         self.addComponent(rangeComponent)
         
@@ -89,7 +88,7 @@ public class UnitEntity: GKEntity {
     var moveComponent: MovementComponent? {
         return self.component(ofType: MovementComponent.self)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -172,13 +171,4 @@ public class TroopEntity: UnitEntity {
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-
-extension UnitEntity: AimingDelegate {
-    func handleAim(direction: CGPoint, distance: CGFloat) {
-        self.component(ofType: AimingComponent.self)
-    }
-    
-    
 }

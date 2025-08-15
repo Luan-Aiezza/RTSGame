@@ -26,13 +26,15 @@ class AimControlComponent: GKComponent {
     }
     
     public func setupController(inputHandler: InputHandler, virtualController: AdaptedVirtualController?) {
-//        subscriptions.insert(inputHandler.$directionAxis.sink(receiveValue: { [weak self] direction in
-//            self?.delegate.handleMovement(direction: direction)
-//        }))
+        subscriptions.insert(inputHandler.$directionAxis.sink(receiveValue: { [weak self] direction in
+            self?.delegate.handleAim(direction: direction, distance: 0)
+        }))
         
         guard let virtualController else { return }
         subscriptions.insert(virtualController.creatAimObserver(completion: { direction, distance in
+            print(direction)
             self.delegate.handleAim(direction: direction, distance: distance)
+            
         }))
     }
 }

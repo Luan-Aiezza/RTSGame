@@ -16,6 +16,9 @@ extension GameScene {
         SKEntityManager.shared.add(controlledEntity)
 //        controlledEntity.component(ofType: ControlableComponent.self)?
 //            .setupController(inputHandler: commandInput, virtualController: commandController)
+        setupRTSAiming()
+        
+        controlledEntity.addComponent(AimControlComponent(delegate: aimingSystem!))
         controlledEntity.component(ofType: AimControlComponent.self)?.setupController(inputHandler: commandInput, virtualController: commandController)
         
         setupAdatpedVirtualController()

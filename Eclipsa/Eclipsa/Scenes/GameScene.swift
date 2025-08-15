@@ -13,8 +13,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var wallNode: SKSpriteNode?
     
     var gameController: AdaptedVirtualController?
-    private var aimingSystem: AimingSystem?
-    var touchHandler: RTSTouchHandler?
+    var aimingSystem: AimingSystem?
+//    var touchHandler: RTSTouchHandler?
     
     var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -33,10 +33,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         commandController = .init(scene: self, analogRadius: 25)
         commandController?.setAnalogVisible(value: false)
         commandInput.observeGameController()
-
         setupPlayer()
         setupCamera()
-        setupRTSAiming()
         setupTroops()
         setupUI()
 
@@ -80,8 +78,12 @@ extension GameScene {
 extension GameScene {
     func setupRTSAiming() {
         let aimingSystem = AimingSystem(scene: self)
+        aimingSystem.player = controlledEntity
+        
+        if let player = controlledEntity{
+            aimingSystem.addComponent(foundIn: player)
+        }
         self.aimingSystem = aimingSystem
-        touchHandler = RTSTouchHandler(scene: self, aimingSystem: aimingSystem)
     }
 }
 
