@@ -168,7 +168,36 @@ public class TroopEntity: UnitEntity {
         }
     }
     
+    /// Command the troop to move to a given point, disabling any follow behavior.
+    public func moveTo(point: CGPoint) {
+        // Remove follow behavior if present
+        self.removeComponent(ofType: TroopBehaviorComponent.self)
+        // Move to the destination
+        if let agentComponent = self.component(ofType: AgentComponent.self) {
+            // Crie um agente alvo fixo na posição desejada
+            let targetAgent = GKAgent2D()
+            targetAgent.position = vector_float2(Float(point.x), Float(point.y))
+            targetAgent.radius = 2.0 // Raio pequeno só para evitar colisões
+            targetAgent.maxSpeed = agentComponent.agent.maxSpeed
+            targetAgent.maxAcceleration = agentComponent.agent.maxAcceleration
+            
+            let goal = GKGoal(toSeekAgent: targetAgent)
+            let behavior = GKBehavior(goal: goal, weight: 1.0)
+            agentComponent.agent.behavior = behavior
+        }
+    }
+    
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
+
+extension UnitEntity: AimingDelegate {
+    func handleAim(direction: CGPoint, distance: CGFloat) {
+        self.component(ofType: AimingComponent.self)
+    }
+    
+    
+}
+

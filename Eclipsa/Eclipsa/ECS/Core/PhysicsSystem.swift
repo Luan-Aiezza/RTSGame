@@ -17,11 +17,13 @@ extension UInt32 {
 }
 
 final class PhysicsSystem {
+    let offset = CGPoint(x: 0, y: -10)
+    
     // Configura o corpo físico do herói
     func setupHeroPhysics(for entity: UnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
-            let heroBody = SKPhysicsBody(rectangleOf: CGSize(width: 64, height: 64))
+            let heroBody = SKPhysicsBody(rectangleOf: CGSize(width: 32, height: 48))
             heroBody.affectedByGravity = false
             heroBody.allowsRotation = false
             heroBody.categoryBitMask = PhysicsCategory.player
@@ -35,7 +37,7 @@ final class PhysicsSystem {
     func setupTroopPhysics(for entity: UnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
-            let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48))
+            let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48), center: offset)
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false
             troopBody.categoryBitMask = PhysicsCategory.troop
