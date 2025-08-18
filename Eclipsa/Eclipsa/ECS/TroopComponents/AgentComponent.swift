@@ -9,7 +9,7 @@ public class AgentComponent: GKComponent {
     public let agent: GKAgent2D
     private weak var node: SKSpriteNode?
     
-    public init(node: SKSpriteNode, radius: Float = 32.0, maxSpeed: Float = 120.0, maxAcceleration: Float = 180.0) {
+    public init(node: SKSpriteNode, radius: Float = 16.0, maxSpeed: Float = 120.0, maxAcceleration: Float = 180.0) {
         self.agent = GKAgent2D()
         self.node = node
         super.init()

@@ -4,6 +4,9 @@
 import SpriteKit
 import GameplayKit
 
+import SpriteKit
+import GameplayKit
+
 public class HealthComponent: GKComponent {
     public private(set) var currentHealth: Int
     public let maxHealth: Int
@@ -21,6 +24,10 @@ public class HealthComponent: GKComponent {
         guard currentHealth > 0 else { return }
         currentHealth = max(currentHealth - amount, 0)
         onHealthChanged?(currentHealth, maxHealth)
+        
+        if isDead {
+            handleDeath()
+        }
     }
     
     public func heal(_ amount: Int) {
@@ -32,6 +39,26 @@ public class HealthComponent: GKComponent {
     public func setHealth(_ value: Int) {
         currentHealth = min(max(value, 0), maxHealth)
         onHealthChanged?(currentHealth, maxHealth)
+        
+        if isDead {
+            handleDeath()
+        }
+    }
+    
+    private func handleDeath() {
+        guard let entity = entity else { return }
+        
+        if let anim = entity.component(ofType: AnimationComponent.self) {
+            anim.runAnimation(for: .die)
+            
+            // espera a animação terminar antes de remover
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak entity] in
+                entity?.destroy()
+            }
+        } else {
+            // sem animação → remove imediatamente
+            entity.destroy()
+        }
     }
     
     public required init?(coder: NSCoder) {

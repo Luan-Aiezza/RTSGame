@@ -99,17 +99,13 @@ public class TroopEntity: UnitEntity {
 
 extension TroopEntity {
     public func die() {
-        // Animação de morte (se tiver)
         if let anim = self.component(ofType: AnimationComponent.self) {
-            anim.runAnimation(for: .die) // precisa ser configurada antes
+            anim.runAnimation(for: .die)
         }
         
-        // Delay opcional para permitir que animação de morte rode
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-//            if let node = self.component(ofType: GKSKNodeComponent.self)?.node {
-//                node.removeFromParent()
-//            }
-//            self.removeAllComponents()
-//        }
+        // espera a animação terminar
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
+            self?.destroy()
+        }
     }
 }

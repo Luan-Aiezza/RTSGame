@@ -101,7 +101,19 @@ extension UnitEntity: AimingDelegate {
     func handleAim(direction: CGPoint, distance: CGFloat) {
         self.component(ofType: AimingComponent.self)
     }
-    
-    
 }
 
+extension GKEntity {
+    /// Remove todos os componentes e referencia ao node
+    func destroy() {
+        if let node = self.component(ofType: GKSKNodeComponent.self)?.node {
+            node.removeAllActions()
+            node.removeAllChildren()
+            node.removeFromParent()
+        }
+        // Remove todos os componentes ligados à entidade
+        for component in self.components {
+            self.removeComponent(ofType: type(of: component))
+        }
+    }
+}
