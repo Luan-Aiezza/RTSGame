@@ -4,7 +4,10 @@ import GameplayKit
 /// Componente reutilizável para animações frame a frame via SKTexture
 public class AnimationComponent: GKComponent {
     public enum AnimationState: Hashable {
-        case idle, walk
+        case idle
+        case walk
+        case attack
+        case die
         case custom(String)
     }
     

@@ -20,6 +20,10 @@ public class TroopEntity: UnitEntity {
         
         self.addComponent(TeamComponent(team: team)) // TeamComponent antes do HealthBarComponent para cor correta
 
+        if self.component(ofType: AttackComponent.self) == nil {
+            self.addComponent(AttackComponent(troop: self, damage: 12, cooldown: 1.2))
+        }
+        
         // Garante componente de Vida e barra
         if self.component(ofType: HealthComponent.self) == nil {
             let healthComponent = HealthComponent(maxHealth: 60)
@@ -40,8 +44,13 @@ public class TroopEntity: UnitEntity {
         if let animationComponent = self.component(ofType: AnimationComponent.self) {
             let idleTextures = (1...12).map { SKTexture(imageNamed: "Sun_Soldier_Idle_\($0)") }
             let walkTextures = (1...8).map { SKTexture(imageNamed: "Sun_Soldier_Walk_\($0)") }
+            let attackTextures = (1...3).map { SKTexture(imageNamed: "Sun_Soldier_Atack_\($0)") }
+            let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
+            
             animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
             animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
+            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.08, repeatForever: false)
+            animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
         // Garante que a tropa começa em idle e já anima
         if let stateMachineComponent = self.component(ofType: StateMachineComponent.self) {
@@ -85,5 +94,22 @@ public class TroopEntity: UnitEntity {
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+extension TroopEntity {
+    public func die() {
+        // Animação de morte (se tiver)
+        if let anim = self.component(ofType: AnimationComponent.self) {
+            anim.runAnimation(for: .die) // precisa ser configurada antes
+        }
+        
+        // Delay opcional para permitir que animação de morte rode
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+//            if let node = self.component(ofType: GKSKNodeComponent.self)?.node {
+//                node.removeFromParent()
+//            }
+//            self.removeAllComponents()
+//        }
     }
 }
