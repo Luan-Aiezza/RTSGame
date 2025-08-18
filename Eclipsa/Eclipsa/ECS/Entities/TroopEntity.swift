@@ -44,7 +44,7 @@ public class TroopEntity: UnitEntity {
         if let animationComponent = self.component(ofType: AnimationComponent.self) {
             let idleTextures = (1...12).map { SKTexture(imageNamed: "Sun_Soldier_Idle_\($0)") }
             let walkTextures = (1...8).map { SKTexture(imageNamed: "Sun_Soldier_Walk_\($0)") }
-            let attackTextures = (1...3).map { SKTexture(imageNamed: "Sun_Soldier_Atack_\($0)") }
+            let attackTextures = (1...3).map { SKTexture(imageNamed: "Sun_Soldier_Attack_\($0)") }
             let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
             
             animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
