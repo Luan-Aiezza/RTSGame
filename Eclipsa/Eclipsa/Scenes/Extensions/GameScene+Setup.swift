@@ -90,6 +90,16 @@ extension GameScene {
     func setupUI() {
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)
         troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
+        setupCommandButton()
         camera?.addChild(troopControlButtons)
+    }
+    
+   private func setupCommandButton(){
+       commandButton = CommandButton(size: self.size)
+        commandButton.onTouch = { [weak self] in
+            self?.aimingSystem?.cancelAiming()
+        }
+       commandButton.toggleCommand(value: true)
+        camera?.addChild(commandButton)
     }
 }
