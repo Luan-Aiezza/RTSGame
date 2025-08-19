@@ -51,6 +51,12 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         return position
     }
     
+    func startAiming() {
+        guard let component = aimingComponent else {return}
+        component.isAiming = true
+        setupDragAiming()
+    }
+    
     private func setupDragAiming() {
         let path = CGMutablePath()
         path.addArc(center: centerPosition, radius: CGFloat(aimingComponent?.maxRange ?? 0), startAngle: 0, endAngle: .pi * 2, clockwise: true)
@@ -58,24 +64,19 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         rangeIndicator?.path = path
         rangeIndicator?.isHidden = false
     }
-    func finishAiming(for entity: GKEntity) -> AimingResult? {
-        guard let aimingComp = entity.component(ofType: AimingComponent.self),
-              aimingComp.isAiming else { return nil }
-        
-        let result = AimingResult(
-            startPoint: aimingComp.startPoint,
-            endPoint: aimingComp.endPoint,
-        )
-        
+    func finishAiming(completion: ((_ result: AimingResult) -> Void)) {
+        guard let aimingComp = aimingComponent,
+              aimingComp.isAiming else { return }
+        let result = AimingResult(startPoint: aimingComp.startPoint, endPoint: aimingComp.endPoint)
         aimingComp.isAiming = false
         aimingLine?.isHidden = true
         rangeIndicator?.isHidden = true
-        
-        return result
+        completion(result)
     }
     
     func cancelAiming() {
         guard let aimingComp = aimingComponent else { return }
+        print("cancelado")
         aimingComp.isAiming = false
         aimingLine?.isHidden = true
         rangeIndicator?.isHidden = true
@@ -84,11 +85,8 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
 
 extension AimingSystem: AimingDelegate {
     func handleAim(direction: CGPoint, distance: CGFloat) {
-        guard let aimingComp = aimingComponent else {
-            return
-        }
-        aimingComp.isAiming = true
-        setupDragAiming()
+        guard let aimingComp = aimingComponent,
+        aimingComp.isAiming else {return}
         let startPoint = centerPosition
         aimingComp.startPoint = startPoint
         
