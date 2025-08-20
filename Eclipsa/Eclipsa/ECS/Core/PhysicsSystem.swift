@@ -41,7 +41,7 @@ final class PhysicsSystem {
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false
             troopBody.categoryBitMask = PhysicsCategory.troop
-            troopBody.collisionBitMask = PhysicsCategory.wall | PhysicsCategory.troop
+            troopBody.collisionBitMask = PhysicsCategory.wall
             troopBody.contactTestBitMask = PhysicsCategory.range
             let troopPhysics = SKPhysicsBodyComponent(physicsBody: troopBody)
             entity.addComponent(troopPhysics)

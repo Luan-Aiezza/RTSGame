@@ -27,11 +27,21 @@ extension GameScene {
     func updateTroopTargets() {
         for troop in troops {
             guard let behavior = troop.component(ofType: TroopBehaviorComponent.self) else { continue }
-            if let enemy = nearestEnemyTroop(inRangeOf: troop) {
-                behavior.setTarget(enemy)
-            } else {
-                behavior.setTarget(controlledEntity)
+
+            // Só tropas que já estavam em follow podem alternar
+            let wasFollowingPlayer = (behavior.target as? UnitEntity) === controlledEntity || behavior.manualTargetPoint != nil
+
+            if wasFollowingPlayer {
+                if let enemy = nearestEnemyTroop(inRangeOf: troop) {
+                    behavior.setTarget(enemy)
+                } else if behavior.manualTargetPoint != nil {
+                    behavior.setTarget(nil) // mantém ponto manual
+                } else {
+                    behavior.setTarget(controlledEntity) // volta pro follow
+                }
             }
         }
     }
+
+
 }

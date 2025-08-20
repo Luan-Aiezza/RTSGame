@@ -22,22 +22,30 @@ class TroopControlSystem {
               let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
               let playerTeam = targetEntity.component(ofType: TeamComponent.self)?.team
         else { return }
+
         for troop in troops {
             if let troopPosition = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
                rangeComponent.contains(point: troopPosition),
                let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
                troopTeam == playerTeam {
-                // Ativa comportamento de seguir usando TroopBehaviorComponent
-                if troop.component(ofType: TroopBehaviorComponent.self) == nil {
-                    troop.addComponent(TroopBehaviorComponent(
+
+                let behavior = troop.component(ofType: TroopBehaviorComponent.self) ?? {
+                    let b = TroopBehaviorComponent(
                         troop: troop,
                         target: targetEntity,
                         allTroops: { [weak self] in self?.troops ?? [] }
-                    ))
-                }
+                    )
+                    troop.addComponent(b)
+                    return b
+                }()
+
+                // Prioridade máxima pro Follow:
+                behavior.manualTargetPoint = nil
+                behavior.setTarget(targetEntity)
             }
         }
     }
+
 
     func commandTroopsToStop() {
         guard let targetEntity = targetEntity,
