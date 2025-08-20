@@ -24,25 +24,25 @@ extension GameScene {
         
         // Only move troops if not tapping Follow button
         let buttonNodes = troopControlButtons.nodes(at: location)
-        let tappedFollow = buttonNodes.contains { $0.name == "followButton" }
-        if !tappedFollow {
-            for troop in troops {
-                guard
-                    let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
-                    let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team,
-                    troopTeam == playerTeam
-                else { continue }
-
-                // 🔑 Só deixa receber comando manual se já estava em follow do player
-                if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-                   (behavior.target as? UnitEntity) === controlledEntity {
-
-                    behavior.manualTargetPoint = locationInScene
-                    behavior.setTarget(nil) // sem inimigo → vá pro ponto
-
-                }
-            }
-        }
+//        let tappedFollow = buttonNodes.contains { $0.name == "followButton" }
+//        if !tappedFollow {
+//            for troop in troops {
+//                guard
+//                    let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+//                    let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team,
+//                    troopTeam == playerTeam
+//                else { continue }
+//
+//                // 🔑 Só deixa receber comando manual se já estava em follow do player
+//                if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+//                   (behavior.target as? UnitEntity) === controlledEntity {
+//
+//                    behavior.manualTargetPoint = locationInScene
+//                    behavior.setTarget(nil) // sem inimigo → vá pro ponto
+//
+//                }
+//            }
+//        }
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -60,9 +60,25 @@ extension GameScene {
         if location.x <= 0 {
             gameController?.touchesEnded(touches, with: event)
             gameController?.setAnalogVisible(value: false, withDuration: 0.6)
-        } else {
+        } else if location.x > 0 {
             commandButton.handleTouch(location)
             aimingSystem?.finishAiming { [weak self] result in
+                    for troop in troops {
+                        guard
+                            let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+                            let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team,
+                            troopTeam == playerTeam
+                        else { continue }
+
+                        // 🔑 Só deixa receber comando manual se já estava em follow do player
+                        if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+                           (behavior.target as? UnitEntity) === controlledEntity {
+
+                            behavior.manualTargetPoint = result.endPoint
+                            behavior.setTarget(nil) // sem inimigo → vá pro ponto
+
+                        }
+                }
                 self?.commandButton.toggleCommand(value: true)
             }
             commandController?.touchesEnded(touches, with: event)
