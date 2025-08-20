@@ -16,6 +16,9 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     private var aimingLine: SKShapeNode?
     private var rangeIndicator: SKShapeNode?
     
+    private var lastAimDirection: CGPoint = .zero
+    private var lastAimDistance: CGFloat = 0.0
+    
     init(scene: SKScene) {
         self.scene = scene
         super.init(componentClass: AimingComponent.self)
@@ -81,6 +84,21 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         aimingLine?.isHidden = true
         rangeIndicator?.isHidden = true
     }
+    
+    func updateRangeIndicatorPosition() {
+            guard let aimingComp = aimingComponent else { return }
+            
+            let path = CGMutablePath()
+            path.addArc(
+                center: centerPosition, // Usa a posição atual do jogador
+                radius: CGFloat(aimingComp.maxRange),
+                startAngle: 0,
+                endAngle: .pi * 2,
+                clockwise: true
+            )
+            
+            rangeIndicator?.path = path
+        }
 }
 
 extension AimingSystem: AimingDelegate {
@@ -94,22 +112,47 @@ extension AimingSystem: AimingDelegate {
         
         let clampedDistance = min(realDistance, CGFloat(aimingComp.maxRange))
         let angle = atan2(direction.y, direction.x)
-
         let endPoint = CGPoint(
             x: startPoint.x + cos(angle) * clampedDistance,
             y: startPoint.y + sin(angle) * clampedDistance
         )
-
         aimingComp.endPoint = endPoint
-        updateAimingLine(from: startPoint, to: endPoint, range: aimingComp.maxRange)
+            updateAimingLine(to: endPoint)
     }
     
-    private func updateAimingLine(from start: CGPoint, to end: CGPoint, range: CGFloat) {
+    func updateAimingLine(to end: CGPoint) {
             let path = CGMutablePath()
-            path.move(to: start)
+            path.move(to: centerPosition)
             path.addLine(to: end)
-
-            aimingLine?.path = path
-            aimingLine?.isHidden = false
+        
+        aimingLine?.path = path
+        aimingLine?.isHidden = false
+        updateRangeIndicatorPosition()
         }
+    
+    func updateDynamicAiming() {
+        guard let aimingComp = aimingComponent,
+              aimingComp.isAiming else { return }
+        
+        // Atualiza posição do range indicator
+        updateRangeIndicatorPosition()
+        
+        // Se temos uma direção válida guardada, recalcula o endPoint
+        if lastAimDirection != .zero {
+            let currentStartPoint = centerPosition
+            let angle = atan2(lastAimDirection.y, lastAimDirection.x)
+            let clampedDistance = min(lastAimDistance, CGFloat(aimingComp.maxRange))
+            
+            let newEndPoint = CGPoint(
+                x: currentStartPoint.x + cos(angle) * clampedDistance,
+                y: currentStartPoint.y + sin(angle) * clampedDistance
+            )
+            
+            // Atualiza o component com os novos valores
+            aimingComp.startPoint = currentStartPoint
+            aimingComp.endPoint = newEndPoint
+            
+            updateAimingLine(to: newEndPoint)
+        }
+    }
 }
