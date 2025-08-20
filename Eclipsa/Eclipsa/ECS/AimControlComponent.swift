@@ -32,7 +32,6 @@ class AimControlComponent: GKComponent {
         
         guard let virtualController else { return }
         subscriptions.insert(virtualController.creatAimObserver(completion: { direction, distance in
-            print(direction)
             self.delegate.handleAim(direction: direction, distance: distance)
             
         }))

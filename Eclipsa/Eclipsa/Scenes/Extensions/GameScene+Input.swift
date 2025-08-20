@@ -14,10 +14,11 @@ extension GameScene {
             gameController?.changePosition(location)
             gameController?.touchBegan(touches, with: event)
         } else if location.x > 0 {
-            aimingSystem?.startAiming()
             commandController?.setAnalogVisible(value: true)
+            aimingSystem?.startAiming()
             commandController?.changePosition(location)
             commandController?.touchBegan(touches, with: event)
+            commandButton.toggleCommand(value: false)
         }
         troopControlButtons.handleTouch(location)
         
@@ -51,6 +52,13 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let camera
+                ,let location = touches.first?.location(in: camera) else { return }
+        commandButton.handleTouch(location)
+        aimingSystem?.finishAiming { [weak self] result in
+            self?.commandButton.toggleCommand(value: true)
+            print(result)
+        }
         gameController?.touchesEnded(touches, with: event)
         gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
