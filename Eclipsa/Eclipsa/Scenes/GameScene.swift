@@ -62,6 +62,13 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         updatePlayerState()
         updateTroopState()
         depthSortNodes()
+        
+        var aimingComponent: AimingComponent? {
+            return controlledEntity?.component(ofType: AimingComponent.self)
+        }
+        if ((aimingComponent?.isAiming) ?? true){
+            aimingSystem?.updateDynamicAiming()
+        }
     }
 
 }

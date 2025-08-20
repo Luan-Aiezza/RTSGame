@@ -36,23 +36,28 @@ extension GameScene {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera, let _ = touches.first?.location(in: camera) else { return }
-        gameController?.touchMoved(touches, with: event)
-        commandController?.touchMoved(touches, with: event)
+        guard let camera, let location = touches.first?.location(in: camera) else { return }
+        if location.x <= 0 {
+            gameController?.touchMoved(touches, with: event)
+        } else {
+            commandController?.touchMoved(touches, with: event)
+        }
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let camera
                 ,let location = touches.first?.location(in: camera) else { return }
-        commandButton.handleTouch(location)
-        aimingSystem?.finishAiming { [weak self] result in
-            self?.commandButton.toggleCommand(value: true)
-            print(result)
+        if location.x <= 0 {
+            gameController?.touchesEnded(touches, with: event)
+            gameController?.setAnalogVisible(value: false, withDuration: 0.6)
+        } else {
+            commandButton.handleTouch(location)
+            aimingSystem?.finishAiming { [weak self] result in
+                self?.commandButton.toggleCommand(value: true)
+            }
+            commandController?.touchesEnded(touches, with: event)
+            commandController?.setAnalogVisible(value: false, withDuration: 0.6)
         }
-        gameController?.touchesEnded(touches, with: event)
-        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
-        commandController?.touchesEnded(touches, with: event)
-        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {

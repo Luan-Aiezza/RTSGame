@@ -193,11 +193,3 @@ public class TroopEntity: UnitEntity {
 }
 
 
-extension UnitEntity: AimingDelegate {
-    func handleAim(direction: CGPoint, distance: CGFloat) {
-        self.component(ofType: AimingComponent.self)
-    }
-    
-    
-}
-

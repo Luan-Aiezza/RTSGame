@@ -29,16 +29,16 @@ class GameViewController: UIViewController {
                 
                 // Present the scene
                 let skView = SKView(frame: view.bounds)
-                skView.translatesAutoresizingMaskIntoConstraints = false
-                
-                view.addSubview(skView)
                 
                 skView.presentScene(sceneNode)
                 skView.ignoresSiblingOrder = true
                 skView.showsFPS = true
                 skView.showsNodeCount = true
                 skView.showsDrawCount = true
+                skView.isMultipleTouchEnabled = true
                 
+                skView.translatesAutoresizingMaskIntoConstraints = false
+                view.addSubview(skView)
                 NSLayoutConstraint.activate([
                     skView.topAnchor.constraint(equalTo: view.topAnchor),
                     skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
