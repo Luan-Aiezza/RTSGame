@@ -49,7 +49,7 @@ public class TroopEntity: UnitEntity {
             
             animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
             animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
-            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.08, repeatForever: false)
+            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.3, repeatForever: false)
             animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
         // Garante que a tropa começa em idle e já anima

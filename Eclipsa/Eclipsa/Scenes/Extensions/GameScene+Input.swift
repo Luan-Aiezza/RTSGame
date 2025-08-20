@@ -26,9 +26,19 @@ extension GameScene {
         let tappedFollow = buttonNodes.contains { $0.name == "followButton" }
         if !tappedFollow {
             for troop in troops {
+                guard
+                    let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+                    let playerTeam = controlledEntity.component(ofType: TeamComponent.self)?.team,
+                    troopTeam == playerTeam
+                else { continue }
+
+                // 🔑 Só deixa receber comando manual se já estava em follow do player
                 if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-                   let target = (behavior as? TroopBehaviorComponent)?.target as? UnitEntity, target === controlledEntity {
-                    troop.moveTo(point: locationInScene)
+                   (behavior.target as? UnitEntity) === controlledEntity {
+
+                    behavior.manualTargetPoint = locationInScene
+                    behavior.setTarget(nil) // sem inimigo → vá pro ponto
+
                 }
             }
         }
