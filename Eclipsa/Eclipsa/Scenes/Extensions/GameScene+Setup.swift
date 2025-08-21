@@ -91,15 +91,26 @@ extension GameScene {
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)
         troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
         setupCommandButton()
+        setupReleaseButton()
         camera?.addChild(troopControlButtons)
     }
     
    private func setupCommandButton(){
-       commandButton = CommandButton(size: self.size)
-        commandButton.onTouch = { [weak self] in
+       cancelButton = CommandButton(position: Position.cancelButton(size: self.size), name: "Cancel")
+        cancelButton.onTouch = { [weak self] in
             self?.aimingSystem?.cancelAiming()
+            self?.cancelButton.toggleCommand(value: true)
         }
-       commandButton.toggleCommand(value: true)
-        camera?.addChild(commandButton)
+       cancelButton.toggleCommand(value: true)
+        camera?.addChild(cancelButton)
+    }
+    
+    private func setupReleaseButton() {
+        releaseButton = CommandButton(position: Position.releaseButton(size: self.size), name: "Release", color: .blue)
+        releaseButton.onTouch = { [weak self] in
+            self?.aimingSystem?.startAiming()
+        }
+        releaseButton.toggleCommand(value: false)
+        camera?.addChild(releaseButton)
     }
 }

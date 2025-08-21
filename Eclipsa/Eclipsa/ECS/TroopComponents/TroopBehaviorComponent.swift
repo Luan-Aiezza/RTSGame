@@ -50,7 +50,6 @@ public class TroopBehaviorComponent: GKComponent {
 
         agentComponent.agent.behavior = behavior
     }
-    
     public func setTarget(_ newTarget: GKEntity?) {
         self.target = newTarget
         configureBehavior()

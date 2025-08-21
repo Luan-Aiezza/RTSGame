@@ -12,19 +12,17 @@ class CommandButton: SKNode {
     
     var onTouch: (() -> Void)?
     
-    init(size: CGSize) {
+    init(position: CGPoint, name: String = "Default", color: UIColor = .red) {
         
         let buttonSize = CGSize(width: 64, height: 64)
         button = SKShapeNode(ellipseOf: buttonSize)
-        button.fillColor = .red
-        button.strokeColor = .darkGray
+        button.fillColor = color
+        button.strokeColor = color.withAlphaComponent(0.3)
         super.init()
-        let x =  size.width/2 - 80
-        let y =  size.height/2 - 80
-        button.position = CGPoint(x:  x, y:  y)
+        button.position = position
         button.zPosition = 1000
-        button.name = "cancelButton"
-        let label = SKLabelNode(text: "Cancel")
+        button.name = name
+        let label = SKLabelNode(text: name)
         label.fontName = "Avenir-Black"
         label.fontSize = 22
         label.fontColor = .white
@@ -42,9 +40,8 @@ class CommandButton: SKNode {
         if !isHidden {
             let nodes = self.nodes(at: location)
             for node in nodes {
-                if node.name == "cancelButton" {
+                if node.name == button.name {
                     onTouch?()
-                    toggleCommand(value: true)
                 }
             }
         }

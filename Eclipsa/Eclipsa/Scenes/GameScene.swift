@@ -23,7 +23,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var troops: [TroopEntity] = []
     
     public var troopControlButtons: TroopControlButtons!
-    public var commandButton: CommandButton!
+    public var cancelButton: CommandButton!
+    public var releaseButton: CommandButton!
     
     public var customLastUpdateTime: TimeInterval?
     
@@ -33,6 +34,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)
+        commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
         setupPlayer()
         setupCamera()
