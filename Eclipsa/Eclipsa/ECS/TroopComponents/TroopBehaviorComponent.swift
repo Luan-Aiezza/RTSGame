@@ -5,8 +5,9 @@
 import GameplayKit
 
 public class TroopBehaviorComponent: GKComponent {
+    
     unowned let troop: TroopEntity
-    public var target: GKEntity?
+    public weak var target: GKEntity?
     let allTroops: () -> [TroopEntity]
     
     // Novo: ponto manual para onde o jogador mandou ir
@@ -26,10 +27,17 @@ public class TroopBehaviorComponent: GKComponent {
 
         let behavior = GKBehavior()
 
-        if let enemy = target,
-           let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
-            let seekGoal = GKGoal(toSeekAgent: targetAgent)
-            behavior.setWeight(1.0, for: seekGoal)
+        if let enemy = target {
+            // Se alvo morreu ou perdeu agent, limpa
+            if let health = enemy.component(ofType: HealthComponent.self), health.isDead {
+                self.target = nil
+            }
+            else if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
+                let seekGoal = GKGoal(toSeekAgent: targetAgent)
+                behavior.setWeight(1.0, for: seekGoal)
+            } else {
+                self.target = nil
+            }
         } else if let manualPoint = manualTargetPoint {
             if manualTargetAgent == nil {
                 manualTargetAgent = GKAgent2D()
@@ -50,6 +58,7 @@ public class TroopBehaviorComponent: GKComponent {
 
         agentComponent.agent.behavior = behavior
     }
+
     public func setTarget(_ newTarget: GKEntity?) {
         self.target = newTarget
         configureBehavior()
