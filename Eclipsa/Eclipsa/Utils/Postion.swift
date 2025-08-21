@@ -6,12 +6,12 @@
 //
 import SpriteKit
 
-struct Positions {
+struct Position {
     static func cancelButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 80, y: size.height/2 - 80)
     }
     
     static func releaseButton(size: CGSize) -> CGPoint {
-        return CGPoint(x: size.width/2 + 80, y: -size.height/2 + 180)
+        return CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180)
     }
 }
