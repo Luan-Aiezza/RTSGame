@@ -23,7 +23,10 @@ final class PhysicsSystem {
     func setupHeroPhysics(for entity: UnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
-            let heroBody = SKPhysicsBody(rectangleOf: CGSize(width: 32, height: 48))
+            let heroBody = SKPhysicsBody(
+                rectangleOf: CGSize(width: 32, height: 8),
+                center: CGPoint(x: 0, y: -20) // desloca para baixo
+            )
             heroBody.affectedByGravity = false
             heroBody.allowsRotation = false
             heroBody.categoryBitMask = PhysicsCategory.player
