@@ -98,13 +98,6 @@ extension UnitEntity: ControlableDelegate {
     }
 }
 
-
-extension UnitEntity: AimingDelegate {
-    func handleAim(direction: CGPoint, distance: CGFloat) {
-        self.component(ofType: AimingComponent.self)
-    }
-}
-
 extension GKEntity {
     /// Remove todos os componentes e referencia ao node
     func destroy() {
