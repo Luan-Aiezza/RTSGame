@@ -67,6 +67,8 @@ public class UnitEntity: GKEntity {
         agent.agent.maxSpeed = 100
         agent.agent.maxAcceleration = 300
         self.addComponent(agent)
+        
+        self.addComponent(TroopGeneratorComponent())
     }
     
     var moveComponent: MovementComponent? {
@@ -115,5 +117,11 @@ extension GKEntity {
         for component in self.components {
             self.removeComponent(ofType: type(of: component))
         }
+    }
+}
+
+extension UnitEntity {
+    var generator: TroopGeneratorComponent? {
+        return self.component(ofType: TroopGeneratorComponent.self)
     }
 }
