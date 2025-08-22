@@ -5,13 +5,16 @@
 import GameplayKit
 
 public class TroopBehaviorComponent: GKComponent {
+    
     unowned let troop: TroopEntity
-    public var target: GKEntity?
+    public weak var target: GKEntity?
     let allTroops: () -> [TroopEntity]
     
     // Novo: ponto manual para onde o jogador mandou ir
     public var manualTargetPoint: CGPoint?
     private var manualTargetAgent: GKAgent2D?
+    
+    private var lastDefeatedTargetPosition: CGPoint?
     
     public init(troop: TroopEntity, target: GKEntity?, allTroops: @escaping () -> [TroopEntity]) {
         self.troop = troop
@@ -24,12 +27,43 @@ public class TroopBehaviorComponent: GKComponent {
     private func configureBehavior() {
         guard let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
 
+        // Se não há alvo e não é um comando manual, busca por inimigo próximo
+        if target == nil && manualTargetPoint == nil {
+            if let range = troop.component(ofType: RangeComponent.self) {
+                let enemyTeam = troop.component(ofType: TeamComponent.self)?.team == .sun ? Team.moon : Team.sun
+                let nearbyEnemies = allTroops().filter {
+                    $0 !== troop &&
+                    $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
+                    ($0.component(ofType: HealthComponent.self)?.isDead == false) &&
+                    (range.contains(point: $0.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero))
+                }
+                if let newTarget = nearbyEnemies.first {
+                    setTarget(newTarget)
+                    return // Após novo alvo, encerra configuração para permitir update do behavior
+                } else if let lastPos = lastDefeatedTargetPosition {
+                    manualTargetPoint = lastPos
+                    configureBehavior()
+                    return
+                }
+            }
+        }
+
         let behavior = GKBehavior()
 
-        if let enemy = target,
-           let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
-            let seekGoal = GKGoal(toSeekAgent: targetAgent)
-            behavior.setWeight(1.0, for: seekGoal)
+        if let enemy = target {
+            // Se alvo morreu ou perdeu agent, limpa
+            if let health = enemy.component(ofType: HealthComponent.self), health.isDead {
+                if let node = enemy.component(ofType: GKSKNodeComponent.self)?.node {
+                    lastDefeatedTargetPosition = node.position
+                }
+                self.target = nil
+            }
+            else if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
+                let seekGoal = GKGoal(toSeekAgent: targetAgent)
+                behavior.setWeight(1.0, for: seekGoal)
+            } else {
+                self.target = nil
+            }
         } else if let manualPoint = manualTargetPoint {
             if manualTargetAgent == nil {
                 manualTargetAgent = GKAgent2D()
@@ -50,6 +84,7 @@ public class TroopBehaviorComponent: GKComponent {
 
         agentComponent.agent.behavior = behavior
     }
+
     public func setTarget(_ newTarget: GKEntity?) {
         self.target = newTarget
         configureBehavior()

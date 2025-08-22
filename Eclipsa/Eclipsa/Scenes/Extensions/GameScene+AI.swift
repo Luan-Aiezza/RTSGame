@@ -6,7 +6,7 @@ extension GameScene {
         guard let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
               let position = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
               let range = troop.component(ofType: RangeComponent.self)?.radius else { return nil }
-
+        
         return troops
             .filter { $0 !== troop }
             .filter { $0.component(ofType: TeamComponent.self)?.team != troopTeam }
@@ -23,14 +23,14 @@ extension GameScene {
                 return d1 < d2
             }
     }
-
+    
     func updateTroopTargets() {
         for troop in troops {
             guard let behavior = troop.component(ofType: TroopBehaviorComponent.self) else { continue }
-
+            
             // Só tropas que já estavam em follow podem alternar
             let wasFollowingPlayer = (behavior.target as? UnitEntity) === controlledEntity || behavior.manualTargetPoint != nil
-
+            
             if wasFollowingPlayer {
                 if let enemy = nearestEnemyTroop(inRangeOf: troop) {
                     behavior.setTarget(enemy)
@@ -42,6 +42,4 @@ extension GameScene {
             }
         }
     }
-
-
 }
