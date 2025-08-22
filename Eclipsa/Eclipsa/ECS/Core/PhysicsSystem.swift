@@ -17,7 +17,7 @@ extension UInt32 {
 }
 
 final class PhysicsSystem {
-    let offset = CGPoint(x: 0, y: -10)
+    static let offset = CGPoint(x: 0, y: -10)
     
     // Configura o corpo físico do herói
     func setupHeroPhysics(for entity: UnitEntity) {
@@ -34,7 +34,7 @@ final class PhysicsSystem {
         }
     }
 
-    func setupTroopPhysics(for entity: UnitEntity) {
+    static func setupTroopPhysics(for entity: UnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48), center: offset)
