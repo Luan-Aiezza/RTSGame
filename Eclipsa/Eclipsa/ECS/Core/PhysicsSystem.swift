@@ -40,7 +40,10 @@ final class PhysicsSystem {
     func setupTroopPhysics(for entity: UnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
-            let troopBody = SKPhysicsBody(rectangleOf: CGSize(width: 48, height: 48), center: offset)
+            let troopBody = SKPhysicsBody(
+                rectangleOf: CGSize(width: 48, height: 8),
+                center: CGPoint(x: 0, y: -26) // desloca para baixo
+            )
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false
             troopBody.categoryBitMask = PhysicsCategory.troop
