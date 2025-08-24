@@ -8,68 +8,46 @@ import SpriteKit
 import GameplayKit
 import BehindGameKit
 
-// Entidade de Tropa baseada em UnitEntity, sem controle manual do jogador
-public class TroopEntity: UnitEntity {
-    public override init(team: Team = .sun) {
-        super.init(team: team)
+// Entidade de Tropa baseada em BaseUnitEntity, sem controle manual do jogador
+public class TroopEntity: BaseUnitEntity {
+    public init(team: Team = .sun, allTroops: @escaping () -> [TroopEntity]) {
+        // Texturas específicas da tropa (Mage)
+        let idleTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Idle_\($0)") }
+        let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Walk_\($0)") }
+        let spriteSize = CGSize(width: 48, height: 48)
+        let maxHealth = 60
         
-        // 🔧 Ajusta o tamanho do sprite para 32x32
-        if let spriteNode = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
-            spriteNode.size = CGSize(width: 48, height: 48)
+        super.init(team: team, maxHealth: maxHealth, spriteSize: spriteSize, idleTextures: idleTextures, walkTextures: walkTextures)
+        
+        // Ajusta animações adicionais: attack e death
+        if let animationComponent = self.component(ofType: AnimationComponent.self) {
+            let attackTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
+            let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
+            
+            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.3, repeatForever: false)
+            animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
         
-        self.addComponent(TeamComponent(team: team)) // 7TeamComponent antes do HealthBarComponent para cor correta
-
+        // Componentes exclusivos da tropa
         if self.component(ofType: AttackComponent.self) == nil {
             self.addComponent(AttackComponent(troop: self, damage: 12, cooldown: 1.2))
         }
         
-        // Garante componente de Vida e barra
-        if self.component(ofType: HealthComponent.self) == nil {
-            let healthComponent = HealthComponent(maxHealth: 60)
-            self.addComponent(healthComponent)
-            let healthBar = HealthBarComponent()
-            self.addComponent(healthBar)
-            healthComponent.onHealthChanged = { [weak healthBar] health, max in
-                healthBar?.updateBar(health: health, max: max)
-            }
-            healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+        if self.component(ofType: TroopBehaviorComponent.self) == nil {
+            self.addComponent(TroopBehaviorComponent(
+                troop: self,
+                target: nil,
+                allTroops: allTroops
+            ))
         }
         
-        if self.component(ofType: MovementComponent.self) == nil {
-            self.addComponent(MovementComponent(moveSpeed: 2))
-        }
-        
-        // Troca as animações para as animações específicas da tropa
-        if let animationComponent = self.component(ofType: AnimationComponent.self) {
-            let idleTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Idle_\($0)") }
-            let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Walk_\($0)") }
-            let attackTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
-            let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
-            
-            animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
-            animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
-            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.3, repeatForever: false)
-            animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
-        }
-        // Garante que a tropa começa em idle e já anima
-        if let stateMachineComponent = self.component(ofType: StateMachineComponent.self) {
-            stateMachineComponent.stateMachine.enter(IdleState.self)
-        }
+        // Remove controle manual do jogador
         self.removeComponent(ofType: ControlableComponent.self)
         self.removeComponent(ofType: AdaptedControlableComponent.self)
         
-        // Movimentação das tropas agora será feita via GKAgent2D e comportamentos (GKBehavior).
-        // Comportamentos como seguir e evitar serão adicionados em etapas futuras.
-        
-        // Adiciona AgentComponent para controle de movimentação por IA
-        if let node = self.component(ofType: AnimationComponent.self)?.node,
-           self.component(ofType: AgentComponent.self) == nil {
-            let agent = AgentComponent(node: node)
-            agent.agent.radius = 32
-            agent.agent.maxSpeed = 80
-            agent.agent.maxAcceleration = 250
-            self.addComponent(agent)
+        // Garante que começa em idle e já anima
+        if let stateMachineComponent = self.component(ofType: StateMachineComponent.self) {
+            stateMachineComponent.stateMachine.enter(IdleState.self)
         }
     }
     
@@ -109,3 +87,4 @@ extension TroopEntity {
         }
     }
 }
+

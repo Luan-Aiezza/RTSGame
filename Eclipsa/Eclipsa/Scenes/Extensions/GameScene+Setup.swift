@@ -47,7 +47,7 @@ extension GameScene {
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
 
         func createTroop(at position: CGPoint, team: Team) -> TroopEntity {
-            let troop = TroopEntity(team: team)
+            let troop = TroopEntity(team: team, allTroops: { [unowned self] in self.troops })
             troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
             physicsSystem.setupTroopPhysics(for: troop)
 
@@ -114,3 +114,4 @@ extension GameScene {
         camera?.addChild(releaseButton)
     }
 }
+
