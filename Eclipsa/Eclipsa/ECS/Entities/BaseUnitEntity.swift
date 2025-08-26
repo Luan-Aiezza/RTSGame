@@ -44,7 +44,7 @@ public class BaseUnitEntity: GKEntity {
         // Adiciona AgentComponent padrão (detalhes podem ser sobrescritos nas subclasses)
         let agent = AgentComponent(node: spriteNode)
         agent.agent.radius = 32
-        agent.agent.maxSpeed = 100
+        agent.agent.maxSpeed = 75
         agent.agent.maxAcceleration = 300
         self.addComponent(agent)
     }

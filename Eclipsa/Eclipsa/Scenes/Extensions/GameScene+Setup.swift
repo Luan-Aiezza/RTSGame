@@ -106,7 +106,7 @@ extension GameScene {
     }
     
     private func setupReleaseButton() {
-        releaseButton = CommandButton(position: Position.releaseButton(size: self.size), name: "Release", color: .blue)
+        releaseButton = CommandButton(position: Position.releaseButton(size: self.size), name: "R", color: .blue)
         releaseButton.onTouch = { [weak self] in
             self?.aimingSystem?.startAiming()
         }

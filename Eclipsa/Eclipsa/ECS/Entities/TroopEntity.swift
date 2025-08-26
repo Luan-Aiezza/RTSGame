@@ -14,7 +14,7 @@ public class TroopEntity: BaseUnitEntity {
         // Texturas específicas da tropa (Mage)
         let idleTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Idle_\($0)") }
         let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Walk_\($0)") }
-        let spriteSize = CGSize(width: 48, height: 48)
+        let spriteSize = CGSize(width: 32, height: 32)
         let maxHealth = 60
         
         super.init(team: team, maxHealth: maxHealth, spriteSize: spriteSize, idleTextures: idleTextures, walkTextures: walkTextures)

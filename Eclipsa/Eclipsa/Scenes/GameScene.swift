@@ -31,6 +31,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
+        applyNearestFilterToTileMaps()
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)

@@ -14,6 +14,7 @@ public class CameraComponent: GKSKNodeComponent {
     
     init(cameraNode: SKCameraNode) {
         self.cameraNode = cameraNode
+        self.cameraNode.setScale(0.75)
         
         super.init()
     }

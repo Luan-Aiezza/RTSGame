@@ -12,7 +12,7 @@ import BehindGameKit
 public class UnitEntity: BaseUnitEntity {
     
     public init(team: Team = .sun) {
-        let spriteSize = CGSize(width: 48, height: 48)
+        let spriteSize = CGSize(width: 32, height: 32)
         let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle_\($0)") }
         let walkTextures = (1...5).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
         
@@ -25,7 +25,7 @@ public class UnitEntity: BaseUnitEntity {
         self.addComponent(AimingComponent())
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(AdaptedControlableComponent(delegate: self))
-        self.addComponent(MovementComponent(moveSpeed: 2))
+        self.addComponent(MovementComponent(moveSpeed: 1.5))
     }
     
     required init?(coder: NSCoder) {

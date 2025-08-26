@@ -6,20 +6,20 @@ public class RangeComponent: GKComponent {
     public let radius: CGFloat
     public let color: SKColor
     public let node: SKShapeNode
-
+//DEVOLVER O CIRCULO
     /// Handler chamado ao começar contato com um nó alvo
     public var didBeginContact: ((SKNode) -> Void)?
     /// Handler chamado ao terminar contato
     public var didEndContact: ((SKNode) -> Void)?
 
-    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.05)) {
+    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.2)) {
         self.radius = radius
         self.color = color
         self.node = SKShapeNode(circleOfRadius: radius)
         super.init()
         node.fillColor = color
-        node.strokeColor = color.withAlphaComponent(0.9)
-        node.lineWidth = 2
+        node.strokeColor = color.withAlphaComponent(0.2)
+        node.lineWidth = 0
         node.zPosition = 100
         let body = SKPhysicsBody(circleOfRadius: radius)
         body.isDynamic = false
