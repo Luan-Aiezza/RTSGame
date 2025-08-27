@@ -11,6 +11,8 @@ import BehindGameKit
 // Entidade de Tropa baseada em BaseUnitEntity, sem controle manual do jogador
 public class TroopEntity: BaseUnitEntity {
     public init(team: Team = .sun, allTroops: @escaping () -> [TroopEntity]) {
+        
+        
         // Texturas específicas da tropa (Mage)
         let idleTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Idle_\($0)") }
         let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Walk_\($0)") }
@@ -27,6 +29,18 @@ public class TroopEntity: BaseUnitEntity {
             animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.3, repeatForever: false)
             animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
+
+        // Substituir a máquina anterior:
+        let idle = TroopIdleState(troop: self)
+        let follow = TroopFollowState(troop: self)
+        let attack = TroopAttackState(troop: self)
+        let die = TroopDieState(troop: self)
+
+        let stateMachine = GKStateMachine(states: [idle, follow, attack, die])
+        self.stateMachineComponent = StateMachineComponent(stateMachine)
+        self.addComponent(stateMachineComponent)
+
+        stateMachine.enter(TroopIdleState.self)
         
         // Componentes exclusivos da tropa
         if self.component(ofType: AttackComponent.self) == nil {
@@ -45,10 +59,7 @@ public class TroopEntity: BaseUnitEntity {
         self.removeComponent(ofType: ControlableComponent.self)
         self.removeComponent(ofType: AdaptedControlableComponent.self)
         
-        // Garante que começa em idle e já anima
-        if let stateMachineComponent = self.component(ofType: StateMachineComponent.self) {
-            stateMachineComponent.stateMachine.enter(IdleState.self)
-        }
+        stateMachine.enter(TroopIdleState.self)
     }
     
     /// Command the troop to move to a given point, disabling any follow behavior.
@@ -69,6 +80,24 @@ public class TroopEntity: BaseUnitEntity {
             agentComponent.agent.behavior = behavior
         }
     }
+    
+    public override func update(deltaTime seconds: TimeInterval) {
+        super.update(deltaTime: seconds)
+        stateMachineComponent.stateMachine.update(deltaTime: seconds)
+        
+        // Flip horizontal baseado na velocidade do agent
+        if let agentComponent = self.component(ofType: AgentComponent.self),
+           let node = self.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
+            
+            let velocity = agentComponent.agent.velocity
+            if velocity.x > 0 {
+                node.xScale = abs(node.xScale)
+            } else if velocity.x < 0 {
+                node.xScale = -abs(node.xScale)
+            }
+        }
+    }
+
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

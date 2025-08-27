@@ -32,17 +32,22 @@ public class AttackComponent: GKComponent {
         }
     }
     
+    public func tryAttack(on target: TroopEntity) -> Bool {
+        if CACurrentMediaTime() - lastAttackTime >= cooldown {
+            performAttack(on: target)
+            lastAttackTime = CACurrentMediaTime()
+            return true
+        }
+        return false
+    }
+    
     private func performAttack(on target: TroopEntity) {
         if let health = target.component(ofType: HealthComponent.self) {
             health.takeDamage(damage)
-            
             if health.isDead {
-                target.component(ofType: StateMachineComponent.self)?.stateMachine.enter(DieState.self)
+                target.stateMachineComponent.stateMachine.enter(TroopDieState.self)
             }
         }
-        
-        // Troca para estado de ataque (roda animação)
-        troop.component(ofType: StateMachineComponent.self)?.stateMachine.enter(AttackState.self)
     }
     
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
