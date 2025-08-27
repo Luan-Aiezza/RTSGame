@@ -24,8 +24,8 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let heroBody = SKPhysicsBody(
-                rectangleOf: CGSize(width: 32, height: 8),
-                center: CGPoint(x: 0, y: -20) // desloca para baixo
+                rectangleOf: CGSize(width: 24, height: 4),
+                center: CGPoint(x: 0, y: -15) // desloca para baixo
             )
             heroBody.affectedByGravity = false
             heroBody.allowsRotation = false
@@ -41,8 +41,8 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let troopBody = SKPhysicsBody(
-                rectangleOf: CGSize(width: 48, height: 8),
-                center: CGPoint(x: 0, y: -26) // desloca para baixo
+                rectangleOf: CGSize(width: 26, height: 4),
+                center: CGPoint(x: 0, y: -12) // desloca para baixo
             )
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false

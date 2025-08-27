@@ -58,15 +58,25 @@ class TroopIdleState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .idle)
+
+        if let agent = troop.component(ofType: AgentComponent.self)?.agent {
+            // ❌ não zera maxSpeed
+            // ❌ não coloca behavior = nil
+            agent.maxSpeed = troop.component(ofType: AgentComponent.self)?.defaultMaxSpeed ?? 60
+            agent.maxAcceleration = troop.component(ofType: AgentComponent.self)?.defaultMaxAcceleration ?? 120
+            // um behavior vazio mantém o agente "vivo"
+            agent.behavior = GKBehavior()
+        }
     }
     
     override func update(deltaTime seconds: TimeInterval) {
-        // Se tiver alvo válido, troca para follow
-        if let behavior = troop.component(ofType: TroopBehaviorComponent.self), behavior.target != nil {
+        if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+           behavior.target != nil {
             stateMachine?.enter(TroopFollowState.self)
         }
     }
 }
+
 
 class TroopFollowState: GKState {
     unowned let troop: TroopEntity
@@ -74,6 +84,11 @@ class TroopFollowState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .walk)
+        
+        if let agentComponent = troop.component(ofType: AgentComponent.self) {
+            agentComponent.agent.maxSpeed = agentComponent.defaultMaxSpeed
+            agentComponent.agent.maxAcceleration = agentComponent.defaultMaxAcceleration
+        }
     }
     
     override func update(deltaTime seconds: TimeInterval) {
@@ -100,6 +115,11 @@ class TroopAttackState: GKState {
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .attack)
+        
+        if let agent = troop.component(ofType: AgentComponent.self)?.agent {
+            agent.maxSpeed = .zero
+            agent.behavior = nil // <- limpa os goals
+        }
     }
     
     override func update(deltaTime seconds: TimeInterval) {

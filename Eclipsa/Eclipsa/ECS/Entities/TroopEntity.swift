@@ -26,7 +26,7 @@ public class TroopEntity: BaseUnitEntity {
             let attackTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
             let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
             
-            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.3, repeatForever: false)
+            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
             animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
 
