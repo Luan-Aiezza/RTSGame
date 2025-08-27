@@ -25,14 +25,6 @@ class WalkingState: GKState {
     }
 }
 
-class AttackState: GKState {
-    unowned let entity: GKEntity
-    init(entity: GKEntity) { self.entity = entity }
-    override func didEnter(from previousState: GKState?) {
-        entity.component(ofType: AnimationComponent.self)?.runAnimation(for: .attack)
-    }
-}
-
 class DieState: GKState {
     unowned let entity: GKEntity
     init(entity: GKEntity) { self.entity = entity }
@@ -60,3 +52,80 @@ class DieState: GKState {
 }
 
 
+class TroopIdleState: GKState {
+    unowned let troop: TroopEntity
+    init(troop: TroopEntity) { self.troop = troop }
+    
+    override func didEnter(from previousState: GKState?) {
+        troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .idle)
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        // Se tiver alvo válido, troca para follow
+        if let behavior = troop.component(ofType: TroopBehaviorComponent.self), behavior.target != nil {
+            stateMachine?.enter(TroopFollowState.self)
+        }
+    }
+}
+
+class TroopFollowState: GKState {
+    unowned let troop: TroopEntity
+    init(troop: TroopEntity) { self.troop = troop }
+    
+    override func didEnter(from previousState: GKState?) {
+        troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .walk)
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+              let target = behavior.target as? TroopEntity,
+              let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let range = troop.component(ofType: RangeComponent.self)?.radius else { return }
+        
+        let d2 = (troopPos.x - targetPos.x) * (troopPos.x - targetPos.x) +
+                 (troopPos.y - targetPos.y) * (troopPos.y - targetPos.y)
+        
+        if d2 <= range * range {
+            stateMachine?.enter(TroopAttackState.self)
+        } else if behavior.target == nil {
+            stateMachine?.enter(TroopIdleState.self)
+        }
+    }
+}
+
+class TroopAttackState: GKState {
+    unowned let troop: TroopEntity
+    init(troop: TroopEntity) { self.troop = troop }
+    
+    override func didEnter(from previousState: GKState?) {
+        troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .attack)
+    }
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        guard let attack = troop.component(ofType: AttackComponent.self),
+              let behavior = troop.component(ofType: TroopBehaviorComponent.self),
+              let target = behavior.target as? TroopEntity,
+              let health = target.component(ofType: HealthComponent.self),
+              !health.isDead else {
+            stateMachine?.enter(TroopIdleState.self)
+            return
+        }
+        _ = attack.tryAttack(on: target)
+        attack.update(deltaTime: seconds) // aplica dano se cooldown passou
+    }
+}
+
+class TroopDieState: GKState {
+    unowned let troop: TroopEntity
+    init(troop: TroopEntity) { self.troop = troop }
+    
+    override func didEnter(from previousState: GKState?) {
+        troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            self.troop.destroy()
+        }
+    }
+    
+    override func isValidNextState(_ stateClass: AnyClass) -> Bool { false }
+}

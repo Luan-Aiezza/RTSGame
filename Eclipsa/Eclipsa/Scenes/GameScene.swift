@@ -63,7 +63,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
         updateTroopTargets()
         updatePlayerState()
-        updateTroopState()
         depthSortNodes()
         
         var aimingComponent: AimingComponent? {
