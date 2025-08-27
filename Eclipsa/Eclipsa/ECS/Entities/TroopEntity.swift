@@ -33,13 +33,13 @@ public class TroopEntity: BaseUnitEntity {
             self.addComponent(AttackComponent(troop: self, damage: 12, cooldown: 1.2))
         }
         
-        if self.component(ofType: TroopBehaviorComponent.self) == nil {
-            self.addComponent(TroopBehaviorComponent(
-                troop: self,
-                target: nil,
-                allTroops: allTroops
-            ))
-        }
+//        if self.component(ofType: TroopBehaviorComponent.self) == nil {
+//            self.addComponent(TroopBehaviorComponent(
+//                troop: self,
+//                target: nil,
+//                allTroops: allTroops
+//            ))
+//        }
         
         // Remove controle manual do jogador
         self.removeComponent(ofType: ControlableComponent.self)
@@ -86,8 +86,10 @@ extension TroopEntity {
             self?.destroy()
         }
     }
-    static func createTroop(at position: CGPoint, team: Team) -> TroopEntity {
-         let troop = TroopEntity(team: team)
+    static func createTroop(at position: CGPoint, team: Team, troops: [TroopEntity]) -> TroopEntity {
+        let troop = TroopEntity(team: team){
+            return troops
+        }
          troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
          PhysicsSystem.setupTroopPhysics(for: troop)
 

@@ -16,13 +16,14 @@ class TroopGeneratorComponent: GKComponent {
         return CGPoint(x: cos(angle) * radius, y: sin(angle) * radius)
     }
     
-    var generatedTroops = Set<TroopEntity>()
+    var generatedTroops: Set<TroopEntity> = []
     var limitTroops: Int = 5
     
-    func generateTroop() -> TroopEntity?{
+    func generateTroop(troops: [TroopEntity]) -> TroopEntity?{
         if limitTroops > generatedTroops.count {
             let position = spawnPosition + spawnOffset
-            let troop = TroopEntity.createTroop(at: position, team: Team.sun)
+            print(position)
+            let troop = TroopEntity.createTroop(at: position, team: Team.sun, troops: troops)
             generatedTroops.insert(troop)
             return troop
         }

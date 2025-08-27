@@ -26,6 +26,7 @@ public class UnitEntity: BaseUnitEntity {
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(AdaptedControlableComponent(delegate: self))
         self.addComponent(MovementComponent(moveSpeed: 1.5))
+        self.addComponent(TroopGeneratorComponent())
     }
     
     required init?(coder: NSCoder) {

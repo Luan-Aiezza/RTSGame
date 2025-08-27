@@ -14,8 +14,6 @@ extension GameScene {
         setupInputControllerIfNeeded()
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
-//        controlledEntity.component(ofType: ControlableComponent.self)?
-//            .setupController(inputHandler: commandInput, virtualController: commandController)
         setupRTSAiming()
         
         controlledEntity.addComponent(AimControlComponent(delegate: aimingSystem!))
@@ -44,7 +42,8 @@ extension GameScene {
     }
     
     func addTroop(at point: CGPoint, team: Team) -> TroopEntity{
-        let troop = TroopEntity.createTroop(at: point, team: team)
+        
+        let troop = TroopEntity.createTroop(at: point, team: team, troops: [])
         SKEntityManager.shared.add(troop)
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
             addChild(node)
@@ -54,21 +53,21 @@ extension GameScene {
 
     func setupTroops() {
         for _ in 0..<6{
-            if let troop = controlledEntity.generator?.generateTroop(),
+            if let troop = controlledEntity.generator?.generateTroop(troops: troops),
                let node = troop.component(ofType: AnimationComponent.self)?.node{
                 addChild(node)
-                troops.append(troop)
                 SKEntityManager.shared.add(troop)
+                troops.append(troop)
             }
         }
           // Inimigos
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
           let enemyPositions = [
               CGPoint(x: basePosition.x - 50, y: basePosition.y),
-              CGPoint(x: basePosition.x - 90, y: basePosition.y - 90),
+              CGPoint(x: basePosition.x - 60, y: basePosition.y - 10),
               CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
           ]
-          troops += enemyPositions.map { addTroop(at: $0, team: .moon) }
+        self.troops += enemyPositions.map { addTroop(at: $0, team: .moon) }
         
         
       }
