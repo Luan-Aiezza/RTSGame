@@ -14,8 +14,6 @@ extension GameScene {
         setupInputControllerIfNeeded()
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
-//        controlledEntity.component(ofType: ControlableComponent.self)?
-//            .setupController(inputHandler: commandInput, virtualController: commandController)
         setupRTSAiming()
         
         controlledEntity.addComponent(AimControlComponent(delegate: aimingSystem!))
@@ -42,50 +40,38 @@ extension GameScene {
             SKEntityManager.shared.add(cameraEntity)
         }
     }
+    
+    func addTroop(at point: CGPoint, team: Team) -> TroopEntity{
+        
+        let troop = TroopEntity.createTroop(at: point, team: team, troops: [])
+        SKEntityManager.shared.add(troop)
+        if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
+            addChild(node)
+        }
+        return troop
+    }
 
     func setupTroops() {
-        let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
-
-        func createTroop(at position: CGPoint, team: Team) -> TroopEntity {
-            let troop = TroopEntity(team: team, allTroops: { [unowned self] in self.troops })
-            troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
-            physicsSystem.setupTroopPhysics(for: troop)
-
-            // O RangeComponent já é adicionado pelo construtor de TroopEntity
-
-            if let rangeComp = troop.component(ofType: RangeComponent.self),
-               let nodeComp = troop.component(ofType: GKSKNodeComponent.self) {
-                let scene = nodeComp.node.scene ?? self
-                let positionInScene = nodeComp.node.position
-                rangeComp.node.position = positionInScene
-                if rangeComp.node.parent !== scene {
-                    scene.addChild(rangeComp.node)
-                }
-            }
-
-            SKEntityManager.shared.add(troop)
-            if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
+        for _ in 0..<6{
+            if let troop = controlledEntity.generator?.generateTroop(troops: troops),
+               let node = troop.component(ofType: AnimationComponent.self)?.node{
                 addChild(node)
+                SKEntityManager.shared.add(troop)
+                troops.append(troop)
             }
-            return troop
         }
+          // Inimigos
+        let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
+          let enemyPositions = [
+              CGPoint(x: basePosition.x - 50, y: basePosition.y),
+              CGPoint(x: basePosition.x - 60, y: basePosition.y - 10),
+              CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
+          ]
+        self.troops += enemyPositions.map { addTroop(at: $0, team: .moon) }
+        
+        
+      }
 
-        // Aliados
-        let allyPositions = [
-            CGPoint(x: basePosition.x + 100, y: basePosition.y),
-            CGPoint(x: basePosition.x + 140, y: basePosition.y + 90),
-            CGPoint(x: basePosition.x + 170, y: basePosition.y - 90)
-        ]
-        troops += allyPositions.map { createTroop(at: $0, team: .sun) }
-
-        // Inimigos
-        let enemyPositions = [
-            CGPoint(x: basePosition.x - 50, y: basePosition.y),
-            CGPoint(x: basePosition.x - 90, y: basePosition.y - 90),
-            CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
-        ]
-        troops += enemyPositions.map { createTroop(at: $0, team: .moon) }
-    }
 
     func setupUI() {
         troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)

@@ -14,7 +14,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     
     var gameController: AdaptedVirtualController?
     var aimingSystem: AimingSystem?
-//    var touchHandler: RTSTouchHandler?
     
     var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
@@ -64,13 +63,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         updateTroopTargets()
         updatePlayerState()
         depthSortNodes()
-        
-        var aimingComponent: AimingComponent? {
-            return controlledEntity?.component(ofType: AimingComponent.self)
-        }
-        if ((aimingComponent?.isAiming) ?? true){
-            aimingSystem?.updateDynamicAiming()
-        }
+        aimingSystem?.updateDynamicAiming()
     }
 
 }

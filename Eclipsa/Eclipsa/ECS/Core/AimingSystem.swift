@@ -116,8 +116,11 @@ extension AimingSystem: AimingDelegate {
             x: startPoint.x + cos(angle) * clampedDistance,
             y: startPoint.y + sin(angle) * clampedDistance
         )
+        lastAimDirection = direction
+        lastAimDistance = clampedDistance
+        
         aimingComp.endPoint = endPoint
-            updateAimingLine(to: endPoint)
+        updateAimingLine(to: endPoint)
     }
     
     func updateAimingLine(to end: CGPoint) {
@@ -131,13 +134,7 @@ extension AimingSystem: AimingDelegate {
         }
     
     func updateDynamicAiming() {
-        guard let aimingComp = aimingComponent,
-              aimingComp.isAiming else { return }
-        
-        // Atualiza posição do range indicator
-        updateRangeIndicatorPosition()
-        
-        // Se temos uma direção válida guardada, recalcula o endPoint
+        guard let aimingComp = aimingComponent, aimingComp.isAiming else { return }
         if lastAimDirection != .zero {
             let currentStartPoint = centerPosition
             let angle = atan2(lastAimDirection.y, lastAimDirection.x)
@@ -147,12 +144,10 @@ extension AimingSystem: AimingDelegate {
                 x: currentStartPoint.x + cos(angle) * clampedDistance,
                 y: currentStartPoint.y + sin(angle) * clampedDistance
             )
-            
-            // Atualiza o component com os novos valores
             aimingComp.startPoint = currentStartPoint
             aimingComp.endPoint = newEndPoint
-            
             updateAimingLine(to: newEndPoint)
+            updateRangeIndicatorPosition()
         }
     }
 }

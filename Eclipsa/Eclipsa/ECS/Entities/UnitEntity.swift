@@ -26,6 +26,7 @@ public class UnitEntity: BaseUnitEntity {
         self.addComponent(ControlableComponent(delegate: self))
         self.addComponent(AdaptedControlableComponent(delegate: self))
         self.addComponent(MovementComponent(moveSpeed: 1.5))
+        self.addComponent(TroopGeneratorComponent())
     }
     
     required init?(coder: NSCoder) {
@@ -51,13 +52,6 @@ extension UnitEntity: ControlableDelegate {
     }
 }
 
-
-extension UnitEntity: AimingDelegate {
-    func handleAim(direction: CGPoint, distance: CGFloat) {
-        self.component(ofType: AimingComponent.self)
-    }
-}
-
 extension GKEntity {
     /// Remove todos os componentes e referencia ao node
     func destroy() {
@@ -70,5 +64,11 @@ extension GKEntity {
         for component in self.components {
             self.removeComponent(ofType: type(of: component))
         }
+    }
+}
+
+extension UnitEntity {
+    var generator: TroopGeneratorComponent? {
+        return self.component(ofType: TroopGeneratorComponent.self)
     }
 }
