@@ -37,7 +37,7 @@ final class PhysicsSystem {
         }
     }
 
-    static func setupTroopPhysics(for entity: UnitEntity) {
+    func setupTroopPhysics(for entity: BaseUnitEntity) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let troopBody = SKPhysicsBody(
@@ -67,3 +67,4 @@ final class PhysicsSystem {
         return block
     }
 }
+

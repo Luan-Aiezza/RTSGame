@@ -14,7 +14,7 @@ class TroopControlButtons: SKNode {
         let buttonSize = CGSize(width: 64, height: 64)
         
         followButton = SKSpriteNode(color: .green, size: buttonSize)
-        followButton.alpha = 0.7
+        followButton.alpha = 0.9
         followButton.position = CGPoint(x: size.width/2 - 80, y: -size.height/2 + 80)
         followButton.zPosition = 1000
         followButton.name = "followButton"
