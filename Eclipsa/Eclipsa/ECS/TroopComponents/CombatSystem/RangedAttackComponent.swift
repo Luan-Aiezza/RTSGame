@@ -20,11 +20,14 @@ public class AttackComponent: GKComponent {
               let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
               let range = unit.component(ofType: RangeComponent.self)?.radius else { return }
         
+        // ⚠️ nova checagem de time
+        guard let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+              let unitTeam = unit.component(ofType: TeamComponent.self)?.team,
+              targetTeam != unitTeam else { return }
+        
         let d2 = (unitPos.x - enemyPos.x) * (unitPos.x - enemyPos.x) + (unitPos.y - enemyPos.y) * (unitPos.y - enemyPos.y)
         
-        // Se inimigo está em alcance
         if d2 <= range * range {
-            // Atacar apenas se cooldown passou
             if CACurrentMediaTime() - lastAttackTime >= cooldown {
                 performAttack(on: target)
                 lastAttackTime = CACurrentMediaTime()
@@ -33,6 +36,10 @@ public class AttackComponent: GKComponent {
     }
     
     public func tryAttack(on target: BaseUnitEntity) -> Bool {
+        guard let unitTeam = unit.component(ofType: TeamComponent.self)?.team,
+              let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+              unitTeam != targetTeam else { return false }
+        
         if CACurrentMediaTime() - lastAttackTime >= cooldown {
             performAttack(on: target)
             lastAttackTime = CACurrentMediaTime()

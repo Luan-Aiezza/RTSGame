@@ -48,7 +48,17 @@ class TroopFollowState: GKState {
               let target = behavior.target as? BaseUnitEntity,
               let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
               let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let range = troop.component(ofType: RangeComponent.self)?.radius else { return }
+              let range = troop.component(ofType: RangeComponent.self)?.radius,
+              let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+              let targetTeam = target.component(ofType: TeamComponent.self)?.team else {
+            return
+        }
+        
+        // ❌ Não ataca aliados (ex: o herói do mesmo time)
+        guard troopTeam != targetTeam else {
+            // se o alvo for aliado, apenas segue (nunca entra em ataque)
+            return
+        }
         
         let d2 = (troopPos.x - targetPos.x) * (troopPos.x - targetPos.x) +
                  (troopPos.y - targetPos.y) * (troopPos.y - targetPos.y)
@@ -59,6 +69,7 @@ class TroopFollowState: GKState {
             stateMachine?.enter(TroopIdleState.self)
         }
     }
+
 }
 
 class TroopAttackState: GKState {
@@ -79,12 +90,16 @@ class TroopAttackState: GKState {
               let behavior = troop.component(ofType: TroopBehaviorComponent.self),
               let target = behavior.target as? BaseUnitEntity,
               let health = target.component(ofType: HealthComponent.self),
+              let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+              let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+              troopTeam != targetTeam,   // ✅ impede atacar aliados
               !health.isDead else {
             stateMachine?.enter(TroopIdleState.self)
             return
         }
+        
         _ = attack.tryAttack(on: target)
-        attack.update(deltaTime: seconds) // aplica dano se cooldown passou
+        attack.update(deltaTime: seconds)
     }
 }
 
