@@ -1,70 +1,23 @@
 //
-//  States.swift
+//  TroopStates.swift
 //  Eclipsa
 //
-//  Created by Luan Aiezza on 15/08/25.
+//  Created by Luan Aiezza on 28/08/25.
 //
-
 import SpriteKit
 import GameplayKit
 import BehindGameKit
 
-class IdleState: GKState {
-    unowned let entity: GKEntity
-    init(entity: GKEntity) { self.entity = entity }
-    override func didEnter(from previousState: GKState?) {
-        (entity.component(ofType: AnimationComponent.self))?.runAnimation(for: .idle)
-    }
-}
-
-class WalkingState: GKState {
-    unowned let entity: GKEntity
-    init(entity: GKEntity) { self.entity = entity }
-    override func didEnter(from previousState: GKState?) {
-        (entity.component(ofType: AnimationComponent.self))?.runAnimation(for: .walk)
-    }
-}
-
-class DieState: GKState {
-    unowned let entity: GKEntity
-    init(entity: GKEntity) { self.entity = entity }
-    
-    override func didEnter(from previousState: GKState?) {
-        entity.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
-
-        if let node = entity.component(ofType: GKSKNodeComponent.self)?.node {
-            let duration = entity.component(ofType: AnimationComponent.self)?
-                .node
-                .action(forKey: "animation")?
-                .duration ?? 0.5
-            
-            node.run(SKAction.sequence([
-                SKAction.wait(forDuration: duration),
-                SKAction.removeFromParent()
-            ])) { [weak self] in
-                guard let entity = self?.entity else { return }
-                for component in entity.components {
-                    entity.removeComponent(ofType: type(of: component))
-                }
-            }
-        }
-    }
-}
-
-
 class TroopIdleState: GKState {
-    unowned let troop: TroopEntity
-    init(troop: TroopEntity) { self.troop = troop }
+    unowned let troop: BaseUnitEntity
+    init(troop: BaseUnitEntity) { self.troop = troop }
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .idle)
 
         if let agent = troop.component(ofType: AgentComponent.self)?.agent {
-            // ❌ não zera maxSpeed
-            // ❌ não coloca behavior = nil
             agent.maxSpeed = troop.component(ofType: AgentComponent.self)?.defaultMaxSpeed ?? 60
             agent.maxAcceleration = troop.component(ofType: AgentComponent.self)?.defaultMaxAcceleration ?? 120
-            // um behavior vazio mantém o agente "vivo"
             agent.behavior = GKBehavior()
         }
     }
@@ -77,10 +30,9 @@ class TroopIdleState: GKState {
     }
 }
 
-
 class TroopFollowState: GKState {
-    unowned let troop: TroopEntity
-    init(troop: TroopEntity) { self.troop = troop }
+    unowned let troop: BaseUnitEntity
+    init(troop: BaseUnitEntity) { self.troop = troop }
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .walk)
@@ -93,7 +45,7 @@ class TroopFollowState: GKState {
     
     override func update(deltaTime seconds: TimeInterval) {
         guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-              let target = behavior.target as? TroopEntity,
+              let target = behavior.target as? BaseUnitEntity,
               let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
               let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
               let range = troop.component(ofType: RangeComponent.self)?.radius else { return }
@@ -110,8 +62,8 @@ class TroopFollowState: GKState {
 }
 
 class TroopAttackState: GKState {
-    unowned let troop: TroopEntity
-    init(troop: TroopEntity) { self.troop = troop }
+    unowned let troop: BaseUnitEntity
+    init(troop: BaseUnitEntity) { self.troop = troop }
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .attack)
@@ -125,7 +77,7 @@ class TroopAttackState: GKState {
     override func update(deltaTime seconds: TimeInterval) {
         guard let attack = troop.component(ofType: AttackComponent.self),
               let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-              let target = behavior.target as? TroopEntity,
+              let target = behavior.target as? BaseUnitEntity,
               let health = target.component(ofType: HealthComponent.self),
               !health.isDead else {
             stateMachine?.enter(TroopIdleState.self)
@@ -137,8 +89,8 @@ class TroopAttackState: GKState {
 }
 
 class TroopDieState: GKState {
-    unowned let troop: TroopEntity
-    init(troop: TroopEntity) { self.troop = troop }
+    unowned let troop: BaseUnitEntity
+    init(troop: BaseUnitEntity) { self.troop = troop }
     
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
@@ -149,3 +101,4 @@ class TroopDieState: GKState {
     
     override func isValidNextState(_ stateClass: AnyClass) -> Bool { false }
 }
+

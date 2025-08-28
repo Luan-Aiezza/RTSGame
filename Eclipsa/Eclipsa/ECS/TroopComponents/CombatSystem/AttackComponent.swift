@@ -2,25 +2,25 @@ import GameplayKit
 import BehindGameKit
 
 public class AttackComponent: GKComponent {
-    private unowned let troop: TroopEntity
+    private unowned let unit: BaseUnitEntity
     private var cooldown: TimeInterval
     private var lastAttackTime: TimeInterval = 0
     private var damage: Int
     
-    public init(troop: TroopEntity, damage: Int = 10, cooldown: TimeInterval = 1.5) {
-        self.troop = troop
+    public init(unit: BaseUnitEntity, damage: Int = 10, cooldown: TimeInterval = 1.5) {
+        self.unit = unit
         self.damage = damage
         self.cooldown = cooldown
         super.init()
     }
     
     public override func update(deltaTime seconds: TimeInterval) {
-        guard let target = (troop.component(ofType: TroopBehaviorComponent.self)?.target as? TroopEntity),
-              let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
+        guard let target = (unit.component(ofType: TroopBehaviorComponent.self)?.target as? BaseUnitEntity),
+              let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
               let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let range = troop.component(ofType: RangeComponent.self)?.radius else { return }
+              let range = unit.component(ofType: RangeComponent.self)?.radius else { return }
         
-        let d2 = (troopPos.x - enemyPos.x) * (troopPos.x - enemyPos.x) + (troopPos.y - enemyPos.y) * (troopPos.y - enemyPos.y)
+        let d2 = (unitPos.x - enemyPos.x) * (unitPos.x - enemyPos.x) + (unitPos.y - enemyPos.y) * (unitPos.y - enemyPos.y)
         
         // Se inimigo está em alcance
         if d2 <= range * range {
@@ -32,7 +32,7 @@ public class AttackComponent: GKComponent {
         }
     }
     
-    public func tryAttack(on target: TroopEntity) -> Bool {
+    public func tryAttack(on target: BaseUnitEntity) -> Bool {
         if CACurrentMediaTime() - lastAttackTime >= cooldown {
             performAttack(on: target)
             lastAttackTime = CACurrentMediaTime()
@@ -41,9 +41,9 @@ public class AttackComponent: GKComponent {
         return false
     }
     
-    private func performAttack(on target: TroopEntity) {
-        guard let origin = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let scene = troop.component(ofType: GKSKNodeComponent.self)?.node.scene else { return }
+    private func performAttack(on target: BaseUnitEntity) {
+        guard let origin = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let scene = unit.component(ofType: GKSKNodeComponent.self)?.node.scene else { return }
         
         let projectile = ProjectileEntity(from: origin, target: target, damage: damage)
         
@@ -53,13 +53,11 @@ public class AttackComponent: GKComponent {
         }
         
         // registra projétil na cena (assim ele recebe update)
-        scene.physicsWorld.speed = 1.0 // garante que roda
         scene.userData = scene.userData ?? NSMutableDictionary()
         var projectiles = scene.userData?["projectiles"] as? [ProjectileEntity] ?? []
         projectiles.append(projectile)
         scene.userData?["projectiles"] = projectiles
     }
 
-    
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }

@@ -44,16 +44,8 @@ public class TroopEntity: BaseUnitEntity {
         
         // Componentes exclusivos da tropa
         if self.component(ofType: AttackComponent.self) == nil {
-            self.addComponent(AttackComponent(troop: self, damage: 12, cooldown: 1.2))
+            self.addComponent(AttackComponent(unit: self, damage: 12, cooldown: 1.2))
         }
-        
-//        if self.component(ofType: TroopBehaviorComponent.self) == nil {
-//            self.addComponent(TroopBehaviorComponent(
-//                troop: self,
-//                target: nil,
-//                allTroops: allTroops
-//            ))
-//        }
         
         // Remove controle manual do jogador
         self.removeComponent(ofType: ControlableComponent.self)
