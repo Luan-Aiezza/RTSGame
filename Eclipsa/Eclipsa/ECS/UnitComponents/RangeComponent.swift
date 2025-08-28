@@ -12,13 +12,13 @@ public class RangeComponent: GKComponent {
     /// Handler chamado ao terminar contato
     public var didEndContact: ((SKNode) -> Void)?
 
-    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.2)) {
+    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.01)) {
         self.radius = radius
         self.color = color
         self.node = SKShapeNode(circleOfRadius: radius)
         super.init()
         node.fillColor = color
-        node.strokeColor = color.withAlphaComponent(0.2)
+        node.strokeColor = color.withAlphaComponent(0.01)
         node.lineWidth = 0
         node.zPosition = 100
         let body = SKPhysicsBody(circleOfRadius: radius)

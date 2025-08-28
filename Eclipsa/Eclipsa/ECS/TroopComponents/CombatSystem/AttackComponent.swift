@@ -42,13 +42,24 @@ public class AttackComponent: GKComponent {
     }
     
     private func performAttack(on target: TroopEntity) {
-        if let health = target.component(ofType: HealthComponent.self) {
-            health.takeDamage(damage)
-            if health.isDead {
-                target.stateMachineComponent.stateMachine.enter(TroopDieState.self)
-            }
+        guard let origin = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let scene = troop.component(ofType: GKSKNodeComponent.self)?.node.scene else { return }
+        
+        let projectile = ProjectileEntity(from: origin, target: target, damage: damage)
+        
+        // adiciona o nó do projétil na cena
+        if let node = projectile.component(ofType: GKSKNodeComponent.self)?.node {
+            scene.addChild(node)
         }
+        
+        // registra projétil na cena (assim ele recebe update)
+        scene.physicsWorld.speed = 1.0 // garante que roda
+        scene.userData = scene.userData ?? NSMutableDictionary()
+        var projectiles = scene.userData?["projectiles"] as? [ProjectileEntity] ?? []
+        projectiles.append(projectile)
+        scene.userData?["projectiles"] = projectiles
     }
+
     
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }

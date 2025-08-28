@@ -51,6 +51,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
 
 
     override func update(_ currentTime: TimeInterval) {
+        
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
 
@@ -60,6 +61,13 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         cameraEntity?.update(deltaTime: deltaTime)
         controlledEntity.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
         troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
+        
+        if let projectiles = self.userData?["projectiles"] as? [ProjectileEntity] {
+            for projectile in projectiles {
+                projectile.update(deltaTime: deltaTime)
+            }
+        }
+        
         updateTroopTargets()
         updatePlayerState()
         depthSortNodes()
