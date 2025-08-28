@@ -47,8 +47,8 @@ public class KnightTroopEntity: BaseUnitEntity {
         stateMachine.enter(TroopIdleState.self)
         
         // Componente de ataque corpo a corpo
-        if self.component(ofType: AttackComponent.self) == nil {
-            self.addComponent(AttackComponent(unit: self, damage: 20, cooldown: 1.0)) // mais dano que o mago
+        if self.component(ofType: MeleeAttackComponent.self) == nil {
+            self.addComponent(MeleeAttackComponent(attacker: self, damage: 20, cooldown: 1.0))
         }
         
         // Ajusta o range para combate corpo a corpo
