@@ -3,27 +3,27 @@ import SpriteKit
 import GameplayKit
 
 class TroopControlSystem {
-    private weak var scene: SKScene?
-    private(set) var troops: [TroopEntity]
+    private weak var scene: GameScene?
     private(set) weak var targetEntity: UnitEntity?
     
-    init(scene: SKScene?, troops: [TroopEntity], targetEntity: UnitEntity?) {
-        self.scene = scene
-        self.troops = troops
-        self.targetEntity = targetEntity
+    private var troops: [TroopEntity] {
+        guard let troops = scene?.troops else {return []}
+        return troops
     }
-
-    func updateTroops(_ troops: [TroopEntity]) {
-        self.troops = troops
+    
+    init(scene: GameScene?, targetEntity: UnitEntity?) {
+        self.scene = scene
+        self.targetEntity = targetEntity
     }
     
     func commandTroopsToFollow() {
-        guard let targetEntity = targetEntity,
+        guard let scene = scene,
+            let targetEntity = targetEntity,
               let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
               let playerTeam = targetEntity.component(ofType: TeamComponent.self)?.team
         else { return }
 
-        for troop in troops {
+        for troop in scene.troops {
             if let troopPosition = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
                rangeComponent.contains(point: troopPosition),
                let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
