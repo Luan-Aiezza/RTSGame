@@ -11,13 +11,13 @@ import BehindGameKit
 
 public class ProjectileEntity: GKEntity {
     private let damage: Int
-    private weak var target: TroopEntity?
+    private weak var target: BaseUnitEntity?
     private let speed: CGFloat = 180.0 // px/segundo
     
     private var sprite: SKSpriteNode
     private var animationComponent: AnimationComponent
     
-    init(from origin: CGPoint, target: TroopEntity, damage: Int) {
+    init(from origin: CGPoint, target: BaseUnitEntity, damage: Int) {
         self.damage = damage
         self.target = target
         
@@ -55,8 +55,7 @@ public class ProjectileEntity: GKEntity {
                 guard let self = self else { return }
                 self.animationComponent.runAnimation(for: .custom("bullet"))
                 
-                // Adiciona rotação contínua para dar efeito fluido
-                let rotate = SKAction.rotate(byAngle: .pi, duration: 0.3) // 180° em 0.3s
+                let rotate = SKAction.rotate(byAngle: .pi, duration: 0.3)
                 let spin = SKAction.repeatForever(rotate)
                 self.sprite.run(spin, withKey: "bulletSpin")
             }
@@ -73,7 +72,7 @@ public class ProjectileEntity: GKEntity {
         let direction = CGVector(dx: targetPos.x - sprite.position.x, dy: targetPos.y - sprite.position.y)
         let length = sqrt(direction.dx*direction.dx + direction.dy*direction.dy)
         
-        if length < 10 { // chegou no alvo
+        if length < 10 {
             explode(on: target)
             return
         }
@@ -83,26 +82,24 @@ public class ProjectileEntity: GKEntity {
         sprite.position.y += normalized.dy * speed * CGFloat(seconds)
     }
     
-    private func explode(on target: TroopEntity) {
-        // aplica dano
+    private func explode(on target: BaseUnitEntity) {
         if let health = target.component(ofType: HealthComponent.self) {
             health.takeDamage(damage)
-            if health.isDead {
-                target.stateMachineComponent.stateMachine.enter(TroopDieState.self)
+            
+            // só entra em TroopDieState se for tropa
+            if health.isDead, let troop = target as? TroopEntity {
+                troop.stateMachineComponent.stateMachine.enter(TroopDieState.self)
             }
         }
         
-        // troca para animação de impacto
         animationComponent.runAnimation(for: .custom("contact"))
         
-        // remove depois da animação
         sprite.run(.sequence([
             .wait(forDuration: 0.25),
             .removeFromParent(),
             .run { [weak self] in
-                self?.target = nil // solta a referência ao alvo
+                self?.target = nil
             }
         ]))
     }
-
 }

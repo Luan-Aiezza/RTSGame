@@ -53,18 +53,22 @@ final class PhysicsSystem {
             entity.addComponent(troopPhysics)
         }
     }
-
-    // Cria bloco de teste já com corpo físico
-    func makeTestBlock(position: CGPoint) -> SKSpriteNode {
-        let block = SKSpriteNode(color: .red, size: CGSize(width: 80, height: 40))
-        block.position = position
-        let blockBody = SKPhysicsBody(rectangleOf: block.size)
-        blockBody.isDynamic = false
-        blockBody.categoryBitMask = PhysicsCategory.wall
-        blockBody.collisionBitMask = PhysicsCategory.player
-        blockBody.contactTestBitMask = PhysicsCategory.player
-        block.physicsBody = blockBody
-        return block
+    
+    static func setupBuildingPhysics(for entity: BuildingEntity, size: CGSize) {
+        if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
+           nodeComponent.node.physicsBody == nil {
+            
+            let body = SKPhysicsBody(rectangleOf: size)
+            body.affectedByGravity = false
+            body.allowsRotation = false
+            body.isDynamic = false // prédio não se move
+            body.categoryBitMask = PhysicsCategory.wall
+            body.collisionBitMask = UInt32.contactWithAllCategories()
+            body.contactTestBitMask = UInt32.contactWithAllCategories()
+            
+            let physics = SKPhysicsBodyComponent(physicsBody: body)
+            entity.addComponent(physics)
+        }
     }
 }
 
