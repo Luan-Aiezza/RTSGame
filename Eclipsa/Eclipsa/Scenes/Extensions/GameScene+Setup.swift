@@ -53,29 +53,15 @@ extension GameScene {
 
     func setupTroops() {
         for _ in 0..<6{
-//            if let troop = controlledEntity.generator?.generateTroop(troops: troops),
-//               let node = troop.component(ofType: AnimationComponent.self)?.node{
-//                //                    guard let self = self else { return }
-//                self.addChild(node)
-//                SKEntityManager.shared.add(troop)
-//                self.troops.append(troop)
-//            }
             controlledEntity.generator?.startGenerating(troops: troops) { troop in
-                    if let troop = troop,
-                       let node = troop.component(ofType: AnimationComponent.self)?.node{
-                        self.addChild(node)
-                        SKEntityManager.shared.add(troop)
-                        self.troops.append(troop)
-                    }
-            } onComplete: { [weak self] in
-                guard let self = self else { return }
-//                self.setupUI()
-                self.troopControlSystem = TroopControlSystem(scene: self, troops: self.troops, targetEntity: controlledEntity)
-                self.troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
-                camera?.addChild(troopControlButtons!)
-                
+                if let troop = troop,
+                   let node = troop.component(ofType: AnimationComponent.self)?.node{
+                    self.addChild(node)
+                    SKEntityManager.shared.add(troop)
+                    self.troops.append(troop)
+                }
             }
-    }
+        }
 
 
         
@@ -92,6 +78,9 @@ extension GameScene {
 
 
     func setupUI() {
+        self.troopControlSystem = TroopControlSystem(scene: self, targetEntity: controlledEntity)
+        self.troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
+        camera?.addChild(troopControlButtons!)
         setupCommandButton()
         setupReleaseButton()
     }
