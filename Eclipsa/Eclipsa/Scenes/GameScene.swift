@@ -21,7 +21,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Lista de tropas para controle coletivo
     public var troops: [TroopEntity] = []
     
-    public var troopControlButtons: TroopControlButtons!
+    public var troopControlButtons: TroopControlButtons?
     public var cancelButton: CommandButton!
     public var releaseButton: CommandButton!
     
