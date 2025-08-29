@@ -44,9 +44,6 @@ extension GameScene {
         } else if location.x > 0 {
             cancelButton.handleTouch(location)
             
-//            troops.filter { troop in
-//                troop.component(ofType: TeamComponent.self)?.team == controlledEntity.component(ofType: TeamComponent.self)?.team
-//            }
             aimingSystem?.finishAiming { [weak self] result in
                     for troop in troops {
                         guard
