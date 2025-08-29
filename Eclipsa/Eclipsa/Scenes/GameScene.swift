@@ -53,6 +53,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
 
 
     override func update(_ currentTime: TimeInterval) {
+        SKEntityManager.shared.update(currentTime)
         
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
