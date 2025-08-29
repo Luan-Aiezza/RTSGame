@@ -9,6 +9,32 @@ extension GameScene {
             commandController = AdaptedVirtualController(scene: self)
         }
     }
+    
+    func setupPlayerNexus() {
+        if let node = childNode(withName: "Nexus") as? SKSpriteNode {
+            let nexus = PlayerNexusEntity(node: node)
+            SKEntityManager.shared.add(nexus)
+
+            self.userData = self.userData ?? NSMutableDictionary()
+            self.userData?["playerNexus"] = nexus
+        } else {
+            print("⚠️ Node 'Nexus' não encontrado na cena!")
+        }
+    }
+
+    func setupEnemyNexuses() {
+        let enemyNames = ["EnemyNexus_1", "EnemyNexus_2", "EnemyNexus_3"]
+
+        for name in enemyNames {
+            if let node = childNode(withName: name) as? SKSpriteNode {
+                let enemyNexus = EnemyNexusEntity(node: node)
+                SKEntityManager.shared.add(enemyNexus)
+            } else {
+                print("⚠️ Node '\(name)' não encontrado na cena!")
+            }
+        }
+    }
+
 
     func setupPlayer() {
         setupInputControllerIfNeeded()

@@ -30,20 +30,19 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
-        applyNearestFilterToTileMaps()
+        applyNearestFilterRecursively()
+
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
         setupPlayer()
+        setupPlayerNexus()   // ✅ cria base do jogador
+        setupEnemyNexuses()  // ✅ cria bases inimigas
         setupCamera()
         setupTroops()
         setupUI()
-
-        let wall = physicsSystem.makeTestBlock(position: CGPoint(x: -200, y: 0))
-        addChild(wall)
-        wallNode = wall
 
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
