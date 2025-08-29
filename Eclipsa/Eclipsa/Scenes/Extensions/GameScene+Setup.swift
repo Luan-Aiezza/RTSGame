@@ -41,14 +41,13 @@ extension GameScene {
         }
     }
     
-    func addTroop(at point: CGPoint, team: Team) -> TroopEntity{
+    func addTroop(at point: CGPoint, team: Team){
         
         let troop = TroopEntity.createTroop(at: point, team: team, troops: [])
         SKEntityManager.shared.add(troop)
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
             addChild(node)
         }
-        return troop
     }
 
     func setupTroops() {
@@ -58,7 +57,6 @@ extension GameScene {
                    let node = troop.component(ofType: AnimationComponent.self)?.node{
                     self.addChild(node)
                     SKEntityManager.shared.add(troop)
-                    self.troops.append(troop)
                 }
             }
         }
@@ -72,7 +70,7 @@ extension GameScene {
               CGPoint(x: basePosition.x - 60, y: basePosition.y - 10),
               CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
           ]
-        self.troops += enemyPositions.map { addTroop(at: $0, team: .moon) }
+        enemyPositions.forEach { addTroop(at: $0, team: .moon) }
         
       }
 

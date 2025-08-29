@@ -6,7 +6,11 @@ class TroopControlSystem {
     private weak var scene: GameScene?
     private(set) weak var targetEntity: UnitEntity?
     
-    private var troops: [TroopEntity] {
+//    private var troops: [TroopEntity] {
+//        guard let troops = scene?.troops else {return []}
+//        return troops
+//    }
+    private var troops: Set<TroopEntity> {
         guard let troops = scene?.troops else {return []}
         return troops
     }
@@ -17,13 +21,12 @@ class TroopControlSystem {
     }
     
     func commandTroopsToFollow() {
-        guard let scene = scene,
-            let targetEntity = targetEntity,
+        guard let targetEntity = targetEntity,
               let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
               let playerTeam = targetEntity.component(ofType: TeamComponent.self)?.team
         else { return }
 
-        for troop in scene.troops {
+        for troop in troops {
             if let troopPosition = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
                rangeComponent.contains(point: troopPosition),
                let troopTeam = troop.component(ofType: TeamComponent.self)?.team,

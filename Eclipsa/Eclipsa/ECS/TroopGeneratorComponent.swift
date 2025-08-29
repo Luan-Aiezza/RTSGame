@@ -32,12 +32,12 @@ class TroopGeneratorComponent: GKComponent {
         return nil
     }
     
-    func startGenerating(troops: [TroopEntity] ,completion: @escaping ((TroopEntity?) -> Void)) {
+    func startGenerating(troops: Set<TroopEntity> ,completion: @escaping ((TroopEntity?) -> Void)) {
         let queue = DispatchQueue(label: "troopGenerator")
         timer = DispatchSource.makeTimerSource(queue: queue)
         timer?.schedule(deadline: .now(), repeating: coolDown)
         timer?.setEventHandler{
-            let troop = self.generateTroop(troops: troops)
+            let troop = self.generateTroop(troops: Array(troops))
             DispatchQueue.main.async {
                 completion(troop)
             }

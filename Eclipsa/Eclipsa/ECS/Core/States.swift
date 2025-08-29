@@ -42,10 +42,12 @@ class DieState: GKState {
                 SKAction.wait(forDuration: duration),
                 SKAction.removeFromParent()
             ])) { [weak self] in
+                print("entrei no remove From Parent")
                 guard let entity = self?.entity else { return }
                 for component in entity.components {
                     entity.removeComponent(ofType: type(of: component))
                 }
+                SKEntityManager.shared.remove(entity)
             }
         }
     }
@@ -60,8 +62,6 @@ class TroopIdleState: GKState {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .idle)
 
         if let agent = troop.component(ofType: AgentComponent.self)?.agent {
-            // ❌ não zera maxSpeed
-            // ❌ não coloca behavior = nil
             agent.maxSpeed = troop.component(ofType: AgentComponent.self)?.defaultMaxSpeed ?? 60
             agent.maxAcceleration = troop.component(ofType: AgentComponent.self)?.defaultMaxAcceleration ?? 120
             // um behavior vazio mantém o agente "vivo"
