@@ -67,25 +67,28 @@ extension GameScene {
         }
     }
     
-    func addTroop(at point: CGPoint, team: Team) -> TroopEntity{
+    func addTroop(at point: CGPoint, team: Team){
         
         let troop = TroopEntity.createTroop(at: point, team: team, troops: [])
         SKEntityManager.shared.add(troop)
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
             addChild(node)
         }
-        return troop
     }
 
     func setupTroops() {
         for _ in 0..<6{
-            if let troop = controlledEntity.generator?.generateTroop(troops: troops),
-               let node = troop.component(ofType: AnimationComponent.self)?.node{
-                addChild(node)
-                SKEntityManager.shared.add(troop)
-                troops.append(troop)
+            controlledEntity.generator?.startGenerating(troops: troops) { troop in
+                if let troop = troop,
+                   let node = troop.component(ofType: AnimationComponent.self)?.node{
+                    self.addChild(node)
+                    SKEntityManager.shared.add(troop)
+                }
             }
         }
+
+
+        
           // Inimigos
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
           let enemyPositions = [
@@ -93,18 +96,17 @@ extension GameScene {
               CGPoint(x: basePosition.x - 60, y: basePosition.y - 10),
               CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
           ]
-        self.troops += enemyPositions.map { addTroop(at: $0, team: .moon) }
-        
+        enemyPositions.forEach { addTroop(at: $0, team: .moon) }
         
       }
 
 
     func setupUI() {
-        troopControlSystem = TroopControlSystem(scene: self, troops: troops, targetEntity: controlledEntity)
-        troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
+        self.troopControlSystem = TroopControlSystem(scene: self, targetEntity: controlledEntity)
+        self.troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
+        camera?.addChild(troopControlButtons!)
         setupCommandButton()
         setupReleaseButton()
-        camera?.addChild(troopControlButtons)
     }
     
    private func setupCommandButton(){

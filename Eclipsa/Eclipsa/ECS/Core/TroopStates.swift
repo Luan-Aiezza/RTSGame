@@ -110,6 +110,7 @@ class TroopDieState: GKState {
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            SKEntityManager.shared.remove(self.troop)
             self.troop.destroy()
         }
     }

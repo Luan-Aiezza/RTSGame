@@ -9,7 +9,7 @@ public class TroopBehaviorComponent: GKComponent {
     
     unowned let troop: TroopEntity
     public weak var target: GKEntity?
-    let allTroops: () -> [TroopEntity]
+    let allTroops: () -> Set<TroopEntity>
     
     // Novo: ponto manual para onde o jogador mandou ir
     public var manualTargetPoint: CGPoint?
@@ -17,7 +17,7 @@ public class TroopBehaviorComponent: GKComponent {
     
     private var lastDefeatedTargetPosition: CGPoint?
     
-    public init(troop: TroopEntity, target: GKEntity?, allTroops: @escaping () -> [TroopEntity]) {
+    public init(troop: TroopEntity, target: GKEntity?, allTroops: @escaping () -> Set<TroopEntity>) {
         self.troop = troop
         self.target = target
         self.allTroops = allTroops
