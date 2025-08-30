@@ -23,7 +23,7 @@ public class TroopEntity: BaseUnitEntity {
         
         // Ajusta animações adicionais: attack e death
         if let animationComponent = self.component(ofType: AnimationComponent.self) {
-            let attackTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
+            let attackTextures = (1...12).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
             let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
             
             animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
@@ -44,7 +44,7 @@ public class TroopEntity: BaseUnitEntity {
         
         // Componentes exclusivos da tropa
         if self.component(ofType: AttackComponent.self) == nil {
-            self.addComponent(AttackComponent(unit: self, damage: 12, cooldown: 1.2))
+            self.addComponent(AttackComponent(unit: self, damage: 3, cooldown: 2.0))
         }
         
         // Remove controle manual do jogador

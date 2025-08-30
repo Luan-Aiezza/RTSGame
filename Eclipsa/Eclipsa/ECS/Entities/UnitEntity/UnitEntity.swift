@@ -12,7 +12,7 @@ import BehindGameKit
 public class UnitEntity: BaseUnitEntity {
     
     public init(team: Team = .sun) {
-        let spriteSize = CGSize(width: 32, height: 32)
+        let spriteSize = CGSize(width: 32, height: 39)
         let idleTextures = (1...24).map { SKTexture(imageNamed: "Sun_Hero_Idle_\($0)") }
         let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
         
