@@ -23,7 +23,7 @@ extension GameScene {
     }
 
     func setupEnemyNexuses() {
-        let enemyNames = ["EnemyNexus_1", "EnemyNexus_2", "EnemyNexus_3"]
+        let enemyNames = ["EnemyNexus_1", "EnemyNexus_2", "EnemyNexus_3", "EnemyNexus_4", "EnemyNexus_5"]
 
         for name in enemyNames {
             if let node = childNode(withName: name) as? SKSpriteNode {

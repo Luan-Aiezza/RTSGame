@@ -34,17 +34,23 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         super.sceneDidLoad()
         
         applyNearestFilterRecursively()
-
+        
+        setupTreeCollisionsBorder(forTilemapNamed: "Tree_2")
+        setupTreeCollisions(forTilemapNamed: "Tree_1")
+        
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
+        
         setupPlayer()
+        setupTroops()
+        
         setupPlayerNexus()   // ✅ cria base do jogador
         setupEnemyNexuses()  // ✅ cria bases inimigas
+        
         setupCamera()
-        setupTroops()
         setupUI()
 
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)

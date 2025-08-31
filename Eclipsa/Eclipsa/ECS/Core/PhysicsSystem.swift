@@ -58,7 +58,13 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             
-            let body = SKPhysicsBody(rectangleOf: size)
+            let reducedHeight = size.height * 0.8  // 80% da altura
+            let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
+            
+            let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,
+                                                         height: reducedHeight),
+                                     center: CGPoint(x: 0, y: offsetY))
+            
             body.affectedByGravity = false
             body.allowsRotation = false
             body.isDynamic = false // prédio não se move
@@ -70,5 +76,6 @@ final class PhysicsSystem {
             entity.addComponent(physics)
         }
     }
+
 }
 

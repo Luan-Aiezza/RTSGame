@@ -15,11 +15,13 @@ public class HealthBarComponent: GKComponent {
         backgroundNode.fillColor = .black
         backgroundNode.strokeColor = .clear
         backgroundNode.alpha = 0.6
-        backgroundNode.zPosition = 1100
+
         
         barNode = SKShapeNode(rectOf: CGSize(width: barWidth, height: barHeight), cornerRadius: barHeight/2)
         barNode.strokeColor = .clear
-        barNode.zPosition = 1101
+
+        backgroundNode.name = "healthbar_background"
+        barNode.name = "healthbar_bar"
         
         super.init()
     }
