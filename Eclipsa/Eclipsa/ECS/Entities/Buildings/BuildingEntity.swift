@@ -34,8 +34,16 @@ public class BuildingEntity: BaseUnitEntity {
         // ✅ adiciona física de wall
         PhysicsSystem.setupBuildingPhysics(for: self, size: node.size)
 
-        // ✅ adiciona barra de vida
-        let healthBar = HealthBarComponent()
+        // ✅ adiciona barra de vida ajustando dinamicamente a posição
+        let healthBar = HealthBarComponent(nodeHeight: node.size.height)
+        self.addComponent(healthBar)
+
+        if let healthComp = self.component(ofType: HealthComponent.self) {
+            healthComp.onHealthChanged = { [weak self] hp, max in
+                self?.component(ofType: HealthBarComponent.self)?.updateBar(health: hp, max: max)
+            }
+        }
+
         self.addComponent(healthBar)
 
         // liga a barra ao componente de vida

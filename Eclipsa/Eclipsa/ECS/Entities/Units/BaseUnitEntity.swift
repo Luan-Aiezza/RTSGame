@@ -6,7 +6,11 @@ import BehindGameKit
 public class BaseUnitEntity: GKEntity {
     public var stateMachineComponent: StateMachineComponent!
     
-    public init(team: Team = .sun, maxHealth: Int, spriteSize: CGSize, idleTextures: [SKTexture], walkTextures: [SKTexture]) {
+    public init(team: Team = .sun,
+                maxHealth: Int,
+                spriteSize: CGSize,
+                idleTextures: [SKTexture],
+                walkTextures: [SKTexture]) {
         super.init()
 
         let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: spriteSize)
@@ -25,14 +29,17 @@ public class BaseUnitEntity: GKEntity {
         self.stateMachineComponent = StateMachineComponent(stateMachine)
         self.addComponent(stateMachineComponent)
 
-        self.addComponent(TeamComponent(team: team)) // Antes do HealthBar para cor correta
+        self.addComponent(TeamComponent(team: team)) // antes do HealthBar para cor correta
 
         // Componente de Vida
         let healthComponent = HealthComponent(maxHealth: maxHealth)
         self.addComponent(healthComponent)
 
-        let healthBar = HealthBarComponent()
+        // ✅ Barra agora depende do tamanho do sprite
+        let healthBar = HealthBarComponent(nodeHeight: spriteNode.size.height)
         self.addComponent(healthBar)
+
+        // ligação vida ↔ barra
         healthComponent.onHealthChanged = { [weak healthBar] health, max in
             healthBar?.updateBar(health: health, max: max)
         }

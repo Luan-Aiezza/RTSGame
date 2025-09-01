@@ -18,7 +18,7 @@ class NewUnitEntity: GKEntity {
         self.addComponent(AnimationComponent(spriteNode: spriteNode))
         
         setupAnimationComponent()
-        setupHealthComponent(maxHealth: maxHealth)
+        //setupHealthComponent(maxHealth: maxHealth)
     }
    
     
@@ -26,18 +26,18 @@ class NewUnitEntity: GKEntity {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func setupHealthComponent(maxHealth: Int){
-        let healthComponent = HealthComponent(maxHealth: maxHealth)
-        self.addComponent(healthComponent)
-        
-        let healthBar = HealthBarComponent()
-        self.addComponent(healthBar)
-        
-        healthComponent.onHealthChanged = { [weak healthBar] health, max in
-            healthBar?.updateBar(health: health, max: max)
-        }
-        healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
-    }
+//    private func setupHealthComponent(maxHealth: Int){
+//        let healthComponent = HealthComponent(maxHealth: maxHealth)
+//        self.addComponent(healthComponent)
+//        
+//        let healthBar = HealthBarComponent()
+//        self.addComponent(healthBar)
+//        
+//        healthComponent.onHealthChanged = { [weak healthBar] health, max in
+//            healthBar?.updateBar(health: health, max: max)
+//        }
+//        healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+//    }
     
     public func setupAnimationComponent(){
          let config = AnimationConfig(
