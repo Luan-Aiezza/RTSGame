@@ -7,10 +7,10 @@ import SpriteKit
 import GameplayKit
 import BehindGameKit
 
-public class EnemyNexusEntity: BuildingEntity {
+public class InhibitorEntity: BuildingEntity {
     
     public init(node: SKSpriteNode) {
-        super.init(node: node, team: .moon, maxHealth: 1000)
+        super.init(node: node, team: .sun, maxHealth: 1000)
     }
     
     required init?(coder: NSCoder) {

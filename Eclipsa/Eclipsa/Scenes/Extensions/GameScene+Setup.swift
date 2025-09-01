@@ -10,25 +10,25 @@ extension GameScene {
         }
     }
     
-    func setupPlayerNexus() {
+    func setupNexus() {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {
-            let nexus = PlayerNexusEntity(node: node)
+            let nexus = NexusEntity(node: node)
             SKEntityManager.shared.add(nexus)
 
             self.userData = self.userData ?? NSMutableDictionary()
-            self.userData?["playerNexus"] = nexus
+            self.userData?["Nexus"] = nexus
         } else {
             print("⚠️ Node 'Nexus' não encontrado na cena!")
         }
     }
 
-    func setupEnemyNexuses() {
-        let enemyNames = ["EnemyNexus_1", "EnemyNexus_2", "EnemyNexus_3", "EnemyNexus_4", "EnemyNexus_5"]
+    func setupInhibitors() {
+        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2", "Inhibitor_3", "Inhibitor_4", "Inhibitor_5"]
 
-        for name in enemyNames {
+        for name in inhibitorNames {
             if let node = childNode(withName: name) as? SKSpriteNode {
-                let enemyNexus = EnemyNexusEntity(node: node)
-                SKEntityManager.shared.add(enemyNexus)
+                let inhibitor = InhibitorEntity(node: node)
+                SKEntityManager.shared.add(inhibitor)
             } else {
                 print("⚠️ Node '\(name)' não encontrado na cena!")
             }
@@ -92,9 +92,9 @@ extension GameScene {
           // Inimigos
         let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
           let enemyPositions = [
-              CGPoint(x: basePosition.x - 50, y: basePosition.y),
-              CGPoint(x: basePosition.x - 60, y: basePosition.y - 10),
-              CGPoint(x: basePosition.x - 120, y: basePosition.y + 90)
+              CGPoint(x: basePosition.x - 150, y: basePosition.y),
+              CGPoint(x: basePosition.x - 160, y: basePosition.y - 10),
+              CGPoint(x: basePosition.x - 220, y: basePosition.y + 90)
           ]
         enemyPositions.forEach { addTroop(at: $0, team: .moon) }
         

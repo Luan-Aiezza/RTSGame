@@ -7,7 +7,7 @@ import SpriteKit
 import GameplayKit
 import BehindGameKit
 
-public class PlayerNexusEntity: BuildingEntity {
+public class NexusEntity: BuildingEntity {
     
     public init(node: SKSpriteNode) {
         super.init(node: node, team: .sun, maxHealth: 2000)

@@ -10,7 +10,6 @@ import BehindGameKit
 public class BuildingEntity: BaseUnitEntity {
     
     public init(node: SKSpriteNode, team: Team, maxHealth: Int) {
-        // usamos o node já existente na cena em vez de criar um novo
         let spriteSize = node.size
         let texture = node.texture ?? SKTexture(imageNamed: "placeholder")
         
@@ -18,7 +17,7 @@ public class BuildingEntity: BaseUnitEntity {
                    maxHealth: maxHealth,
                    spriteSize: spriteSize,
                    idleTextures: [texture],
-                   walkTextures: [texture]) // prédio não anda, mas precisa preencher
+                   walkTextures: [texture])
         
         // substitui o node criado pelo BaseUnitEntity pelo que veio do .sks
         if let oldNode = self.component(ofType: GKSKNodeComponent.self)?.node {
@@ -34,10 +33,20 @@ public class BuildingEntity: BaseUnitEntity {
         
         // ✅ adiciona física de wall
         PhysicsSystem.setupBuildingPhysics(for: self, size: node.size)
+
+        // ✅ adiciona barra de vida
+        let healthBar = HealthBarComponent()
+        self.addComponent(healthBar)
+
+        // liga a barra ao componente de vida
+        if let healthComp = self.component(ofType: HealthComponent.self) {
+            healthComp.onHealthChanged = { [weak self] hp, max in
+                self?.component(ofType: HealthBarComponent.self)?.updateBar(health: hp, max: max)
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
-

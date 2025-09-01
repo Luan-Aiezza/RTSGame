@@ -47,8 +47,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupPlayer()
         setupTroops()
         
-        setupPlayerNexus()   // ✅ cria base do jogador
-        setupEnemyNexuses()  // ✅ cria bases inimigas
+        setupNexus()   // cria base do jogador
+        setupInhibitors() // cria inibidores aliados
         
         setupCamera()
         setupUI()

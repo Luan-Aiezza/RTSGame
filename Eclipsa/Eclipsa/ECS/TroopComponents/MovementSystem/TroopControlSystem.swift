@@ -6,10 +6,6 @@ class TroopControlSystem {
     private weak var scene: GameScene?
     private(set) weak var targetEntity: UnitEntity?
     
-//    private var troops: [TroopEntity] {
-//        guard let troops = scene?.troops else {return []}
-//        return troops
-//    }
     private var troops: Set<TroopEntity> {
         guard let troops = scene?.troops else {return []}
         return troops
