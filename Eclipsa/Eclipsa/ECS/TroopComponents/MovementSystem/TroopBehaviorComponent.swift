@@ -55,6 +55,7 @@ public class TroopBehaviorComponent: GKComponent {
                 }
             }
         }
+        
 
         let behavior = GKBehavior()
 

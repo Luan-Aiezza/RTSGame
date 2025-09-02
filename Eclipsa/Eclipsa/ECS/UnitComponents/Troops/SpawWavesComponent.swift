@@ -1,10 +1,3 @@
-//
-//  SpawnerWaveComponent.swift
-//  Eclipsa
-//
-//  Criado por Assistant em 01/09/25.
-//
-
 import SpriteKit
 import GameplayKit
 import BehindGameKit
@@ -24,6 +17,7 @@ public class SpawnerWaveComponent: GKComponent {
     public var limiteTropas: Int
     public var crescimentoPorWave: Int
     public var tipoDeTropa: TroopType
+    public var maximoWaves: Int   // 🔹 Novo: limite de waves
     
     public enum TroopType {
         case mage
@@ -37,7 +31,8 @@ public class SpawnerWaveComponent: GKComponent {
         pisoTropas: Int = 2,
         limiteTropas: Int = 12,
         crescimentoPorWave: Int = 2,
-        tipoDeTropa: TroopType = .mage
+        tipoDeTropa: TroopType = .mage,
+        maximoWaves: Int = 5   // 🔹 Novo: padrão
     ) {
         self.scene = scene
         self.intervaloEntreWaves = intervaloEntreWaves
@@ -45,6 +40,7 @@ public class SpawnerWaveComponent: GKComponent {
         self.limiteTropas = limiteTropas
         self.crescimentoPorWave = crescimentoPorWave
         self.tipoDeTropa = tipoDeTropa
+        self.maximoWaves = maximoWaves
         super.init()
         
         setupSpawnPoints()
@@ -81,6 +77,9 @@ public class SpawnerWaveComponent: GKComponent {
         guard let scene = scene else { return }
         guard !spawnPoints.isEmpty, nexusTarget != nil else { return }
         
+        // 🔹 Não gera mais waves se já atingiu o limite
+        guard numeroWave < maximoWaves else { return }
+        
         tempoRestante -= seconds
         if tempoRestante <= 0 {
             gerarWave()
@@ -94,9 +93,13 @@ public class SpawnerWaveComponent: GKComponent {
         guard let nexusTarget = nexusTarget else { return }
         
         numeroWave += 1
+        
+        // 🔹 Se estourar o limite, não gera nada
+        guard numeroWave <= maximoWaves else { return }
+        
         let quantidade = min(pisoTropas + (numeroWave - 1) * crescimentoPorWave, limiteTropas)
         
-        print("🌑 Gerando wave \(numeroWave) com \(quantidade) tropas de \(tipoDeTropa)")
+        print("🌑 Gerando wave \(numeroWave)/\(maximoWaves) com \(quantidade) tropas de \(tipoDeTropa)")
         
         for i in 0..<quantidade {
             let spawnIndex = i % spawnPoints.count
@@ -107,12 +110,11 @@ public class SpawnerWaveComponent: GKComponent {
             case .mage:
                 troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
                     return Array(scene?.troops ?? [])
-                    
                 })
             case .knight:
                 troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
                     return Array(scene?.troops ?? [])
-                })//Knight
+                }) // Knight futuramente
             }
             
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
