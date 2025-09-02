@@ -36,7 +36,7 @@ class CommandButton: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func handleTouch(_ location: CGPoint){
+    public func handleTouch(_ location: CGPoint){
         if !isHidden {
             let nodes = self.nodes(at: location)
             for node in nodes {
