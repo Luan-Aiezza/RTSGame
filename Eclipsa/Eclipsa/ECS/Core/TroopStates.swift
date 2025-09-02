@@ -17,7 +17,7 @@ class TroopIdleState: GKState {
 
         if let agent = troop.component(ofType: AgentComponent.self)?.agent {
             agent.maxSpeed = troop.component(ofType: AgentComponent.self)?.defaultMaxSpeed ?? 60
-            agent.maxAcceleration = troop.component(ofType: AgentComponent.self)?.defaultMaxAcceleration ?? 120
+            agent.maxAcceleration = troop.component(ofType: AgentComponent.self)?.defaultMaxAcceleration ?? 60
             agent.behavior = GKBehavior()
         }
     }

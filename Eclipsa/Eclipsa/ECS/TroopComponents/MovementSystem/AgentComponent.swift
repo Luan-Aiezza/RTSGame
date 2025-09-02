@@ -12,7 +12,7 @@ public class AgentComponent: GKComponent {
     public let defaultMaxSpeed: Float
     public let defaultMaxAcceleration: Float
     
-    public init(node: SKSpriteNode, radius: Float = 32.0, maxSpeed: Float = 120.0, maxAcceleration: Float = 180.0) {
+    public init(node: SKSpriteNode, radius: Float = 32.0, maxSpeed: Float = 120.0, maxAcceleration: Float = 120.0) {
         self.agent = GKAgent2D()
         self.node = node
         self.defaultMaxSpeed = maxSpeed
