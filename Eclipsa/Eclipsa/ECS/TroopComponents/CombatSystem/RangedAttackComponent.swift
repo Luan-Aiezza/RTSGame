@@ -7,7 +7,7 @@ public class AttackComponent: GKComponent {
     private var lastAttackTime: TimeInterval = 0
     private var damage: Int
     
-    public init(unit: BaseUnitEntity, damage: Int = 10, cooldown: TimeInterval = 1.5) {
+    public init(unit: BaseUnitEntity, damage: Int = 10, cooldown: TimeInterval = 2.0) {
         self.unit = unit
         self.damage = damage
         self.cooldown = cooldown
@@ -52,7 +52,7 @@ public class AttackComponent: GKComponent {
         guard let origin = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
               let scene = unit.component(ofType: GKSKNodeComponent.self)?.node.scene else { return }
         
-        let projectile = ProjectileEntity(from: origin, target: target, damage: damage)
+        let projectile = ProjectileEntity(from: origin, caster: unit, target: target, damage: damage)
         
         // adiciona o nó do projétil na cena
         if let node = projectile.component(ofType: GKSKNodeComponent.self)?.node {

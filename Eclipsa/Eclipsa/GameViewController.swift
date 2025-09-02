@@ -36,7 +36,8 @@ class GameViewController: UIViewController {
                 skView.showsNodeCount = true
                 skView.showsDrawCount = true
                 skView.isMultipleTouchEnabled = true
-                
+//                skView.showsPhysics = true //Tirar
+
                 skView.translatesAutoresizingMaskIntoConstraints = false
                 view.addSubview(skView)
                 NSLayoutConstraint.activate([

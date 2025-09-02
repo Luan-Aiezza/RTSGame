@@ -19,7 +19,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var collisionSystem: CollisionSystem!
     var troopControlSystem: TroopControlSystem!
     // Lista de tropas para controle coletivo
-//    public var troops: [TroopEntity] = []
+    //    public var troops: [TroopEntity] = []
     public var troops: Set<TroopEntity> {
         SKEntityManager.shared.getAllGameTroops()
     }
@@ -29,35 +29,46 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var releaseButton: CommandButton!
     
     public var customLastUpdateTime: TimeInterval?
+    var sceneEntity: SceneEntity!
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
         applyNearestFilterRecursively()
-
+        
+        setupTreeCollisionsBorder(forTilemapNamed: "Tree_2")
+        setupTreeCollisions(forTilemapNamed: "Tree_1")
+        
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50)
         commandController?.setAnalogVisible(value: false)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
+        
         setupPlayer()
-        setupPlayerNexus()   // ✅ cria base do jogador
-        setupEnemyNexuses()  // ✅ cria bases inimigas
-        setupCamera()
         setupTroops()
+        
+        setupNexus()   // cria base do jogador
+        setupInhibitors() // cria inibidores aliados
+        
+        setupCamera()
         setupUI()
-
+        
+        sceneEntity = SceneEntity(scene: self)
+        SKEntityManager.shared.add(sceneEntity)
+        
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
     }
-
-
+    
+    
     override func update(_ currentTime: TimeInterval) {
-        SKEntityManager.shared.update(currentTime)
+        
         
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
-
+        SKEntityManager.shared.update(deltaTime) //Trocar para DeltaTime
+        
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }
         cameraEntity?.followPlayer(player: controlledEntity)
@@ -75,15 +86,16 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         updatePlayerState()
         depthSortNodes()
         aimingSystem?.updateDynamicAiming()
+        
     }
-
+    
 }
 
 extension GameScene {
     func didBegin(_ contact: SKPhysicsContact) {
         collisionSystem.handleDidBegin(contact)
     }
-
+    
     func didEnd(_ contact: SKPhysicsContact) {
         collisionSystem.handleDidEnd(contact)
     }
