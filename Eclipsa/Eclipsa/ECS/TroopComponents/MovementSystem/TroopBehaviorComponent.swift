@@ -28,7 +28,6 @@ public class TroopBehaviorComponent: GKComponent {
     private func configureBehavior() {
         guard let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
 
-        // 🚫 Removido: não zera mais maxSpeed quando Idle/Attack
         if let state = troop.stateMachineComponent.stateMachine.currentState {
             if state is TroopIdleState || state is TroopAttackState {
                 // Se o state já mandou parar, não configuramos nada aqui
@@ -88,6 +87,13 @@ public class TroopBehaviorComponent: GKComponent {
         if !otherAgents.isEmpty {
             let avoidGoal = GKGoal(toAvoid: otherAgents, maxPredictionTime: 0.5)
             behavior.setWeight(2.0, for: avoidGoal)
+        }
+        
+        // NOVO: evitar obstáculos fixos
+        if let obstacles = (troop.component(ofType: GKSKNodeComponent.self)?.node.scene?.userData?["TreeObstacles"] as? [GKPolygonObstacle]),
+           !obstacles.isEmpty {
+            let avoidObstacles = GKGoal(toAvoid: obstacles, maxPredictionTime: 1.0)
+            behavior.setWeight(3.0, for: avoidObstacles)
         }
 
         agentComponent.agent.behavior = behavior
