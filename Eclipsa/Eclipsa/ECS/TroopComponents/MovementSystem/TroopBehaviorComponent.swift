@@ -58,16 +58,19 @@ public class TroopBehaviorComponent: GKComponent {
 
         let behavior = GKBehavior()
 
-        if let enemy = target {
-            if let health = enemy.component(ofType: HealthComponent.self), health.isDead {
-                    if let node = enemy.component(ofType: GKSKNodeComponent.self)?.node {
-                        lastDefeatedTargetPosition = node.position
-                        manualTargetPoint = node.position   // 👈 adiciona isso
-                    }
-                    self.target = nil
-            } else if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
+        if let enemy = self.target {
+            if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
                 let seekGoal = GKGoal(toSeekAgent: targetAgent)
                 behavior.setWeight(1.0, for: seekGoal)
+            } else if let nexusNode = enemy.component(ofType: GKSKNodeComponent.self)?.node {
+                if manualTargetAgent == nil {
+                    manualTargetAgent = GKAgent2D()
+                }
+                manualTargetAgent?.position = float2(Float(nexusNode.position.x), Float(nexusNode.position.y))
+                if let manualAgent = manualTargetAgent {
+                    let seekGoal = GKGoal(toSeekAgent: manualAgent)
+                    behavior.setWeight(1.0, for: seekGoal)
+                }
             } else {
                 self.target = nil
             }

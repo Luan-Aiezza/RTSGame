@@ -55,6 +55,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupUI()
         
         sceneEntity = SceneEntity(scene: self)
+        SKEntityManager.shared.add(sceneEntity)
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
@@ -67,7 +68,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         SKEntityManager.shared.update(deltaTime) //Trocar para DeltaTime
-        
         
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }

@@ -119,6 +119,13 @@ public class SpawnerWaveComponent: GKComponent {
                 node.position = spawnPoint
                 scene.addChild(node)
             }
+            
+            if troop.component(ofType: TeamComponent.self)?.team == .moon,
+               troop.component(ofType: AgentComponent.self) == nil,
+               let node = troop.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
+                troop.addComponent(AgentComponent(node: node))
+            }
+            
             PhysicsSystem.setupTroopPhysics(for: troop)
             SKEntityManager.shared.add(troop)
             
@@ -136,3 +143,4 @@ public class SpawnerWaveComponent: GKComponent {
         }
     }
 }
+
