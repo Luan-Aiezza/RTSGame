@@ -5,21 +5,23 @@ import BehindGameKit
 
 public class BaseUnitEntity: GKEntity {
     public var stateMachineComponent: StateMachineComponent!
-    
+    public var spriteNode: SKSpriteNode
     public init(team: Team = .sun,
                 maxHealth: Int,
                 spriteSize: CGSize,
-                idleTextures: [SKTexture],
-                walkTextures: [SKTexture]) {
-        super.init()
-
+                idleTextures: [SKTexture] = [],
+                walkTextures: [SKTexture] = []) {
         let spriteNode = SKSpriteNode(texture: nil, color: .clear, size: spriteSize)
+        self.spriteNode = spriteNode
+        super.init()
         self.addComponent(GKSKNodeComponent(node: spriteNode))
-
-        // Componente de animação
+//        // Componente de animação
         let animationComponent = AnimationComponent(spriteNode: spriteNode)
-        animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
-        animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
+        
+        if !idleTextures.isEmpty  && !walkTextures.isEmpty {
+            animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
+            animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
+        }
         self.addComponent(animationComponent)
 
         // Estado e máquina de estados
