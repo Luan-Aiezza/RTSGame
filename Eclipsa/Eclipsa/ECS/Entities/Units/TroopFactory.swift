@@ -45,11 +45,13 @@ enum TroopFactory{
     }
     
     static func makeMelee(team: Team, allTroops: @escaping () -> [TroopEntity]) -> TroopEntity {
+        
         let idleTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Idle_", quantity: 12)
+        print(idleTextures[0])
         let walkTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Walk_", quantity: 8)
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Attack_", quantity: 3)
         let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
-        let spriteSize = CGSize(width: 64, height: 64)
+        let spriteSize = CGSize(width: 32, height: 32)
         let maxHealth = 120
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
@@ -80,7 +82,7 @@ enum TroopFactory{
             rangeComp.node.physicsBody?.collisionBitMask = 0
             rangeComp.node.physicsBody?.contactTestBitMask = PhysicsCategory.troop
         }
-        
+        stateMachine.enter(TroopIdleState.self)
         return meleeTroop
     }
 }
