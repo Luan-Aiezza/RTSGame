@@ -18,4 +18,12 @@ struct Position {
     static func followButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 80, y: -size.height/2 + 80)
     }
+    
+    static func invokeMeleeButton(size: CGSize) -> CGPoint {
+        return CGPoint(x: size.width/2 - 160, y: -size.height/2 + 80)
+    }
+    
+    static func invokeRangeButton(size: CGSize) -> CGPoint {
+        return CGPoint(x: size.width/2 - 240, y: -size.height/2 + 80)
+    }
 }
