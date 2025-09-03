@@ -14,4 +14,8 @@ struct Position {
     static func releaseButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180)
     }
+    
+    static func followButton(size: CGSize) -> CGPoint {
+        return CGPoint(x: size.width/2 - 80, y: -size.height/2 + 80)
+    }
 }
