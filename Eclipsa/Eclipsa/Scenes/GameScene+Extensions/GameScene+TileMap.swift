@@ -122,11 +122,11 @@ extension GameScene {
                 // Obstacle para GameplayKit
                 let halfW = trunkSize.width / 2
                 let halfH = trunkSize.height / 2
-                let points: [vector_float2] = [
-                    float2(Float(worldPos.x - halfW), Float(worldPos.y - halfH)),
-                    float2(Float(worldPos.x + halfW), Float(worldPos.y - halfH)),
-                    float2(Float(worldPos.x + halfW), Float(worldPos.y + halfH)),
-                    float2(Float(worldPos.x - halfW), Float(worldPos.y + halfH))
+                let points: [SIMD2<Float>] = [
+                    SIMD2<Float>(Float(worldPos.x - halfW), Float(worldPos.y - halfH)),
+                    SIMD2<Float>(Float(worldPos.x + halfW), Float(worldPos.y - halfH)),
+                    SIMD2<Float>(Float(worldPos.x + halfW), Float(worldPos.y + halfH)),
+                    SIMD2<Float>(Float(worldPos.x - halfW), Float(worldPos.y + halfH))
                 ]
                 let obstacle = GKPolygonObstacle(points: points)
                 obstacles.append(obstacle)
@@ -192,3 +192,4 @@ extension GameScene {
         }
     }
 }
+

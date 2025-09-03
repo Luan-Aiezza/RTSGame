@@ -25,7 +25,7 @@ public class TroopBehaviorComponent: GKComponent {
         configureBehavior()
     }
     
-    private func configureBehavior() {
+    internal func configureBehavior() {
         guard let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
 
         if let state = troop.stateMachineComponent.stateMachine.currentState {
@@ -67,7 +67,7 @@ public class TroopBehaviorComponent: GKComponent {
                 if manualTargetAgent == nil {
                     manualTargetAgent = GKAgent2D()
                 }
-                manualTargetAgent?.position = float2(Float(nexusNode.position.x), Float(nexusNode.position.y))
+                manualTargetAgent?.position = SIMD2<Float>(Float(nexusNode.position.x), Float(nexusNode.position.y))
                 if let manualAgent = manualTargetAgent {
                     let seekGoal = GKGoal(toSeekAgent: manualAgent)
                     behavior.setWeight(1.0, for: seekGoal)
@@ -79,7 +79,7 @@ public class TroopBehaviorComponent: GKComponent {
             if manualTargetAgent == nil {
                 manualTargetAgent = GKAgent2D()
             }
-            manualTargetAgent?.position = float2(Float(manualPoint.x), Float(manualPoint.y))
+            manualTargetAgent?.position = SIMD2<Float>(Float(manualPoint.x), Float(manualPoint.y))
             if let manualAgent = manualTargetAgent {
                 let seekGoal = GKGoal(toSeekAgent: manualAgent)
                 behavior.setWeight(1.0, for: seekGoal)
@@ -115,3 +115,4 @@ public class TroopBehaviorComponent: GKComponent {
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }
+

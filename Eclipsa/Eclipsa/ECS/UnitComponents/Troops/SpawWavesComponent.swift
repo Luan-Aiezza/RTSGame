@@ -17,7 +17,7 @@ public class SpawnerWaveComponent: GKComponent {
     public var limiteTropas: Int
     public var crescimentoPorWave: Int
     public var tipoDeTropa: TroopType
-    public var maximoWaves: Int   // 🔹 Novo: limite de waves
+    public var maximoWaves: Int
     
     public enum TroopType {
         case mage
@@ -32,7 +32,7 @@ public class SpawnerWaveComponent: GKComponent {
         limiteTropas: Int = 12,
         crescimentoPorWave: Int = 2,
         tipoDeTropa: TroopType = .mage,
-        maximoWaves: Int = 5   // 🔹 Novo: padrão
+        maximoWaves: Int = 5
     ) {
         self.scene = scene
         self.intervaloEntreWaves = intervaloEntreWaves
@@ -74,10 +74,9 @@ public class SpawnerWaveComponent: GKComponent {
     
     // MARK: - Update
     public override func update(deltaTime seconds: TimeInterval) {
-        guard let scene = scene else { return }
+        guard scene != nil else { return }
         guard !spawnPoints.isEmpty, nexusTarget != nil else { return }
         
-        // 🔹 Não gera mais waves se já atingiu o limite
         guard numeroWave < maximoWaves else { return }
         
         tempoRestante -= seconds
@@ -93,8 +92,6 @@ public class SpawnerWaveComponent: GKComponent {
         guard let nexusTarget = nexusTarget else { return }
         
         numeroWave += 1
-        
-        // 🔹 Se estourar o limite, não gera nada
         guard numeroWave <= maximoWaves else { return }
         
         let quantidade = min(pisoTropas + (numeroWave - 1) * crescimentoPorWave, limiteTropas)
@@ -114,7 +111,7 @@ public class SpawnerWaveComponent: GKComponent {
             case .knight:
                 troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
                     return Array(scene?.troops ?? [])
-                }) // Knight futuramente
+                })
             }
             
             if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
@@ -131,18 +128,20 @@ public class SpawnerWaveComponent: GKComponent {
             PhysicsSystem.setupTroopPhysics(for: troop)
             SKEntityManager.shared.add(troop)
             
-            // Configura o comportamento da tropa para atacar o Nexus
-            if let behavior = troop.component(ofType: TroopBehaviorComponent.self) {
-                behavior.setTarget(nexusTarget)
+            // garantir que o behavior exista e que o target esteja setado
+            let behavior: EnemyTroopBehaviorComponent
+            if let existing = troop.component(ofType: EnemyTroopBehaviorComponent.self) {
+                behavior = existing
             } else {
-                let behavior = TroopBehaviorComponent(
+                behavior = EnemyTroopBehaviorComponent(
                     troop: troop,
-                    target: nexusTarget,
-                    allTroops: { [weak scene] in scene?.troops ?? [] }
+                    nexus: nexusTarget,
+                    allTroops: { [weak scene] in scene?.troops ?? Set<TroopEntity>() }
                 )
                 troop.addComponent(behavior)
             }
+            // sempre assegurar que o Nexus esteja definido como target
+            behavior.setTarget(nexusTarget)
         }
     }
 }
-
