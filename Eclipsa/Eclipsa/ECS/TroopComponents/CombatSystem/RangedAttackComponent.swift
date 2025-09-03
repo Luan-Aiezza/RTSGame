@@ -15,7 +15,10 @@ public class AttackComponent: GKComponent {
     }
     
     public override func update(deltaTime seconds: TimeInterval) {
-        guard let target = (unit.component(ofType: TroopBehaviorComponent.self)?.target as? BaseUnitEntity),
+        let behaviorComponent = (unit.components.first { $0 is TroopBehaviorComponent } as? TroopBehaviorComponent)
+        let target = behaviorComponent?.target as? BaseUnitEntity
+        
+        guard let target = target,
               let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
               let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
               let range = unit.component(ofType: RangeComponent.self)?.radius else { return }

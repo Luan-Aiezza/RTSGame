@@ -1,11 +1,3 @@
-
-//
-//  EnemyBehaviorComponent.swift
-//  Eclipsa
-//
-//  Criado por Luan Aiezza em 03/09/25
-//
-
 import GameplayKit
 import BehindGameKit
 
@@ -19,22 +11,27 @@ public class EnemyTroopBehaviorComponent: TroopBehaviorComponent {
             self.nexusPosition = nexusNode.position
         }
         super.init(troop: troop, target: nil, allTroops: allTroops)
-        setTarget(nexus)
-        self.configureBehavior() // força configuração inicial
+        setTarget(nexus) // começa focado no Nexus
+        configureBehavior()
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 
     override func configureBehavior() {
-        guard let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
-        if let state = troop.stateMachineComponent.stateMachine.currentState {
-            if state is TroopIdleState || state is TroopAttackState {
-                return
-            }
+        guard let troop = troop,
+              let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
+
+        // Se o estado atual mandou parar, não mexe no comportamento
+        if let state = troop.stateMachineComponent.stateMachine.currentState,
+           state is TroopIdleState || state is TroopAttackState {
+            return
         }
+
         var newTarget: GKEntity? = nil
+
+        // Procura inimigos próximos
         if let range = troop.component(ofType: RangeComponent.self) {
-            let enemyTeam = troop.component(ofType: TeamComponent.self)?.team == .sun ? Team.moon : Team.sun
+            let enemyTeam: Team = (troop.component(ofType: TeamComponent.self)?.team == .sun) ? .moon : .sun
             let nearbyEnemies = allTroops().filter {
                 $0 !== troop &&
                 $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
@@ -45,48 +42,29 @@ public class EnemyTroopBehaviorComponent: TroopBehaviorComponent {
                 newTarget = firstEnemy
             }
         }
-        // Se não achou inimigos, vai para o Nexus
+
+        // Se não achou inimigos, segue para o Nexus
         if newTarget == nil {
             newTarget = nexusTarget
         }
+
         if newTarget !== target {
             setTarget(newTarget)
         }
+
         super.configureBehavior()
     }
 
     public override func update(deltaTime seconds: TimeInterval) {
-        configureBehavior()
-        
-        // --- Atualiza a state machine de acordo com o target ---
-        guard let stateMachineComponent = troop.stateMachineComponent else { return }
-        let stateMachine = stateMachineComponent.stateMachine
-        
-        if let currentTarget = target as? BaseUnitEntity,
-           let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
-           let targetPos = currentTarget.component(ofType: GKSKNodeComponent.self)?.node.position,
-           let range = troop.component(ofType: RangeComponent.self)?.radius,
-           let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
-           let targetTeam = currentTarget.component(ofType: TeamComponent.self)?.team
-        {
-            let dist2 = pow(troopPos.x - targetPos.x, 2) + pow(troopPos.y - targetPos.y, 2)
-            
-            if troopTeam != targetTeam {
-                if dist2 <= range * range {
-                    if !(stateMachine.currentState is TroopAttackState) {
-                        stateMachine.enter(TroopAttackState.self)
-                    }
-                } else {
-                    if !(stateMachine.currentState is TroopFollowState) {
-                        stateMachine.enter(TroopFollowState.self)
-                    }
-                }
-            }
-        } else {
-            if !(stateMachine.currentState is TroopIdleState) {
-                stateMachine.enter(TroopIdleState.self)
-            }
-        }
-    }
+        guard let stateMachine = troop?.stateMachineComponent?.stateMachine else { return }
 
+        // Só reconfigura se não estiver atacando
+        if !(stateMachine.currentState is TroopAttackState) {
+            configureBehavior()
+        }
+
+        // Não decidimos mais manualmente o estado aqui.
+        // Idle/Follow/Attack já são controlados dentro dos próprios TroopStates.
+    }
 }
+

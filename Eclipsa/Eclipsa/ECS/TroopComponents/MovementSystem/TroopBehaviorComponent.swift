@@ -7,7 +7,7 @@ import BehindGameKit
 
 public class TroopBehaviorComponent: GKComponent {
     
-    unowned let troop: TroopEntity
+    weak var troop: TroopEntity?
     public weak var target: GKEntity?
     let allTroops: () -> Set<TroopEntity>
     
@@ -26,9 +26,9 @@ public class TroopBehaviorComponent: GKComponent {
     }
     
     internal func configureBehavior() {
-        guard let agentComponent = troop.component(ofType: AgentComponent.self) else { return }
+        guard let agentComponent = troop?.component(ofType: AgentComponent.self) else { return }
 
-        if let state = troop.stateMachineComponent.stateMachine.currentState {
+        if let state = troop?.stateMachineComponent.stateMachine.currentState {
             if state is TroopIdleState || state is TroopAttackState {
                 // Se o state já mandou parar, não configuramos nada aqui
                 return
@@ -37,8 +37,8 @@ public class TroopBehaviorComponent: GKComponent {
 
         // Se não há alvo e não é um comando manual, tenta achar inimigo
         if target == nil && manualTargetPoint == nil {
-            if let range = troop.component(ofType: RangeComponent.self) {
-                let enemyTeam = troop.component(ofType: TeamComponent.self)?.team == .sun ? Team.moon : Team.sun
+            if let range = troop?.component(ofType: RangeComponent.self) {
+                let enemyTeam = troop?.component(ofType: TeamComponent.self)?.team == .sun ? Team.moon : Team.sun
                 let nearbyEnemies = allTroops().filter {
                     $0 !== troop &&
                     $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
@@ -94,7 +94,7 @@ public class TroopBehaviorComponent: GKComponent {
         }
         
         // NOVO: evitar obstáculos fixos
-        if let obstacles = (troop.component(ofType: GKSKNodeComponent.self)?.node.scene?.userData?["TreeObstacles"] as? [GKPolygonObstacle]),
+        if let obstacles = (troop?.component(ofType: GKSKNodeComponent.self)?.node.scene?.userData?["TreeObstacles"] as? [GKPolygonObstacle]),
            !obstacles.isEmpty {
             let avoidObstacles = GKGoal(toAvoid: obstacles, maxPredictionTime: 1.0)
             behavior.setWeight(3.0, for: avoidObstacles)
