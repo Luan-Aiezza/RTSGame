@@ -9,7 +9,7 @@ extension GameScene {
         // Converter o ponto de toque da coordenada da câmera para a cena global
         let locationInScene = camera.convert(location, to: self)
         releaseButton.handleTouch(location)
-        troopControlButtons?.handleTouch(location)
+        buttons.followButton.handleTouch(location)
         if location.x <= 0 {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)
@@ -19,8 +19,6 @@ extension GameScene {
             commandController?.touchBegan(touches, with: event)
             cancelButton.toggleCommand(value: false)
         }
-        // Only move troops if not tapping Follow button
-        let buttonNodes = troopControlButtons?.nodes(at: location)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

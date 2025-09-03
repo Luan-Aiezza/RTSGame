@@ -100,8 +100,6 @@ extension GameScene {
     
     func setupUI() {
         self.troopControlSystem = TroopControlSystem(scene: self, targetEntity: controlledEntity)
-        self.troopControlButtons = TroopControlButtons(size: self.size, troopControlSystem: troopControlSystem)
-        camera?.addChild(troopControlButtons!)
         setupCommandButton()
         setupReleaseButton()
     }
