@@ -1,5 +1,6 @@
 import GameplayKit
 import BehindGameKit
+import SpriteKit
 
 public class TroopBehaviorComponent: GKComponent {
     
@@ -55,16 +56,56 @@ public class TroopBehaviorComponent: GKComponent {
         if let range = troop?.component(ofType: RangeComponent.self),
            target === defaultTarget || target == nil {
             
-            let enemyTeam = troop?.component(ofType: TeamComponent.self)?.team == .sun ? Team.moon : Team.sun
-            let nearbyEnemies = allTroops().filter {
-                $0 !== troop &&
-                $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
-                ($0.component(ofType: HealthComponent.self)?.isDead == false) &&
-                (range.contains(point: $0.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero))
+            // Time inimigo
+            let myTeam = troop?.component(ofType: TeamComponent.self)?.team
+            let enemyTeam: Team? = {
+                guard let t = myTeam else { return nil }
+                return t == .sun ? .moon : .sun
+            }()
+            
+            // 1) Tropas inimigas (comportamento atual)
+            var candidateEntities: [BaseUnitEntity] = []
+            if let enemyTeam = enemyTeam {
+                let enemyTroops = allTroops().compactMap { $0 as BaseUnitEntity }.filter {
+                    $0 !== troop &&
+                    $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
+                    ($0.component(ofType: HealthComponent.self)?.isDead == false)
+                }
+                candidateEntities.append(contentsOf: enemyTroops)
             }
             
-            if let newTarget = nearbyEnemies.first {
-                setTarget(newTarget)   // entra em combate
+            // 2) Se a tropa é inimiga (.moon), também considerar Inhibitors e o UnitEntity do jogador
+            if myTeam == .moon {
+                // Inhibitors aliados do jogador (time .sun)
+                let inhibitors = SKEntityManager.shared.getAllEntities()
+                    .compactMap { $0 as? InhibitorEntity }
+                    .compactMap { $0 as BaseUnitEntity }
+                    .filter {
+                        ($0.component(ofType: TeamComponent.self)?.team == .sun) &&
+                        ($0.component(ofType: HealthComponent.self)?.isDead == false)
+                    }
+                candidateEntities.append(contentsOf: inhibitors)
+                
+                // Jogador (UnitEntity) do time .sun
+                if let player = SKEntityManager.shared.getFirstEntity(ofType: UnitEntity.self) {
+                    if player.component(ofType: TeamComponent.self)?.team == .sun,
+                       player.component(ofType: HealthComponent.self)?.isDead == false {
+                        candidateEntities.append(player)
+                    }
+                }
+            }
+            
+            // Filtrar por alcance
+            let inRangeCandidates: [BaseUnitEntity] = candidateEntities.filter {
+                if let pos = $0.component(ofType: GKSKNodeComponent.self)?.node.position {
+                    return range.contains(point: pos)
+                }
+                return false
+            }
+            
+            // Escolher o primeiro (ou o mais próximo, se quiser otimizar futuramente)
+            if let newTarget = inRangeCandidates.first {
+                setTarget(newTarget)
                 return
             } else if let lastPos = lastDefeatedTargetPosition {
                 manualTargetPoint = lastPos
@@ -111,6 +152,7 @@ public class TroopBehaviorComponent: GKComponent {
         }
         
         // Evitar obstáculos fixos
+
         
         agentComponent.agent.behavior = behavior
     }
