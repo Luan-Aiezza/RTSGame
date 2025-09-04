@@ -20,7 +20,7 @@ extension GameScene {
             cancelButton.toggleCommand(value: false)
         }
         // Only move troops if not tapping Follow button
-        _ = troopControlButtons?.nodes(at: location)
+//        _ = troopControlButtons?.nodes(at: location)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
