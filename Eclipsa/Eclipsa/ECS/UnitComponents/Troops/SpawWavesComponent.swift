@@ -102,6 +102,7 @@ public class SpawnerWaveComponent: GKComponent {
             let spawnIndex = i % spawnPoints.count
             let spawnPoint = spawnPoints[spawnIndex]
             
+            // Cria a tropa conforme o tipo (por enquanto ambos usam TroopEntity base)
             let troop: TroopEntity
             switch tipoDeTropa {
             case .mage:
@@ -119,29 +120,24 @@ public class SpawnerWaveComponent: GKComponent {
                 scene.addChild(node)
             }
             
-            if troop.component(ofType: TeamComponent.self)?.team == .moon,
-               troop.component(ofType: AgentComponent.self) == nil,
+            // Sempre adiciona AgentComponent primeiro
+            if troop.component(ofType: AgentComponent.self) == nil,
                let node = troop.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
                 troop.addComponent(AgentComponent(node: node))
             }
             
+            // Agora adiciona Behavior apontando para o Nexus (já está desopcionalizado no guard acima)
+            let behavior = TroopBehaviorComponent(
+                troop: troop,
+                target: nexusTarget,
+                allTroops: { [weak scene] in
+                    return Set(scene?.troops ?? [])
+                }
+            )
+            troop.addComponent(behavior)
+            
             PhysicsSystem.setupTroopPhysics(for: troop)
             SKEntityManager.shared.add(troop)
-            
-            // garantir que o behavior exista e que o target esteja setado
-            let behavior: EnemyTroopBehaviorComponent
-            if let existing = troop.component(ofType: EnemyTroopBehaviorComponent.self) {
-                behavior = existing
-            } else {
-                behavior = EnemyTroopBehaviorComponent(
-                    troop: troop,
-                    nexus: nexusTarget,
-                    allTroops: { [weak scene] in scene?.troops ?? Set<TroopEntity>() }
-                )
-                troop.addComponent(behavior)
-            }
-            // sempre assegurar que o Nexus esteja definido como target
-            behavior.setTarget(nexusTarget)
         }
     }
 }
