@@ -17,7 +17,7 @@ public class UnitEntity: BaseUnitEntity {
         let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Hero_Walk_\($0)") }
         
         super.init(team: team,
-                   maxHealth: 100,
+                   maxHealth: 500,
                    spriteSize: spriteSize,
                    idleTextures: idleTextures,
                    walkTextures: walkTextures)

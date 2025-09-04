@@ -25,29 +25,6 @@ public class ProjectileEntity: GKEntity {
         bullet.zPosition = 2000 - bullet.position.y
         bullet.isHidden = true
         
-        // 🔹 Conjuração (48x48 → corrigir base)
-        if let casterNode = caster.component(ofType: GKSKNodeComponent.self)?.node {
-            let castNode = SKSpriteNode(texture: nil, size: CGSize(width: 48, height: 48))
-            
-            // alinhar base da tropa (32) com cast (48)
-            castNode.position = CGPoint(
-                x: casterNode.position.x - 4,  // desloca levemente à esquerda
-                y: casterNode.position.y + 8   // sobe um pouco para alinhar a base
-            )
-            castNode.zPosition = casterNode.zPosition + 1
-            
-            let castTextures = (1...12).map { SKTexture(imageNamed: "Sun_Magic_Casting_\($0)") }
-            let castAction = SKAction.animate(with: castTextures, timePerFrame: 0.08)
-            
-            castNode.run(.sequence([
-                castAction,
-                .removeFromParent(),
-                .run { [weak self] in self?.startBullet() }
-            ]))
-            
-            casterNode.scene?.addChild(castNode)
-        }
-        
         // ============================
         // 2) Bullet animação
         // ============================
@@ -59,6 +36,11 @@ public class ProjectileEntity: GKEntity {
             repeatForever: true
         )
         
+        
+        // Como o cast agora está acoplado ao personagem, não precisamos mais do castNode/castTextures.
+        // Basta iniciar o projétil.
+        startBullet()
+        
         // ============================
         // 3) Hit animação (32x32 → corrigir base)
         // ============================
@@ -69,6 +51,7 @@ public class ProjectileEntity: GKEntity {
             timePerFrame: 0.06,
             repeatForever: false
         )
+    
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -143,4 +126,3 @@ public class ProjectileEntity: GKEntity {
         target = nil
     }
 }
-
