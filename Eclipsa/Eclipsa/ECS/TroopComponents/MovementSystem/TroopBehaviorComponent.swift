@@ -111,11 +111,6 @@ public class TroopBehaviorComponent: GKComponent {
         }
         
         // Evitar obstáculos fixos
-        if let obstacles = (troop?.component(ofType: GKSKNodeComponent.self)?.node.scene?.userData?["TreeObstacles"] as? [GKPolygonObstacle]),
-           !obstacles.isEmpty {
-            let avoidObstacles = GKGoal(toAvoid: obstacles, maxPredictionTime: 1.0)
-            behavior.setWeight(3.0, for: avoidObstacles)
-        }
         
         agentComponent.agent.behavior = behavior
     }
