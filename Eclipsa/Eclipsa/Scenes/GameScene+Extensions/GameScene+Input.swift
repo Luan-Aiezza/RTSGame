@@ -10,6 +10,7 @@ extension GameScene {
         let locationInScene = camera.convert(location, to: self)
         releaseButton.handleTouch(location)
         buttons.followButton.handleTouch(location)
+        buttons.invokeRangedButton.handleTouch(location)
         if location.x <= 0 {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)
@@ -65,7 +66,7 @@ extension GameScene {
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         gameController?.touchesCancelled(touches, with: event)
         gameController?.setAnalogVisible(value: false, withDuration: 0.6)
-       commandController?.touchesEnded(touches, with: event)
-       commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        commandController?.touchesEnded(touches, with: event)
+        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
