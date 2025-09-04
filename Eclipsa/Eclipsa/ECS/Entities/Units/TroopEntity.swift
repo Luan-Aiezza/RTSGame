@@ -108,9 +108,6 @@ extension TroopEntity {
         }
     }
     static func createTroop(at position: CGPoint, team: Team, troops: [TroopEntity]) -> TroopEntity {
-//        let troop = TroopEntity(team: team){
-//            return troops
-//        }
         let troop = TroopFactory.makeRanged(team: team) {
             return troops
         }
