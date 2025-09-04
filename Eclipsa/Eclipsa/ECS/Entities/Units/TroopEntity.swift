@@ -10,7 +10,7 @@ import BehindGameKit
 
 // Entidade de Tropa baseada em BaseUnitEntity, sem controle manual do jogador
 public class TroopEntity: BaseUnitEntity {
-    public init(team: Team = .sun, maxHealth: Int = 60, spriteSize: CGSize = .init(width: 32, height: 32), allTroops: @escaping () -> [TroopEntity]) {
+    public init(team: Team = .sun, maxHealth: Int = 50, spriteSize: CGSize = .init(width: 32, height: 32), allTroops: @escaping () -> [TroopEntity]) {
         
         
         // Texturas específicas da tropa (Mage)

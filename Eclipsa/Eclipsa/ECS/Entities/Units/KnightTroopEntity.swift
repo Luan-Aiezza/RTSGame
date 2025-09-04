@@ -17,7 +17,7 @@ public class KnightTroopEntity: BaseUnitEntity {
         let idleTextures = (1...12).map { SKTexture(imageNamed: "Sun_Soldier_Idle_\($0)") }
         let walkTextures = (1...8).map { SKTexture(imageNamed: "Sun_Soldier_Walk_\($0)") }
         let spriteSize = CGSize(width: 32, height: 32)
-        let maxHealth = 120   // mais vida que o mago
+        let maxHealth = 150   // mais vida que o mago
         
         super.init(team: team,
                    maxHealth: maxHealth,
@@ -48,7 +48,7 @@ public class KnightTroopEntity: BaseUnitEntity {
         
         // Componente de ataque corpo a corpo
         if self.component(ofType: MeleeAttackComponent.self) == nil {
-            self.addComponent(MeleeAttackComponent(attacker: self, damage: 20, cooldown: 1.0))
+            self.addComponent(MeleeAttackComponent(attacker: self, damage: 25, cooldown: 1.0))
         }
         
         // Ajusta o range para combate corpo a corpo

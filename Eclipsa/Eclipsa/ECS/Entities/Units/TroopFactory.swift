@@ -17,7 +17,7 @@ enum TroopFactory{
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Mage_Casting_", quantity: 12)
         let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
         let spriteSize = CGSize(width: 48, height: 48)
-        let maxHealth = 60
+        let maxHealth = 50
         
         let rangedTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         
@@ -39,7 +39,7 @@ enum TroopFactory{
         
         stateMachine.enter(TroopIdleState.self)
         
-       rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 3, cooldown: 2.0))
+       rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 50, cooldown: 2.0))
         
         return rangedTroop
     }
@@ -52,7 +52,7 @@ enum TroopFactory{
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Attack_", quantity: 3)
         let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
         let spriteSize = CGSize(width: 32, height: 32)
-        let maxHealth = 120
+        let maxHealth = 150
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         
@@ -71,7 +71,7 @@ enum TroopFactory{
         let stateMachine = GKStateMachine(states: [idle, follow, attack, die])
         meleeTroop.stateMachineComponent = StateMachineComponent(stateMachine)
         meleeTroop.addComponent(meleeTroop.stateMachineComponent)
-        meleeTroop.addComponent(MeleeAttackComponent(attacker: meleeTroop, damage: 20, cooldown: 1.0))
+        meleeTroop.addComponent(MeleeAttackComponent(attacker: meleeTroop, damage: 25, cooldown: 1.0))
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self) {
             rangeComp.node.path = CGPath(ellipseIn: CGRect(x: -16, y: -16, width: 32, height: 32), transform: nil)
