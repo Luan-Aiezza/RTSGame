@@ -70,14 +70,6 @@ public class HealthBarComponent: GKComponent {
                 } else {
                     barNode.fillColor = .green
                 }
-            default:
-                if percent < 0.2 {
-                    barNode.fillColor = .red
-                } else if percent < 0.5 {
-                    barNode.fillColor = .orange
-                } else {
-                    barNode.fillColor = .green
-                }
             }
         } else {
             if percent < 0.2 {
@@ -90,4 +82,3 @@ public class HealthBarComponent: GKComponent {
         }
     }
 }
-

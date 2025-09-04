@@ -87,15 +87,6 @@ extension GameScene {
             }
         }
         
-         //Inimigos
-//        let basePosition = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node.position ?? .zero
-//        let enemyPositions = [
-//            CGPoint(x: basePosition.x - 150, y: basePosition.y),
-//            CGPoint(x: basePosition.x - 160, y: basePosition.y - 10),
-//            CGPoint(x: basePosition.x - 220, y: basePosition.y + 90)
-//        ]
-//        enemyPositions.forEach { addTroop(at: $0, team: .moon) }
-        
     }
     
     func setupUI() {

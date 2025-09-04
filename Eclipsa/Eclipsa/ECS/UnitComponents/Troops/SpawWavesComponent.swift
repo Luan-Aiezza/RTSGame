@@ -1,10 +1,3 @@
-//
-//  SpawnerWaveComponent.swift
-//  Eclipsa
-//
-//  Criado por Assistant em 01/09/25.
-//
-
 import SpriteKit
 import GameplayKit
 import BehindGameKit
@@ -24,6 +17,7 @@ public class SpawnerWaveComponent: GKComponent {
     public var limiteTropas: Int
     public var crescimentoPorWave: Int
     public var tipoDeTropa: TroopType
+    public var maximoWaves: Int
     
     public enum TroopType {
         case mage
@@ -37,7 +31,8 @@ public class SpawnerWaveComponent: GKComponent {
         pisoTropas: Int = 2,
         limiteTropas: Int = 12,
         crescimentoPorWave: Int = 2,
-        tipoDeTropa: TroopType = .mage
+        tipoDeTropa: TroopType = .mage,
+        maximoWaves: Int = 5
     ) {
         self.scene = scene
         self.intervaloEntreWaves = intervaloEntreWaves
@@ -45,6 +40,7 @@ public class SpawnerWaveComponent: GKComponent {
         self.limiteTropas = limiteTropas
         self.crescimentoPorWave = crescimentoPorWave
         self.tipoDeTropa = tipoDeTropa
+        self.maximoWaves = maximoWaves
         super.init()
         
         setupSpawnPoints()
@@ -78,8 +74,10 @@ public class SpawnerWaveComponent: GKComponent {
     
     // MARK: - Update
     public override func update(deltaTime seconds: TimeInterval) {
-        guard let scene = scene else { return }
+        guard scene != nil else { return }
         guard !spawnPoints.isEmpty, nexusTarget != nil else { return }
+        
+        guard numeroWave < maximoWaves else { return }
         
         tempoRestante -= seconds
         if tempoRestante <= 0 {
@@ -94,14 +92,17 @@ public class SpawnerWaveComponent: GKComponent {
         guard let nexusTarget = nexusTarget else { return }
         
         numeroWave += 1
+        guard numeroWave <= maximoWaves else { return }
+        
         let quantidade = min(pisoTropas + (numeroWave - 1) * crescimentoPorWave, limiteTropas)
         
-        print("🌑 Gerando wave \(numeroWave) com \(quantidade) tropas de \(tipoDeTropa)")
+        print("🌑 Gerando wave \(numeroWave)/\(maximoWaves) com \(quantidade) tropas de \(tipoDeTropa)")
         
         for i in 0..<quantidade {
             let spawnIndex = i % spawnPoints.count
             let spawnPoint = spawnPoints[spawnIndex]
             
+            // Cria a tropa conforme o tipo (por enquanto ambos usam TroopEntity base)
             let troop: TroopEntity
             switch tipoDeTropa {
             case .mage:
@@ -127,27 +128,24 @@ public class SpawnerWaveComponent: GKComponent {
                 scene.addChild(node)
             }
             
-            if troop.component(ofType: TeamComponent.self)?.team == .moon,
-               troop.component(ofType: AgentComponent.self) == nil,
+            // Sempre adiciona AgentComponent primeiro
+            if troop.component(ofType: AgentComponent.self) == nil,
                let node = troop.component(ofType: GKSKNodeComponent.self)?.node as? SKSpriteNode {
                 troop.addComponent(AgentComponent(node: node))
             }
             
+            // Agora adiciona Behavior apontando para o Nexus (já está desopcionalizado no guard acima)
+            let behavior = TroopBehaviorComponent(
+                troop: troop,
+                target: nexusTarget,
+                allTroops: { [weak scene] in
+                    return Set(scene?.troops ?? [])
+                }
+            )
+            troop.addComponent(behavior)
+            
             PhysicsSystem.setupTroopPhysics(for: troop)
             SKEntityManager.shared.add(troop)
-            
-            // Configura o comportamento da tropa para atacar o Nexus
-            if let behavior = troop.component(ofType: TroopBehaviorComponent.self) {
-                behavior.setTarget(nexusTarget)
-            } else {
-                let behavior = TroopBehaviorComponent(
-                    troop: troop,
-                    target: nexusTarget,
-                    allTroops: { [weak scene] in scene?.troops ?? [] }
-                )
-                troop.addComponent(behavior)
-            }
         }
     }
 }
-

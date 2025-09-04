@@ -54,7 +54,7 @@ public class BaseUnitEntity: GKEntity {
         let agent = AgentComponent(node: spriteNode)
         agent.agent.radius = 32
         agent.agent.maxSpeed = 75
-        agent.agent.maxAcceleration = 300
+        agent.agent.maxAcceleration = 75
         self.addComponent(agent)
     }
 
