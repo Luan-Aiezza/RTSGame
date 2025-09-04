@@ -11,6 +11,7 @@ extension GameScene {
         releaseButton.handleTouch(location)
         buttons.followButton.handleTouch(location)
         buttons.invokeRangedButton.handleTouch(location)
+        buttons.invokeMeleeButton.handleTouch(location)
         if location.x <= 0 {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)

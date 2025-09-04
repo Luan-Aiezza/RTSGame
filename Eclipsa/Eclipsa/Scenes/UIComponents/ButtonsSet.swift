@@ -50,6 +50,17 @@ class ButtonsSet {
     
     func setupInvokeMeleeButton(){
         invokeMeleeButton.toggleCommand(value: false)
+        invokeMeleeButton.onTouch = { [weak self] in
+            guard let self = self else { return }
+            self.entity.generator?.generateMelee(troops: self.troops) { troop in
+                if let node = troop?.component(ofType: AnimationComponent.self)?.node,
+                   let troop = troop{
+                    self.scene.addChild(node)
+                    SKEntityManager.shared.add(troop)
+                }
+                
+            }
+        }
         camera?.addChild(invokeMeleeButton)
     }
     func setupInvokeRangedButton(){

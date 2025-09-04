@@ -66,6 +66,17 @@ class TroopGeneratorComponent: GKComponent {
         
     }
     
+    func generateMelee(troops: Set<TroopEntity>, completion: @escaping ((TroopEntity?) -> Void)){
+        let position = spawnPosition + spawnOffset
+        let troop = TroopFactory.makeMelee(team: .sun) {
+            return Array(troops)
+        }
+        troop.spriteNode.position = position
+        generatedTroops.insert(troop)
+        completion(troop)
+        
+    }
+    
     func findFreeSpawnPosition(
         near basePosition: CGPoint,
         maxAttempts: Int = 10,
