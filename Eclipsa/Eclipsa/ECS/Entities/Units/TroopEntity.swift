@@ -112,17 +112,17 @@ extension TroopEntity {
             return troops
         }
          troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
-         PhysicsSystem.setupTroopPhysics(for: troop)
-
-         if let rangeComp = troop.component(ofType: RangeComponent.self),
-            let nodeComp = troop.component(ofType: GKSKNodeComponent.self) {
-             let scene = nodeComp.node.scene
-             let positionInScene = nodeComp.node.position
-             rangeComp.node.position = positionInScene
-             if rangeComp.node.parent !== scene {
-                 scene?.addChild(rangeComp.node)
-             }
-         }
+//         PhysicsSystem.setupTroopPhysics(for: troop)
+//
+//         if let rangeComp = troop.component(ofType: RangeComponent.self),
+//            let nodeComp = troop.component(ofType: GKSKNodeComponent.self) {
+//             let scene = nodeComp.node.scene
+//             let positionInScene = nodeComp.node.position
+//             rangeComp.node.position = positionInScene
+//             if rangeComp.node.parent !== scene {
+//                 scene?.addChild(rangeComp.node)
+//             }
+//         }
          return troop
      }
 }
