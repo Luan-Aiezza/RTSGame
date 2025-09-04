@@ -106,11 +106,19 @@ public class SpawnerWaveComponent: GKComponent {
             let troop: TroopEntity
             switch tipoDeTropa {
             case .mage:
-                troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
+//                troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
+//                    return Array(scene?.troops ?? [])
+//                    
+//                })
+                
+                troop = TroopFactory.makeRanged(team: .moon, allTroops: { [weak scene] in
                     return Array(scene?.troops ?? [])
                 })
             case .knight:
-                troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
+//                troop = TroopEntity(team: .moon, allTroops: { [weak scene] in
+//                    return Array(scene?.troops ?? [])
+//                })//Knight
+                troop = TroopFactory.makeMelee(team: .moon, allTroops: { [weak scene] in
                     return Array(scene?.troops ?? [])
                 })
             }

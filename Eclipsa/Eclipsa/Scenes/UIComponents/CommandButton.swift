@@ -14,7 +14,7 @@ class CommandButton: SKNode {
     
     init(position: CGPoint, name: String = "Default", color: UIColor = .red) {
         
-        let buttonSize = CGSize(width: 64, height: 64)
+        let buttonSize = CGSize(width: 50, height: 50)
         button = SKShapeNode(ellipseOf: buttonSize)
         button.fillColor = color
         button.strokeColor = color.withAlphaComponent(0.3)

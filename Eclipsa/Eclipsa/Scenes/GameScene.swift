@@ -12,6 +12,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     var commandInput = InputHandler()
     private var wallNode: SKSpriteNode?
     
+    var buttons: ButtonsSet!
+    
     var gameController: AdaptedVirtualController?
     var aimingSystem: AimingSystem?
     
@@ -24,7 +26,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         SKEntityManager.shared.getAllGameTroops()
     }
     
-    public var troopControlButtons: TroopControlButtons?
     public var cancelButton: CommandButton!
     public var releaseButton: CommandButton!
     
@@ -53,6 +54,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         setupCamera()
         setupUI()
+        buttons = .init(scene: self)
         
         sceneEntity = SceneEntity(scene: self)
         SKEntityManager.shared.add(sceneEntity)

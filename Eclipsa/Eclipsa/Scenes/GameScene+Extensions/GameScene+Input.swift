@@ -9,7 +9,7 @@ extension GameScene {
         // Converter o ponto de toque da coordenada da câmera para a cena global
         _ = camera.convert(location, to: self)
         releaseButton.handleTouch(location)
-        troopControlButtons?.handleTouch(location)
+        buttons.followButton.handleTouch(location)
         if location.x <= 0 {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)
