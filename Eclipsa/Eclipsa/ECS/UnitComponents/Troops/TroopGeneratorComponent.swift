@@ -8,13 +8,18 @@ import GameplayKit
 import BehindGameKit
 
 class TroopGeneratorComponent: GKComponent {
-    weak var scene: SKScene?
-    var spawnPosition: CGPoint = .zero
+    weak var scene: GameScene?
+    var spawnPosition: CGPoint {
+        let entity = self.entity as? BaseUnitEntity
+        return entity?.spriteNode.position ?? .zero
+    }
+    
     var spawnOffset: CGPoint {
         let angle = Double.random(in: 0..<2*Double.pi)
         let radius = Double.random(in: 80...100)
         return CGPoint(x: (cos(angle) * radius).magnitude, y: sin(angle) * radius)
     }
+    
     private var timer: DispatchSourceTimer?
     private var coolDown: TimeInterval = 1
     
@@ -48,5 +53,52 @@ class TroopGeneratorComponent: GKComponent {
     func stopGenerating() {
         timer?.cancel()
         timer = nil
+    }
+    
+    func generateRanged(troops: Set<TroopEntity>, completion: @escaping ((TroopEntity?) -> Void)){
+        let position = spawnPosition + spawnOffset
+        let troop = TroopFactory.makeRanged(team: .sun) {
+            return Array(troops)
+        }
+        troop.spriteNode.position = position
+        generatedTroops.insert(troop)
+        completion(troop)
+        
+    }
+    
+    func generateMelee(troops: Set<TroopEntity>, completion: @escaping ((TroopEntity?) -> Void)){
+        let position = spawnPosition + spawnOffset
+        let troop = TroopFactory.makeMelee(team: .sun) {
+            return Array(troops)
+        }
+        troop.spriteNode.position = position
+        generatedTroops.insert(troop)
+        completion(troop)
+        
+    }
+    
+    func findFreeSpawnPosition(
+        near basePosition: CGPoint,
+        maxAttempts: Int = 10,
+        minDistance: CGFloat = 10
+    ) -> CGPoint {
+        for _ in 0..<maxAttempts {
+           let candidate = spawnPosition + spawnOffset
+            
+            let isOccupied = SKEntityManager.shared.getAllEntities().contains{ entity in
+                    if let entity = entity as? BuildingEntity,
+                       let node = entity.component(ofType: GKSKNodeComponent.self)?.node{
+                        return node.position.distance(to: candidate) < minDistance
+                    }
+                return true
+            }
+            
+            if !isOccupied {
+                return candidate
+            }
+        }
+        
+        // Não achou nenhuma posição livre depois de N tentativas
+        return spawnPosition
     }
 }

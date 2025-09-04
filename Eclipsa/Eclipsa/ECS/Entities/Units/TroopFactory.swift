@@ -39,7 +39,18 @@ enum TroopFactory{
         
         stateMachine.enter(TroopIdleState.self)
         
-       rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 50, cooldown: 2.0))
+       rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 3, cooldown: 2.0))
+       PhysicsSystem.setupTroopPhysics(for: rangedTroop)
+       
+       if let rangeComp = rangedTroop.component(ofType: RangeComponent.self),
+          let nodeComp = rangedTroop.component(ofType: GKSKNodeComponent.self) {
+           let scene = nodeComp.node.scene
+           let positionInScene = nodeComp.node.position
+           rangeComp.node.position = positionInScene
+           if rangeComp.node.parent !== scene {
+               scene?.addChild(rangeComp.node)
+           }
+       }
         
         return rangedTroop
     }
@@ -83,6 +94,19 @@ enum TroopFactory{
             rangeComp.node.physicsBody?.contactTestBitMask = PhysicsCategory.troop
         }
         stateMachine.enter(TroopIdleState.self)
+        
+        PhysicsSystem.setupTroopPhysics(for: meleeTroop)
+        
+        if let rangeComp = meleeTroop.component(ofType: RangeComponent.self),
+           let nodeComp = meleeTroop.component(ofType: GKSKNodeComponent.self) {
+            let scene = nodeComp.node.scene
+            let positionInScene = nodeComp.node.position
+            rangeComp.node.position = positionInScene
+            if rangeComp.node.parent !== scene {
+                scene?.addChild(rangeComp.node)
+            }
+        }
+        
         return meleeTroop
     }
 }

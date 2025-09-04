@@ -1,4 +1,5 @@
 import Foundation
+import BehindGameKit
 import SpriteKit
 import GameplayKit
 
@@ -7,8 +8,7 @@ class TroopControlSystem {
     private(set) weak var targetEntity: UnitEntity?
     
     private var troops: Set<TroopEntity> {
-        guard let troops = scene?.troops else {return []}
-        return troops
+        SKEntityManager.shared.getAllGameTroops()
     }
     
     init(scene: GameScene?, targetEntity: UnitEntity?) {
@@ -32,7 +32,10 @@ class TroopControlSystem {
                     let b = TroopBehaviorComponent(
                         troop: troop,
                         target: targetEntity,
-                        allTroops: { [weak self] in self?.troops ?? [] }
+                        allTroops: { [weak self] in
+                            guard let self = self else { return [] }
+                            return self.troops
+                        }
                     )
                     troop.addComponent(b)
                     return b
