@@ -11,5 +11,4 @@ import Foundation
 protocol GameControllerProtocol: AnyObject {
     func setupVirtualController()
     func virtualControllerDidDisconnect(notification: Notification)
-    
 }
