@@ -48,22 +48,31 @@ class TroopFollowState: GKState {
               let target = behavior.target as? BaseUnitEntity,
               let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
               let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let range = troop.component(ofType: RangeComponent.self)?.radius,
               let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
               let targetTeam = target.component(ofType: TeamComponent.self)?.team else {
             return
         }
         
-        // ❌ Não ataca aliados (ex: o herói do mesmo time)
-        guard troopTeam != targetTeam else {
-            // se o alvo for aliado, apenas segue (nunca entra em ataque)
-            return
+        // ❌ Não ataca aliados
+        guard troopTeam != targetTeam else { return }
+        
+        let dx = troopPos.x - targetPos.x
+        let dy = troopPos.y - targetPos.y
+        let distanceSquared = dx * dx + dy * dy
+        
+        var attackThreshold: CGFloat
+        
+        if troop.component(ofType: MeleeAttackComponent.self) != nil {
+            // ⚔️ melee precisa encostar
+            attackThreshold = 32   // pode ajustar: 16–24
+        } else if let range = troop.component(ofType: RangeComponent.self)?.radius {
+            // 🎯 ranged usa o range normal
+            attackThreshold = range
+        } else {
+            attackThreshold = 32 // fallback
         }
         
-        let d2 = (troopPos.x - targetPos.x) * (troopPos.x - targetPos.x) +
-                 (troopPos.y - targetPos.y) * (troopPos.y - targetPos.y)
-        
-        if d2 <= range * range {
+        if distanceSquared <= attackThreshold * attackThreshold {
             stateMachine?.enter(TroopAttackState.self)
         } else if behavior.target == nil {
             stateMachine?.enter(TroopIdleState.self)
@@ -110,16 +119,18 @@ class TroopDieState: GKState {
 
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
-
-        // Marca como inválida e remove do EntityManager já aqui
         troop.component(ofType: TroopBehaviorComponent.self)?.invalidate()
-        SKEntityManager.shared.remove(troop)
 
-        // Depois de 0.7s remove apenas o nó visual
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                node.removeFromParent()
-            }
+            node.run(.sequence([
+                .wait(forDuration: 0.7),
+                .removeFromParent()
+            ]))
+        }
+
+        // só depois da animação
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+            SKEntityManager.shared.remove(self.troop)
         }
     }
 

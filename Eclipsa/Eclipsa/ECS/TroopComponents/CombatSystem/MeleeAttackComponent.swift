@@ -1,59 +1,70 @@
-//
-//  MeleeAttackComponent.swift
-//  Eclipsa
-//
-//  Criado para ataques corpo a corpo sem projétil
-//
-
 import GameplayKit
-import SpriteKit
 import BehindGameKit
 
 public class MeleeAttackComponent: GKComponent {
-    unowned let attacker: BaseUnitEntity
-    private let damage: Int
-    private let cooldown: TimeInterval
-    
+    private unowned let unit: BaseUnitEntity
+    private var cooldown: TimeInterval
     private var lastAttackTime: TimeInterval = 0
+    private var damage: Int
     
-    public init(attacker: BaseUnitEntity, damage: Int, cooldown: TimeInterval) {
-        self.attacker = attacker
+    public init(unit: BaseUnitEntity, damage: Int = 5, cooldown: TimeInterval = 3.0) {
+        self.unit = unit
         self.damage = damage
         self.cooldown = cooldown
         super.init()
     }
     
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
-    public func tryAttack(target: BaseUnitEntity, currentTime: TimeInterval) {
-        guard currentTime - lastAttackTime >= cooldown else { return }
+    public override func update(deltaTime seconds: TimeInterval) {
+        guard let behaviorComponent = unit.component(ofType: TroopBehaviorComponent.self),
+              let target = behaviorComponent.target as? BaseUnitEntity,
+              let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
+              let range = unit.component(ofType: RangeComponent.self)?.radius else { return }
         
-        // pega distância real entre atacante e alvo
-        guard let attackerPos = attacker.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position else { return }
+        // não ataca aliados
+        guard let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+              let unitTeam = unit.component(ofType: TeamComponent.self)?.team,
+              targetTeam != unitTeam else { return }
         
-        let distance = hypot(targetPos.x - attackerPos.x, targetPos.y - attackerPos.y)
-        
-        // considera alcance corpo a corpo (pode ajustar)
-        if distance <= 40 {
-            performAttack(on: target)
-            lastAttackTime = currentTime
+        let dx = unitPos.x - enemyPos.x
+        let dy = unitPos.y - enemyPos.y
+        let distanceSquared = dx * dx + dy * dy
+
+        // Definindo uma distância mínima de ataque (melee precisa estar bem colado)
+        let attackRadius: CGFloat = 32   // ajuste fino: pode testar 16~24
+
+        if distanceSquared <= attackRadius * attackRadius {
+            if CACurrentMediaTime() - lastAttackTime >= cooldown {
+                performAttack(on: target)
+                lastAttackTime = CACurrentMediaTime()
+            }
         }
+    }
+    
+    public func tryAttack(on target: BaseUnitEntity) -> Bool {
+        guard let unitTeam = unit.component(ofType: TeamComponent.self)?.team,
+              let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+              unitTeam != targetTeam else { return false }
+        
+        if CACurrentMediaTime() - lastAttackTime >= cooldown {
+            performAttack(on: target)
+            lastAttackTime = CACurrentMediaTime()
+            return true
+        }
+        return false
     }
     
     private func performAttack(on target: BaseUnitEntity) {
-        if let health = target.component(ofType: HealthComponent.self) {
-            health.takeDamage(damage)
-            
-            // se for tropa, entra no DieState
-            if health.isDead, let troop = target as? TroopEntity {
-                troop.stateMachineComponent.stateMachine.enter(TroopDieState.self)
-            }
+        // dispara animação de ataque
+        if let animationComp = unit.component(ofType: AnimationComponent.self) {
+            animationComp.runAnimation(for: .attack)
         }
         
-        // opcional: animação de ataque
-        if let anim = attacker.component(ofType: AnimationComponent.self) {
-            anim.runAnimation(for: .attack)
+        // aplica dano direto no alvo
+        if let health = target.component(ofType: HealthComponent.self) {
+            health.takeDamage(damage)
         }
     }
+
+    public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }

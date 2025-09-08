@@ -7,9 +7,16 @@ extension GameScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         
         if let touch = touches.first {
-            let location = touch.location(in: self)
-            if tryHandleOverlayTouch(location) {
-                return // se foi clique no overlay, não processa input normal
+            if let camera {
+                let locationInCamera = touch.location(in: camera)
+                if tryHandleOverlayTouch(locationInCamera) {
+                    return // se foi clique no overlay, não processa input normal
+                }
+            } else {
+                let locationInScene = touch.location(in: self)
+                if tryHandleOverlayTouch(locationInScene) {
+                    return
+                }
             }
         }
         

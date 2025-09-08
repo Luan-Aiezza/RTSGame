@@ -82,11 +82,14 @@ enum TroopFactory{
         let stateMachine = GKStateMachine(states: [idle, follow, attack, die])
         meleeTroop.stateMachineComponent = StateMachineComponent(stateMachine)
         meleeTroop.addComponent(meleeTroop.stateMachineComponent)
-        meleeTroop.addComponent(MeleeAttackComponent(attacker: meleeTroop, damage: 25, cooldown: 1.0))
+        meleeTroop.addComponent(MeleeAttackComponent(unit: meleeTroop, damage: 25, cooldown: 1.0))
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self) {
-            rangeComp.node.path = CGPath(ellipseIn: CGRect(x: -16, y: -16, width: 32, height: 32), transform: nil)
-            rangeComp.node.physicsBody = SKPhysicsBody(circleOfRadius: 16) // range bem menor
+            let meleeRadius: CGFloat = 12   // ⚔️ alcance bem curto
+            rangeComp.node.path = CGPath(ellipseIn: CGRect(x: -meleeRadius, y: -meleeRadius,
+                                                           width: meleeRadius * 2, height: meleeRadius * 2),
+                                         transform: nil)
+            rangeComp.node.physicsBody = SKPhysicsBody(circleOfRadius: meleeRadius)
             rangeComp.node.physicsBody?.isDynamic = false
             rangeComp.node.physicsBody?.affectedByGravity = false
             rangeComp.node.physicsBody?.categoryBitMask = PhysicsCategory.range

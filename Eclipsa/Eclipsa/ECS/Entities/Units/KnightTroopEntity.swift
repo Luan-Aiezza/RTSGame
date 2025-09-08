@@ -48,7 +48,7 @@ public class KnightTroopEntity: BaseUnitEntity {
         
         // Componente de ataque corpo a corpo
         if self.component(ofType: MeleeAttackComponent.self) == nil {
-            self.addComponent(MeleeAttackComponent(attacker: self, damage: 25, cooldown: 1.0))
+            self.addComponent(MeleeAttackComponent(unit: self, damage: 25, cooldown: 1.0))
         }
         
         // Ajusta o range para combate corpo a corpo

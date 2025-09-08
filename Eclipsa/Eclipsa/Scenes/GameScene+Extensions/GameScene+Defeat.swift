@@ -38,7 +38,9 @@ extension GameScene {
 
     func tryHandleOverlayTouch(_ location: CGPoint) -> Bool {
         guard let camera = camera else { return false }
-        let nodesAtPoint = camera.nodes(at: location)
+        // location aqui costuma estar no espaço da cena; convertemos para o espaço da câmera
+        let cameraSpacePoint = camera.convert(location, from: self)
+        let nodesAtPoint = camera.nodes(at: cameraSpacePoint)
         if nodesAtPoint.first(where: { $0.name == "RestartButton" }) != nil {
             restartGame()
             return true
