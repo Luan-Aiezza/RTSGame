@@ -8,7 +8,7 @@ extension GameScene {
 
         let overlay = SKNode()
         overlay.name = "DefeatOverlay"
-        overlay.zPosition = 10_000
+        overlay.zPosition = 11_000
 
         // Fundo escuro
         let bg = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.6),
