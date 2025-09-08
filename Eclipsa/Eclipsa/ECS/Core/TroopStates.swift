@@ -105,16 +105,25 @@ class TroopAttackState: GKState {
 
 class TroopDieState: GKState {
     unowned let troop: BaseUnitEntity
+
     init(troop: BaseUnitEntity) { self.troop = troop }
-    
+
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            SKEntityManager.shared.remove(self.troop)
-            self.troop.destroy()
+
+        // Marca como inválida e remove do EntityManager já aqui
+        troop.component(ofType: TroopBehaviorComponent.self)?.invalidate()
+        SKEntityManager.shared.remove(troop)
+
+        // Depois de 0.7s remove apenas o nó visual
+        if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                node.removeFromParent()
+            }
         }
     }
-    
+
     override func isValidNextState(_ stateClass: AnyClass) -> Bool { false }
 }
+
 

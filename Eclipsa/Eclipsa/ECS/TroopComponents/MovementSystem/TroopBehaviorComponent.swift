@@ -30,54 +30,67 @@ public class TroopBehaviorComponent: GKComponent {
     }
     
     internal func configureBehavior() {
-        guard let agentComponent = troop?.component(ofType: AgentComponent.self) else { return }
+        // Capture strong ref to avoid use-after-free while we run this method
+        guard let troopLocal = troop else { return }
+        guard let agentComponent = troopLocal.component(ofType: AgentComponent.self) else { return }
 
-        if let state = troop?.stateMachineComponent.stateMachine.currentState {
+        // If the troop's state demands stop, bail out early.
+        if let state = troopLocal.stateMachineComponent.stateMachine.currentState {
             if state is TroopIdleState || state is TroopAttackState {
-                // Se o state já mandou parar, não configuramos nada aqui
                 return
             }
         }
-        
-        // Reseta o alvo inválido (ex: morreu)
+
+        // --- 1) Reset target if dead and remember last position ---
         if let currentTarget = target as? BaseUnitEntity,
            currentTarget.component(ofType: HealthComponent.self)?.isDead == true {
+            if let pos = currentTarget.component(ofType: GKSKNodeComponent.self)?.node.position {
+                lastDefeatedTargetPosition = pos
+            }
             target = nil
         }
-        
-        // Se não há alvo de combate nem comando manual → volta pro Nexus
+
+        // --- 2) Determine fallback: nexus (defaultTarget) or last defeated point ---
         if target == nil && manualTargetPoint == nil {
             if let nexus = defaultTarget {
                 target = nexus
+            } else if let lastPos = lastDefeatedTargetPosition {
+                manualTargetPoint = lastPos
             }
         }
-        
-        // Se não há alvo e não é comando manual, tenta achar inimigo próximo
-        if let range = troop?.component(ofType: RangeComponent.self),
-           target === defaultTarget || target == nil {
-            
-            // Time inimigo
-            let myTeam = troop?.component(ofType: TeamComponent.self)?.team
+
+        // --- 3) Try to find nearby enemies if relevant ---
+        // Use strong refs and snapshots to avoid collection mutation/use-after-free issues.
+        if let range = troopLocal.component(ofType: RangeComponent.self),
+           (target === defaultTarget || target == nil) {
+
+            let myTeam = troopLocal.component(ofType: TeamComponent.self)?.team
             let enemyTeam: Team? = {
                 guard let t = myTeam else { return nil }
                 return t == .sun ? .moon : .sun
             }()
-            
-            // 1) Tropas inimigas (comportamento atual)
+
             var candidateEntities: [BaseUnitEntity] = []
+
             if let enemyTeam = enemyTeam {
-                let enemyTroops = allTroops().compactMap { $0 as BaseUnitEntity }.filter {
-                    $0 !== troop &&
-                    $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
-                    ($0.component(ofType: HealthComponent.self)?.isDead == false)
-                }
+                // Make a snapshot of all troops (strong refs) so it can't change mid-iteration.
+                let snapshot = allTroops()
+                let enemyTroops = snapshot
+                    .compactMap { $0 as? BaseUnitEntity }
+                    .filter {
+                        // Compare against the strong local ref
+                        $0 !== troopLocal &&
+                        $0.component(ofType: TeamComponent.self)?.team == enemyTeam &&
+                        ($0.component(ofType: HealthComponent.self)?.isDead == false)
+                    }
                 candidateEntities.append(contentsOf: enemyTroops)
             }
-            
-            // 2) Se a tropa é inimiga (.moon), também considerar Inhibitors e o UnitEntity do jogador
+
+            // If this troop is an enemy (.moon), also consider inhibitors and player unit.
             if myTeam == .moon {
-                // Inhibitors aliados do jogador (time .sun)
-                let inhibitors = SKEntityManager.shared.getAllEntities()
+                // We also snapshot the global entities to avoid mid-iteration mutation.
+                let allEntitiesSnapshot = SKEntityManager.shared.getAllEntities()
+                let inhibitors = allEntitiesSnapshot
                     .compactMap { $0 as? InhibitorEntity }
                     .compactMap { $0 as BaseUnitEntity }
                     .filter {
@@ -85,8 +98,7 @@ public class TroopBehaviorComponent: GKComponent {
                         ($0.component(ofType: HealthComponent.self)?.isDead == false)
                     }
                 candidateEntities.append(contentsOf: inhibitors)
-                
-                // Jogador (UnitEntity) do time .sun
+
                 if let player = SKEntityManager.shared.getFirstEntity(ofType: UnitEntity.self) {
                     if player.component(ofType: TeamComponent.self)?.team == .sun,
                        player.component(ofType: HealthComponent.self)?.isDead == false {
@@ -94,29 +106,30 @@ public class TroopBehaviorComponent: GKComponent {
                     }
                 }
             }
-            
-            // Filtrar por alcance
+
+            // Filter candidates by range (use troopLocal's range helper)
             let inRangeCandidates: [BaseUnitEntity] = candidateEntities.filter {
                 if let pos = $0.component(ofType: GKSKNodeComponent.self)?.node.position {
                     return range.contains(point: pos)
                 }
                 return false
             }
-            
-            // Escolher o primeiro (ou o mais próximo, se quiser otimizar futuramente)
+
+            // If we found a new target, use it. Otherwise, if we have lastDefeatedTargetPosition,
+            // set manualTargetPoint to it (but do NOT recursively call configureBehavior()).
             if let newTarget = inRangeCandidates.first {
                 setTarget(newTarget)
                 return
             } else if let lastPos = lastDefeatedTargetPosition {
+                // Set manual target point and continue — but avoid recursion.
                 manualTargetPoint = lastPos
-                configureBehavior()
-                return
+                // do not call configureBehavior() recursively; just continue to behavior creation
             }
         }
-        
-        // --- Behavior padrão ---
+
+        // --- 4) Build GKBehavior for agent (seek target or manual point) ---
         let behavior = GKBehavior()
-        
+
         if let enemy = self.target {
             if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
                 let seekGoal = GKGoal(toSeekAgent: targetAgent)
@@ -131,7 +144,8 @@ public class TroopBehaviorComponent: GKComponent {
                     behavior.setWeight(1.0, for: seekGoal)
                 }
             } else {
-                self.target = defaultTarget // volta pro Nexus se alvo inválido
+                // If the referenced enemy doesn't expose agent/node, fallback to defaultTarget.
+                self.target = defaultTarget
             }
         } else if let manualPoint = manualTargetPoint {
             if manualTargetAgent == nil {
@@ -143,18 +157,27 @@ public class TroopBehaviorComponent: GKComponent {
                 behavior.setWeight(1.0, for: seekGoal)
             }
         }
-        
-        // Evitar colisão
-        let otherAgents = allTroops().compactMap { $0 !== troop ? $0.component(ofType: AgentComponent.self)?.agent : nil }
+
+        // --- 5) Avoid other agents: use snapshot and compare to troopLocal ---
+        let snapshotForAgents = allTroops()
+        let otherAgents = snapshotForAgents.compactMap { $0 !== troopLocal ? $0.component(ofType: AgentComponent.self)?.agent : nil }
         if !otherAgents.isEmpty {
             let avoidGoal = GKGoal(toAvoid: otherAgents, maxPredictionTime: 0.5)
             behavior.setWeight(2.0, for: avoidGoal)
         }
-        
-        // Evitar obstáculos fixos
 
-        
+        // Finally apply behavior
         agentComponent.agent.behavior = behavior
+    }
+    
+    public func invalidate() {
+        if let agent = troop?.component(ofType: AgentComponent.self)?.agent {
+            agent.behavior = nil
+        }
+        manualTargetAgent = nil
+        manualTargetPoint = nil
+        target = nil
+        defaultTarget = nil
     }
     
     public func setTarget(_ newTarget: GKEntity?) {
@@ -162,7 +185,9 @@ public class TroopBehaviorComponent: GKComponent {
         configureBehavior()
     }
     
+    // Update should early-return if troop was deallocated
     public override func update(deltaTime seconds: TimeInterval) {
+        guard troop != nil else { return }
         configureBehavior()
     }
     

@@ -20,7 +20,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
     var troopControlSystem: TroopControlSystem!
-    
+    // Lista de tropas para controle coletivo
+    //    public var troops: [TroopEntity] = []
     public var troops: Set<TroopEntity> {
         SKEntityManager.shared.getAllGameTroops()
     }

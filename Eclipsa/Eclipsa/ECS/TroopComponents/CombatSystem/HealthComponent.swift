@@ -6,6 +6,7 @@ import GameplayKit
 
 import SpriteKit
 import GameplayKit
+import BehindGameKit
 
 public class HealthComponent: GKComponent {
     public private(set) var currentHealth: Int
@@ -47,19 +48,26 @@ public class HealthComponent: GKComponent {
     
     private func handleDeath() {
         guard let entity = entity else { return }
-        
+
+        // Marca como morta imediatamente (assim updates não rodam mais)
+        entity.component(ofType: TroopBehaviorComponent.self)?.invalidate()
+
         if let anim = entity.component(ofType: AnimationComponent.self) {
             anim.runAnimation(for: .die)
-            
-            // espera a animação terminar antes de remover
+
+            // remove do EntityManager logo aqui (para sair de allTroops)
+            SKEntityManager.shared.remove(entity)
+
+            // espera só para remover o nó visual
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak entity] in
                 entity?.destroy()
             }
         } else {
-            // sem animação → remove imediatamente
+            SKEntityManager.shared.remove(entity)
             entity.destroy()
         }
     }
+
     
     public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
