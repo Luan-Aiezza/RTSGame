@@ -62,7 +62,7 @@ enum TroopFactory{
         let walkTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Walk_", quantity: 8)
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Attack_", quantity: 3)
         let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
-        let spriteSize = CGSize(width: 32, height: 32)
+        let spriteSize = CGSize(width: 48, height: 48)
         let maxHealth = 150
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)

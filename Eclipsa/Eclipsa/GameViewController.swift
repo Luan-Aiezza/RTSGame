@@ -84,6 +84,15 @@ class GameViewController: UIViewController {
         }
     }
 
+    // MARK: - Public navigation back to Home
+    public func returnToHome() {
+        // Remove a cena atual e volta a mostrar a HomeScreen
+        skView?.presentScene(nil)
+        skView?.removeFromSuperview()
+        skView = nil
+        setupHomeScreen()
+    }
+
     // MARK: - Orientation & Status Bar
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {

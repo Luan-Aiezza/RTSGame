@@ -23,7 +23,6 @@ extension GameScene {
                 }
             }
         }
-        
         // remove o tilemap original da cena
         tileMap.removeFromParent()
     }
@@ -51,7 +50,7 @@ extension GameScene {
             if let name = node.name {
                 // Health bars → sempre na frente
                 if name.hasPrefix("healthbar") {
-                    node.zPosition = 10_000
+                    node.zPosition = 9_000
                     return
                 }
                 // HUD/UI → sempre na frente
@@ -61,7 +60,7 @@ extension GameScene {
                 }
                 // Defeat overlay e seus filhos → sempre na frente
                 if name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
-                    node.zPosition = 10_000
+                    node.zPosition = 11_000
                     return
                 }
             }
