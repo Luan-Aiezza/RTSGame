@@ -11,45 +11,80 @@ import GameplayKit
 import GameController
 
 class GameViewController: UIViewController {
+    
+    private var skView: SKView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-//        self.setupVirtualController()
+        setupHomeScreen()
+    }
+    
+    // MARK: - Home Screen
+    private func setupHomeScreen() {
+        view.backgroundColor = .black
         
-        // Load 'GameScene.sks' as a GKScene. This provides gameplay related content
-        // including entities and graphs.
-        if let scene = GKScene(fileNamed: "GameScene_1") {
-            
-            // Get the SKScene from the loaded GKScene
-            if let sceneNode = scene.rootNode as! GameScene? {
-                
-                
-                // Set the scale mode to scale to fit the window
-                sceneNode.scaleMode = .aspectFill
-                
-                // Present the scene
-                let skView = SKView(frame: view.bounds)
-                
-                skView.presentScene(sceneNode)
-                skView.ignoresSiblingOrder = true
-                skView.showsFPS = true
-                skView.showsNodeCount = true
-                skView.showsDrawCount = true
-                skView.isMultipleTouchEnabled = true
-//                skView.showsPhysics = true //Tirar
-
-                skView.translatesAutoresizingMaskIntoConstraints = false
-                view.addSubview(skView)
-                NSLayoutConstraint.activate([
-                    skView.topAnchor.constraint(equalTo: view.topAnchor),
-                    skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-                    skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-                    skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-                ])
-            }
+        let home = HomeScreen()
+        home.translatesAutoresizingMaskIntoConstraints = false
+        home.onPlayTapped = { [weak self] in
+            self?.didTapPlay()
+        }
+        view.addSubview(home)
+        
+        NSLayoutConstraint.activate([
+            home.topAnchor.constraint(equalTo: view.topAnchor),
+            home.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            home.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            home.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+    }
+    
+    // MARK: - Start Game
+    @objc private func didTapPlay() {
+        startGame(sceneNamed: "GameScene_1")
+    }
+    
+    private func startGame(sceneNamed name: String) {
+        // Remove qualquer SKView ou subviews anteriores (como a home)
+        view.subviews.forEach { $0.removeFromSuperview() }
+        
+        // Cria o SKView e adiciona à hierarquia
+        let skView = SKView(frame: view.bounds)
+        skView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skView)
+        NSLayoutConstraint.activate([
+            skView.topAnchor.constraint(equalTo: view.topAnchor),
+            skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        self.skView = skView
+        
+        // Configurações de debug (opcional)
+        skView.ignoresSiblingOrder = true
+        skView.showsFPS = true
+        skView.showsNodeCount = true
+        skView.showsDrawCount = true
+        skView.isMultipleTouchEnabled = true
+        // skView.showsPhysics = true
+        
+        // Carrega a cena via GKScene para manter o pipeline existente
+        if let gkScene = GKScene(fileNamed: name),
+           let sceneNode = gkScene.rootNode as? GameScene {
+            sceneNode.scaleMode = .aspectFill
+            skView.presentScene(sceneNode)
+        } else if let sceneNode = GameScene(fileNamed: name) {
+            // Fallback caso o GKScene não esteja configurado
+            sceneNode.scaleMode = .aspectFill
+            skView.presentScene(sceneNode)
+        } else {
+            assertionFailure("Não foi possível carregar a cena \(name)")
+            // Em caso de falha, volta para a Home
+            view.subviews.forEach { $0.removeFromSuperview() }
+            setupHomeScreen()
         }
     }
 
+    // MARK: - Orientation & Status Bar
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         if UIDevice.current.userInterfaceIdiom == .phone {
             return .allButUpsideDown
