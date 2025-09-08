@@ -5,6 +5,14 @@ import GameplayKit
 
 extension GameScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        if let touch = touches.first {
+            let location = touch.location(in: self)
+            if tryHandleOverlayTouch(location) {
+                return // se foi clique no overlay, não processa input normal
+            }
+        }
+        
         guard let camera, let location = touches.first?.location(in: camera) else { return }
         // Converter o ponto de toque da coordenada da câmera para a cena global
         _ = camera.convert(location, to: self)
@@ -21,8 +29,6 @@ extension GameScene {
             commandController?.touchBegan(touches, with: event)
             cancelButton.toggleCommand(value: false)
         }
-        // Only move troops if not tapping Follow button
-//        _ = troopControlButtons?.nodes(at: location)
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {

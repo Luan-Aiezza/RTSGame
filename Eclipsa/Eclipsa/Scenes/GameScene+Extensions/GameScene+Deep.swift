@@ -38,22 +38,35 @@ extension GameScene {
         ]
         
         enumerateChildNodes(withName: "//*") { node, _ in
-            // Ignora health bars → sempre na frente
-            if let name = node.name, name.hasPrefix("healthbar") {
-                node.zPosition = 10_000
-                return
-            }
-            // ⛔ ignora nós da câmera (HUD/UI)
-            if node.inParentHierarchy(self.camera!) {
-                return
-            }
-            // HUD/UI → sempre na frente
-            if let name = node.name, name.hasPrefix("hud") {
-                node.zPosition = 10_000
+            // 1) Ignora nós na hierarquia da câmera (HUD/UI/Overlays)
+            if let cam = self.camera, node.inParentHierarchy(cam) {
+                // Ainda assim, se for healthbar ou HUD, garanta topo absoluto
+                if let name = node.name, name.hasPrefix("healthbar") || name.hasPrefix("hud") || name == "DefeatOverlay" {
+                    node.zPosition = 10_000
+                }
                 return
             }
             
-            // Tilemaps de chão → sempre no fundo
+            // 2) Bypass explícito por nome (caso algo não esteja sob a câmera por algum motivo)
+            if let name = node.name {
+                // Health bars → sempre na frente
+                if name.hasPrefix("healthbar") {
+                    node.zPosition = 10_000
+                    return
+                }
+                // HUD/UI → sempre na frente
+                if name.hasPrefix("hud") {
+                    node.zPosition = 10_000
+                    return
+                }
+                // Defeat overlay e seus filhos → sempre na frente
+                if name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
+                    node.zPosition = 10_000
+                    return
+                }
+            }
+            
+            // 3) Tilemaps de chão → sempre no fundo
             if let tileMap = node as? SKTileMapNode,
                let name = tileMap.name,
                groundTileMapNames.contains(name) {
@@ -61,7 +74,7 @@ extension GameScene {
                 return
             }
             
-            // Tilemaps de árvores (Tree_*) → converter para sprites individuais
+            // 4) Tilemaps de árvores (Tree_*) → converter para sprites individuais
             if let tileMap = node as? SKTileMapNode,
                let name = tileMap.name,
                name.hasPrefix("Tree") {
@@ -69,9 +82,8 @@ extension GameScene {
                 return
             }
             
-            // Lógica padrão de profundidade
+            // 5) Lógica padrão de profundidade
             node.zPosition = -node.position.y
         }
     }
 }
-

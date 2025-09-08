@@ -13,6 +13,11 @@ extension GameScene {
     func setupNexus() {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {
             let nexus = NexusEntity(node: node)
+            
+            nexus.onDestroyed = { [weak self] in
+                self?.handleDefeat()
+            }
+            
             SKEntityManager.shared.add(nexus)
             
             self.userData = self.userData ?? NSMutableDictionary()
@@ -21,9 +26,10 @@ extension GameScene {
             print("⚠️ Node 'Nexus' não encontrado na cena!")
         }
     }
+
     
     func setupInhibitors() {
-        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2", "Inhibitor_3", "Inhibitor_4", "Inhibitor_5"]
+        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2", "Inhibitor_3", "Inhibitor_4", "Inhibitor_5", "Inhibitor_6"]
         
         for name in inhibitorNames {
             if let node = childNode(withName: name) as? SKSpriteNode {

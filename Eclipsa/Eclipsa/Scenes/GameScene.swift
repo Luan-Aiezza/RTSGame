@@ -54,6 +54,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         setupCamera()
         setupUI()
+        setupSnow()   // Efeito de neve
         buttons = .init(scene: self)
         
         sceneEntity = SceneEntity(scene: self)
