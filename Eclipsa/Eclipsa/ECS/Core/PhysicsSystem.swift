@@ -41,8 +41,8 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             let troopBody = SKPhysicsBody(
-                rectangleOf: CGSize(width: 26, height: 4),
-                center: CGPoint(x: 0, y: -12) // desloca para baixo
+                rectangleOf: CGSize(width: 26, height: 24),
+                center: CGPoint(x: 0, y: -6) // desloca para baixo
             )
             troopBody.affectedByGravity = false
             troopBody.allowsRotation = false
@@ -58,7 +58,7 @@ final class PhysicsSystem {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             
-            let reducedHeight = size.height * 0.8  // 80% da altura
+            let reducedHeight = size.height * 0.7  // 70% da altura
             let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
             
             let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,

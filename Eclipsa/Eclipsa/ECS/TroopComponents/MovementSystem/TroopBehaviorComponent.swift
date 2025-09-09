@@ -165,6 +165,15 @@ public class TroopBehaviorComponent: GKComponent {
             let avoidGoal = GKGoal(toAvoid: otherAgents, maxPredictionTime: 0.5)
             behavior.setWeight(2.0, for: avoidGoal)
         }
+        
+        // --- 6) Avoid static obstacles (trees) ---
+        if let scene = troopLocal.component(ofType: GKSKNodeComponent.self)?.node.scene as? GameScene,
+           let obstacles = scene.userData?["TreeObstacles"] as? [GKPolygonObstacle],
+           !obstacles.isEmpty {
+
+            let avoidObstaclesGoal = GKGoal(toAvoid: obstacles, maxPredictionTime: 1.0)
+            behavior.setWeight(5.0, for: avoidObstaclesGoal) // peso mais alto para respeitar árvores
+        }
 
         // Finally apply behavior
         agentComponent.agent.behavior = behavior
