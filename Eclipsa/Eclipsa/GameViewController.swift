@@ -23,7 +23,7 @@ class GameViewController: UIViewController {
     private func setupHomeScreen() {
         view.backgroundColor = .black
         
-        let home = HomeScreen()
+        let home = HomeView()
         home.translatesAutoresizingMaskIntoConstraints = false
         home.onPlayTapped = { [weak self] in
             self?.didTapPlay()
