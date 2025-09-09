@@ -6,6 +6,7 @@ struct DialogueLine {
 }
 
 final class DialogueHUD: SKNode {
+    private let backgroundBox: SKShapeNode
     private let textLabel: SKLabelNode
     private let starNode: SKSpriteNode
     
@@ -17,28 +18,38 @@ final class DialogueHUD: SKNode {
     init(sceneSize: CGSize) {
         // Texto
         textLabel = SKLabelNode(text: "")
-        textLabel.fontSize = 16
-        textLabel.fontColor = .black
+        textLabel.fontSize = 14
+        textLabel.fontColor = .white
         textLabel.fontName = "CCPixelArcade-Display"
         textLabel.numberOfLines = 0
-        textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.9
+        textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.85
         textLabel.verticalAlignmentMode = .top
         textLabel.horizontalAlignmentMode = .center
-        textLabel.zPosition = 10_500
+        textLabel.zPosition = 10_510
+        
+        // Caixa preta com borda dourada
+        backgroundBox = SKShapeNode()
+        backgroundBox.fillColor = SKColor.black.withAlphaComponent(0.8)
+        backgroundBox.strokeColor = SKColor.yellow.withAlphaComponent(0.8)
+        backgroundBox.lineWidth = 1
+        backgroundBox.zPosition = 10_500
+        backgroundBox.isAntialiased = false // estilo pixel
         
         // Estrela animada
         let initialTexture = SKTexture(imageNamed: "Star_Icon_1")
         starNode = SKSpriteNode(texture: initialTexture, size: CGSize(width: 32, height: 32))
-        starNode.zPosition = 10_500
+        starNode.zPosition = 10_520
         starNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
         
         super.init()
         
-        // Posições relativas ao topo da câmera
-        let topY = sceneSize.height/3
-        textLabel.position = CGPoint(x: 0, y: topY - 10) // texto logo abaixo do topo
-        starNode.position = CGPoint(x: 0, y: topY + 18) // estrela acima do texto
+        // Posições relativas
+        let topY = sceneSize.height / 3
+        textLabel.position = CGPoint(x: 0, y: topY - 10)
+        backgroundBox.position = CGPoint(x: 0, y: topY - 5)
+        starNode.position = CGPoint(x: 0, y: topY + 25)
         
+        addChild(backgroundBox)
         addChild(starNode)
         addChild(textLabel)
         
@@ -54,6 +65,23 @@ final class DialogueHUD: SKNode {
         fullText = line.text
         textLabel.text = ""
         currentCharIndex = 0
+        updateBoxSize()
+    }
+    
+    private func updateBoxSize() {
+        // Calcula o tamanho necessário baseado no texto atual
+        let labelFrame = textLabel.frame
+        let padding: CGFloat = 20
+        let width = labelFrame.width + padding
+        let height = labelFrame.height + padding
+        
+        let rect = CGRect(
+            x: -width/2,
+            y: -height,
+            width: width,
+            height: height
+        )
+        backgroundBox.path = CGPath(roundedRect: rect, cornerWidth: 8, cornerHeight: 8, transform: nil)
     }
     
     func present(animated: Bool = true) {
@@ -90,6 +118,7 @@ final class DialogueHUD: SKNode {
                 let substring = String(self.fullText[..<idx])
                 self.textLabel.text = substring
                 self.currentCharIndex += 1
+                self.updateBoxSize() // ← atualiza a caixa conforme cresce
             } else {
                 timer.invalidate()
                 self.typingTimer = nil
