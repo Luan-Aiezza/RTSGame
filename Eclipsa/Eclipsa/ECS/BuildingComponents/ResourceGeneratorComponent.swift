@@ -11,13 +11,10 @@ class ResourceGeneratorComponent: GKComponent {
     var rate: TimeInterval
     var maxResourcePerGeneration: Int
     var lastTimeUpdate: TimeInterval = 0
-    var maxStoredResource: Int
-    var storedResource: Int = 0
     
-    init(rate: TimeInterval, maxResourcePerGeneration: Int = 1, maxStoredResource: Int = 10) {
+    init(rate: TimeInterval, maxResourcePerGeneration: Int = 1) {
         self.rate = rate
         self.maxResourcePerGeneration = maxResourcePerGeneration
-        self.maxStoredResource = maxStoredResource
         super.init()
     }
     
@@ -29,16 +26,14 @@ class ResourceGeneratorComponent: GKComponent {
     override func update(deltaTime seconds: TimeInterval) {
         lastTimeUpdate += seconds
         
-        if lastTimeUpdate >= rate && storedResource < maxStoredResource {
+        if lastTimeUpdate >= rate && ResourceHandler.shared.getMaxAmountOfResources() > ResourceHandler.shared.getStoredResources(){
             generateResource()
             lastTimeUpdate = 0
-            print(storedResource)
         }
     }
     
     func generateResource() {
-        let amount = min(maxResourcePerGeneration, maxStoredResource - storedResource)
-        storedResource += amount
+        ResourceHandler.shared.addResources(maxResourcePerGeneration)
     }
     
 }
