@@ -7,7 +7,7 @@
 
 import UIKit
 
-final class HomeScreen: UIView {
+final class HomeView: UIView {
     
     var onPlayTapped: (() -> Void)?
     
