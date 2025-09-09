@@ -46,16 +46,16 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
         
-        setupPlayer()
+        setupPlayer() //Instancia o player na cena
         setupTroops()
         
         setupNexus()   // cria base do jogador
         setupInhibitors() // cria inibidores aliados
         
-        setupCamera()
-        startDialogue()
+        setupCamera() //Instancia a camera na cena
+        startDialogue() //Instancia os dialogos na cena
         setupUI()
-        setupSnow()   // Efeito de neve
+        setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
         
         sceneEntity = SceneEntity(scene: self)

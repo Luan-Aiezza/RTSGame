@@ -4,24 +4,31 @@ import BehindGameKit
 import GameplayKit
 
 extension GameScene {
+    
+    private func overlayIsActive() -> Bool {
+        return camera?.childNode(withName: "DefeatOverlay") != nil
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        
-        if let touch = touches.first {
-            if let camera {
+        // Se a overlay de derrota está ativa, só processa overlay e bloqueia o resto
+        if overlayIsActive() {
+            if let touch = touches.first, let camera {
                 let locationInCamera = touch.location(in: camera)
-                if tryHandleOverlayTouch(locationInCamera) {
-                    return // se foi clique no overlay, não processa input normal
-                }
-            } else {
-                let locationInScene = touch.location(in: self)
-                if tryHandleOverlayTouch(locationInScene) {
-                    return
-                }
+                _ = tryHandleOverlayTouch(locationInCamera) // tenta clicar no Restart
+            }
+            return
+        }
+        
+        // Sem overlay: se houver câmera, também priorizamos clique em overlay (no caso de corrida de estado)
+        if let touch = touches.first, let camera {
+            let locationInCamera = touch.location(in: camera)
+            if tryHandleOverlayTouch(locationInCamera) {
+                return // se foi clique no overlay, não processa input normal
             }
         }
         
         guard let camera, let location = touches.first?.location(in: camera) else { return }
-        // Converter o ponto de toque da coordenada da câmera para a cena global
+        // Converter o ponto de toque da coordenada da câmera para a cena global (caso necessário para outras lógicas)
         _ = camera.convert(location, to: self)
         releaseButton.handleTouch(location)
         buttons.followButton.handleTouch(location)
@@ -31,7 +38,7 @@ extension GameScene {
             gameController?.setAnalogVisible(value: true)
             gameController?.changePosition(location)
             gameController?.touchBegan(touches, with: event)
-        } else if location.x > 0 && aimingSystem?.aimingComponent?.isAiming ?? false {
+        } else if location.x > 0 && (aimingSystem?.aimingComponent?.isAiming ?? false) {
             commandController?.setAnalogVisible(value: true)
             commandController?.touchBegan(touches, with: event)
             cancelButton.toggleCommand(value: false)
@@ -39,6 +46,11 @@ extension GameScene {
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Bloqueia toda interação do jogo quando overlay está ativa
+        if overlayIsActive() {
+            return
+        }
+        
         guard let camera, let location = touches.first?.location(in: camera) else { return }
         if location.x <= 0 {
             gameController?.touchMoved(touches, with: event)
@@ -48,8 +60,17 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-        guard let camera
-                ,let location = touches.first?.location(in: camera) else { return }
+        // Bloqueia toda interação do jogo quando overlay está ativa, exceto tentar o clique no Restart
+        if overlayIsActive() {
+            if let touch = touches.first, let camera {
+                let locationInCamera = touch.location(in: camera)
+                _ = tryHandleOverlayTouch(locationInCamera)
+            }
+            return
+        }
+        
+        guard let camera,
+              let location = touches.first?.location(in: camera) else { return }
         if location.x <= 0 {
             gameController?.touchesEnded(touches, with: event)
             gameController?.setAnalogVisible(value: false, withDuration: 0.6)
@@ -80,9 +101,14 @@ extension GameScene {
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+        // Bloqueia toda interação do jogo quando overlay está ativa
+        if overlayIsActive() {
+            return
+        }
         gameController?.touchesCancelled(touches, with: event)
         gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
         commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
+

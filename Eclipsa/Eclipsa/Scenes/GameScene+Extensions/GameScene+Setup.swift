@@ -23,7 +23,7 @@ extension GameScene {
             self.userData = self.userData ?? NSMutableDictionary()
             self.userData?["Nexus"] = nexus
         } else {
-            print("⚠️ Node 'Nexus' não encontrado na cena!")
+            print("Node 'Nexus' não encontrado na cena!")
         }
     }
 
@@ -36,7 +36,7 @@ extension GameScene {
                 let inhibitor = InhibitorEntity(node: node)
                 SKEntityManager.shared.add(inhibitor)
             } else {
-                print("⚠️ Node '\(name)' não encontrado na cena!")
+                print("Node '\(name)' não encontrado na cena!")
             }
         }
     }

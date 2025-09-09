@@ -68,7 +68,7 @@ public class SpawnerWaveComponent: GKComponent {
         if let nexus = scene.userData?["Nexus"] as? NexusEntity {
             nexusTarget = nexus
         } else {
-            print("⚠️ Nexus não encontrado para SpawnerWaveComponent")
+            print("Nexus não encontrado para SpawnerWaveComponent")
         }
     }
     

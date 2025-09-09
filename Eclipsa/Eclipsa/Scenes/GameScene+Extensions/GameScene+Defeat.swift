@@ -10,10 +10,12 @@ extension GameScene {
         overlay.name = "DefeatOverlay"
         overlay.zPosition = 11_000
 
-        // Fundo escuro
+        // Fundo escuro ocupa a tela da câmera
         let bg = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.6),
                               size: size)
+        bg.name = "DefeatOverlayBG"
         bg.position = .zero
+        bg.zPosition = 0
         overlay.addChild(bg)
 
         // Texto "Defeat"
@@ -22,6 +24,7 @@ extension GameScene {
         defeatLabel.fontSize = 72
         defeatLabel.fontColor = .red
         defeatLabel.position = CGPoint(x: 0, y: 100)
+        defeatLabel.zPosition = 1
         overlay.addChild(defeatLabel)
 
         // Botão "Restart"
@@ -31,16 +34,16 @@ extension GameScene {
         restartLabel.fontColor = .white
         restartLabel.position = CGPoint(x: 0, y: -50)
         restartLabel.name = "RestartButton"
+        restartLabel.zPosition = 1
         overlay.addChild(restartLabel)
 
         camera?.addChild(overlay)
     }
 
-    func tryHandleOverlayTouch(_ location: CGPoint) -> Bool {
+    // Agora este método espera receber SEMPRE um ponto no espaço da CÂMERA.
+    func tryHandleOverlayTouch(_ cameraSpaceLocation: CGPoint) -> Bool {
         guard let camera = camera else { return false }
-        // location aqui costuma estar no espaço da cena; convertemos para o espaço da câmera
-        let cameraSpacePoint = camera.convert(location, from: self)
-        let nodesAtPoint = camera.nodes(at: cameraSpacePoint)
+        let nodesAtPoint = camera.nodes(at: cameraSpaceLocation)
         if nodesAtPoint.first(where: { $0.name == "RestartButton" }) != nil {
             restartGame()
             return true
@@ -56,3 +59,4 @@ extension GameScene {
         }
     }
 }
+

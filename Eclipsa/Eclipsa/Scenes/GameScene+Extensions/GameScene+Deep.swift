@@ -36,37 +36,74 @@ extension GameScene {
             "Grass_3", "Grass_3_Variation"
         ]
         
+        // Nomes explícitos de botões/hud que conhecemos
+        let explicitHUDButtonNames: Set<String> = ["Cancel", "R", "Melee", "Ranged", "Follow"]
+        
         enumerateChildNodes(withName: "//*") { node, _ in
-            // 1) Ignora nós na hierarquia da câmera (HUD/UI/Overlays)
+            // 1) Nós na hierarquia da câmera (HUD/UI/Overlays) têm regras específicas
             if let cam = self.camera, node.inParentHierarchy(cam) {
-                // Ainda assim, se for healthbar ou HUD, garanta topo absoluto
-                if let name = node.name, name.hasPrefix("healthbar") || name.hasPrefix("hud") || name == "DefeatOverlay" {
-                    node.zPosition = 10_000
+                
+                // 1.1) Defeat overlay e seus filhos → topo absoluto
+                if node.name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
+                    node.zPosition = 11_000
+                    return
                 }
-                return
+                
+                // 1.2) DialogueHUD (por classe, por pai ou por nome) → atrás do DefeatOverlay
+                if (node is DialogueHUD) || (node.parent is DialogueHUD) || node.name == "DialogueHUD" || node.parent?.name == "DialogueHUD" {
+                    node.zPosition = 10_800
+                    return
+                }
+                
+                // 1.3) Botões e analógicos (HUD) → atrás do DialogueHUD
+                if let name = node.name, explicitHUDButtonNames.contains(name) || name.hasPrefix("hud") {
+                    node.zPosition = 10_600
+                    return
+                }
+                // Analógico: identificar por classe AdaptedAnalogNode
+                if node is AdaptedAnalogNode || node.parent is AdaptedAnalogNode {
+                    node.zPosition = 10_600
+                    return
+                }
+                // Fallback para outros nós de HUD com z alto (evita reclassificar DialogueHUD/DefeatOverlay que já retornaram)
+                if node.zPosition >= 900 {
+                    node.zPosition = 10_600
+                    return
+                }
+                
+                // 1.4) Healthbars também podem estar sob a câmera
+                if let name = node.name, name.hasPrefix("healthbar") {
+                    node.zPosition = 10_400
+                    return
+                }
+                // Demais nós sob a câmera caem para regras gerais abaixo
             }
             
             // 2) Bypass explícito por nome (caso algo não esteja sob a câmera por algum motivo)
             if let name = node.name {
-                // Health bars → sempre na frente
+                // Health bars → à frente do resto, porém atrás dos botões/analógicos
                 if name.hasPrefix("healthbar") {
-                    node.zPosition = 9_000
+                    node.zPosition = 10_400
                     return
                 }
-                // HUD/UI → sempre na frente
+                // HUD/UI com prefixo → atrás do DialogueHUD
                 if name.hasPrefix("hud") {
-                    node.zPosition = 10_000
+                    node.zPosition = 10_600
                     return
                 }
-                // Defeat overlay e seus filhos → sempre na frente
+                // Defeat overlay e seus filhos → topo absoluto (fallback)
                 if name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
                     node.zPosition = 11_000
                     return
                 }
-                // Dialogue HUD → deve ficar atrás do defeat, mas à frente do resto
-                // Ajuste aqui os identificadores conforme os nomes reais usados pelo seu HUD de diálogo
+                // Dialogue HUD por nome/pai (fallback)
                 if name == "DialogueHUD" || node.parent?.name == "DialogueHUD" {
-                    node.zPosition = 10_500
+                    node.zPosition = 10_800
+                    return
+                }
+                // Botões explícitos por nome (fallback)
+                if explicitHUDButtonNames.contains(name) {
+                    node.zPosition = 10_600
                     return
                 }
             }
@@ -92,3 +129,4 @@ extension GameScene {
         }
     }
 }
+
