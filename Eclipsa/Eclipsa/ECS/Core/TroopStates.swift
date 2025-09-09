@@ -121,17 +121,14 @@ class TroopDieState: GKState {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
         troop.component(ofType: TroopBehaviorComponent.self)?.invalidate()
 
+        // só cuida do nó visual
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
             node.run(.sequence([
                 .wait(forDuration: 0.7),
                 .removeFromParent()
             ]))
         }
-
-        // só depois da animação
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-            SKEntityManager.shared.remove(self.troop)
-        }
+        // ❌ não chama remove nem destroy aqui
     }
 
     override func isValidNextState(_ stateClass: AnyClass) -> Bool { false }

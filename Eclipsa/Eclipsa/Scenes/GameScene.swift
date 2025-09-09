@@ -53,6 +53,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupInhibitors() // cria inibidores aliados
         
         setupCamera()
+        startDialogue()
         setupUI()
         setupSnow()   // Efeito de neve
         buttons = .init(scene: self)
