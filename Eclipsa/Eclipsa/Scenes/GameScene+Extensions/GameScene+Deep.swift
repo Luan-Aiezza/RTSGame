@@ -63,6 +63,12 @@ extension GameScene {
                     node.zPosition = 11_000
                     return
                 }
+                // Dialogue HUD → deve ficar atrás do defeat, mas à frente do resto
+                // Ajuste aqui os identificadores conforme os nomes reais usados pelo seu HUD de diálogo
+                if name == "DialogueHUD" || node.parent?.name == "DialogueHUD" {
+                    node.zPosition = 10_500
+                    return
+                }
             }
             
             // 3) Tilemaps de chão → sempre no fundo

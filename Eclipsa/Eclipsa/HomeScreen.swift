@@ -35,17 +35,29 @@ final class HomeScreen: UIView {
         container.translatesAutoresizingMaskIntoConstraints = false
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.text = "Eclipsa"
+        titleLabel.text = "SunCrown"
         titleLabel.textColor = .white
-        titleLabel.font = UIFont.systemFont(ofSize: 48, weight: .heavy)
+        // Use a variação "Display" (ajuste o PostScript name se necessário)
+        if let displayFont = UIFont(name: "CCPixelArcade-Display", size: 48) {
+            titleLabel.font = displayFont
+        } else {
+            // Fallback caso a fonte não esteja disponível
+            titleLabel.font = UIFont.systemFont(ofSize: 48, weight: .heavy)
+        }
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 1
         
         playButton.translatesAutoresizingMaskIntoConstraints = false
         playButton.setTitle("Play", for: .normal)
-        playButton.setTitleColor(.white, for: .normal)
-        playButton.titleLabel?.font = UIFont.systemFont(ofSize: 28, weight: .bold)
-        playButton.backgroundColor = UIColor.systemBlue
+        playButton.setTitleColor(.black, for: .normal)
+        // Use a variação "Joystick" (ajuste o PostScript name se necessário)
+        if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 28) {
+            playButton.titleLabel?.font = joystickFont
+        } else {
+            // Fallback caso a fonte não esteja disponível
+            playButton.titleLabel?.font = UIFont.systemFont(ofSize: 28, weight: .bold)
+        }
+        playButton.backgroundColor = UIColor.systemYellow
         playButton.layer.cornerRadius = 14
         playButton.contentEdgeInsets = UIEdgeInsets(top: 14, left: 28, bottom: 14, right: 28)
         playButton.addTarget(self, action: #selector(handlePlayTapped), for: .touchUpInside)

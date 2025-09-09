@@ -14,9 +14,22 @@
 		CF289E532E37E7600074EF9A /* Eclipsa.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Eclipsa.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		CFFCA1C02E6FD0BE004455F1 /* Exceptions for "Eclipsa" folder in "Eclipsa" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = CF289E522E37E7600074EF9A /* Eclipsa */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		CF289E552E37E7600074EF9A /* Eclipsa */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				CFFCA1C02E6FD0BE004455F1 /* Exceptions for "Eclipsa" folder in "Eclipsa" target */,
+			);
 			path = Eclipsa;
 			sourceTree = "<group>";
 		};
@@ -264,6 +277,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Eclipsa/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -300,6 +314,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Eclipsa/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;

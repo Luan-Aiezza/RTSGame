@@ -17,9 +17,9 @@ final class DialogueHUD: SKNode {
     init(sceneSize: CGSize) {
         // Texto
         textLabel = SKLabelNode(text: "")
-        textLabel.fontSize = 18
+        textLabel.fontSize = 16
         textLabel.fontColor = .black
-        textLabel.fontName = "AvenirNext-Bold"
+        textLabel.fontName = "CCPixelArcade-Display"
         textLabel.numberOfLines = 0
         textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.9
         textLabel.verticalAlignmentMode = .top
