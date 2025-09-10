@@ -26,4 +26,8 @@ enum Position {
     static func invokeRangeButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 240, y: -size.height/2 + 80)
     }
+    
+    static func resourceLabel(size: CGSize) -> CGPoint {
+        return CGPoint(x: -size.width/3, y: size.height/3)
+    }
 }
