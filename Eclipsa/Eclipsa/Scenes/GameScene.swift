@@ -118,7 +118,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         aimingSystem?.updateDynamicAiming()
         
     }
-    
 }
 
 extension GameScene {
@@ -147,12 +146,9 @@ extension GameScene {
     // Observa o HealthComponent do player atual e agenda respawn quando morrer
     func observePlayerDeath() {
         guard let health = controlledEntity?.component(ofType: HealthComponent.self) else { return }
-        // Compor com o handler existente (ex.: da barra de vida)
         let previousHandler = health.onHealthChanged
         health.onHealthChanged = { [weak self, weak health] current, max in
-            // 1) mantém a barra de vida funcionando
             previousHandler?(current, max)
-            // 2) respawn
             guard let self = self, let health = health else { return }
             if health.isDead {
                 self.schedulePlayerRespawn()
@@ -163,49 +159,31 @@ extension GameScene {
     private func schedulePlayerRespawn() {
         guard !isRespawningPlayer else { return }
         isRespawningPlayer = true
-        
-        // Limpa dependências do player morto e deixa animações/DieState fazerem o ciclo de remoção do nó
         cleanupDeadPlayer()
-        
-        // Agenda respawn em 5 segundos
         DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) { [weak self] in
             self?.respawnPlayer()
         }
     }
     
     private func cleanupDeadPlayer() {
-        // Descadastra o player do collisionSystem e outros que mantêm referência
         collisionSystem?.clearControlledEntity()
-        
-        // Remove a entidade do EntityManager para evitar vazamento e updates
         if let dead = controlledEntity {
             SKEntityManager.shared.remove(dead)
         }
-        
-        // Opcional: destruir componentes remanescentes (DieState já remove node e componentes)
         controlledEntity?.destroy()
-        
-        // Desvincula sistemas que apontavam para o player antigo
         aimingSystem?.player = nil
         troopControlSystem?.clearTargetEntity()
         cameraEntity?.followPlayer(player: nil)
-        
-        // Zera referência
         controlledEntity = nil
     }
     
     private func respawnPlayer() {
-        // Cria e configura um novo player usando o pipeline existente
         setupPlayer()
-        // Reobservar morte do novo player
         observePlayerDeath()
-        
-        // Reaponta sistemas que dependem do player
         collisionSystem?.setControlledEntity(controlledEntity)
         cameraEntity?.followPlayer(player: controlledEntity)
         troopControlSystem?.setTargetEntity(controlledEntity)
         aimingSystem?.player = controlledEntity
-        
         isRespawningPlayer = false
     }
 }

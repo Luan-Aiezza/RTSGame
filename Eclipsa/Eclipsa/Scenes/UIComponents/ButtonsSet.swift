@@ -86,7 +86,10 @@ class ButtonsSet {
     func setupFollowButton(){
         
         followButton.onTouch = { [weak self] in
-            self?.scene.troopControlSystem.commandTroopsToFollow()
+            guard let self = self else { return }
+            self.scene.troopControlSystem.commandTroopsToFollow()
+            // Dispara efeito visual na posição do jogador
+            self.scene.playFollowEffectAtPlayer()
         }
         followButton.toggleCommand(value: false)
         camera?.addChild(followButton)
