@@ -66,6 +66,7 @@ class ButtonsSet {
     }
     func setupInvokeRangedButton(){
         guard let invokeRangedButton = invokeRangedButton else { return }
+        invokeRangedButton.changeLabelToImage(with: "Mage_Invoke_Icon 1")
             invokeRangedButton.onTouch = { [weak self] in
                 guard let self = self else { return }
                 if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
