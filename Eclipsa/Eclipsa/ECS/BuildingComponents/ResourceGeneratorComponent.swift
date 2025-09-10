@@ -1,0 +1,39 @@
+//
+//  ResourceGeneratorComponent.swift
+//  Eclipsa
+//
+//  Created by Joseph Pereira on 09/09/25.
+//
+
+import GameplayKit
+
+class ResourceGeneratorComponent: GKComponent {
+    var rate: TimeInterval
+    var maxResourcePerGeneration: Int
+    var lastTimeUpdate: TimeInterval = 0
+    
+    init(rate: TimeInterval, maxResourcePerGeneration: Int = 1) {
+        self.rate = rate
+        self.maxResourcePerGeneration = maxResourcePerGeneration
+        super.init()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    
+    override func update(deltaTime seconds: TimeInterval) {
+        lastTimeUpdate += seconds
+        
+        if lastTimeUpdate >= rate && ResourceHandler.shared.getMaxAmountOfResources() > ResourceHandler.shared.getStoredResources(){
+            generateResource()
+            lastTimeUpdate = 0
+        }
+    }
+    
+    func generateResource() {
+        ResourceHandler.shared.addResources(maxResourcePerGeneration)
+    }
+    
+}
