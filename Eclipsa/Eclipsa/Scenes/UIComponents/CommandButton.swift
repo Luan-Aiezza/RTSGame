@@ -9,6 +9,8 @@ import SpriteKit
 class CommandButton: SKNode {
     
     private let button: SKShapeNode
+    private var label: SKLabelNode?
+    private var image: SKSpriteNode?
     
     var onTouch: (() -> Void)?
     
@@ -22,18 +24,27 @@ class CommandButton: SKNode {
         button.position = position
         button.zPosition = 1000
         button.name = name
-        let label = SKLabelNode(text: name)
-        label.fontName = "Avenir-Black"
-        label.fontSize = 22
-        label.fontColor = .white
-        label.verticalAlignmentMode = .center
-        button.addChild(label)
+        
+        label = SKLabelNode(text: name)
+        label!.fontName = "Avenir-Black"
+        label!.fontSize = 22
+        label!.fontColor = .white
+        label!.verticalAlignmentMode = .center
+        button.addChild(label!)
         isHidden = true
         addChild(button)
         }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    public func changeLabelToImage(with name: String){
+        button.removeAllChildren()
+        image = SKSpriteNode(imageNamed: name)
+        image!.size = CGSize(width: 36, height: 36)
+        image!.name = name
+        button.addChild(image!)
     }
     
     public func handleTouch(_ location: CGPoint){
