@@ -50,8 +50,10 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     }
     
     var centerPosition: CGPoint {
-        guard let position = player?.moveComponent?.node?.position else { return .zero }
-        return position
+        if let node = player?.component(ofType: GKSKNodeComponent.self)?.node {
+            return node.position
+        }
+        return .zero
     }
     
     func startAiming() {
@@ -86,19 +88,18 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     }
     
     func updateRangeIndicatorPosition() {
-            guard let aimingComp = aimingComponent else { return }
-            
-            let path = CGMutablePath()
-            path.addArc(
-                center: centerPosition, // Usa a posição atual do jogador
-                radius: CGFloat(aimingComp.maxRange),
-                startAngle: 0,
-                endAngle: .pi * 2,
-                clockwise: true
-            )
-            
-            rangeIndicator?.path = path
-        }
+        guard aimingComponent != nil else { return }
+        let path = CGMutablePath()
+        path.addArc(
+            center: centerPosition, // Usa a posição atual do jogador
+            radius: CGFloat(aimingComponent?.maxRange ?? 0),
+            startAngle: 0,
+            endAngle: .pi * 2,
+            clockwise: true
+        )
+        
+        rangeIndicator?.path = path
+    }
 }
 
 extension AimingSystem: AimingDelegate {

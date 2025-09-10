@@ -16,6 +16,15 @@ class TroopControlSystem {
         self.targetEntity = targetEntity
     }
     
+    // MARK: - Public API to manage target
+    public func setTargetEntity(_ entity: UnitEntity?) {
+        self.targetEntity = entity
+    }
+    
+    public func clearTargetEntity() {
+        self.targetEntity = nil
+    }
+    
     func commandTroopsToFollow() {
         guard let targetEntity = targetEntity,
               let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
@@ -48,7 +57,6 @@ class TroopControlSystem {
         }
     }
 
-
     func commandTroopsToStop() {
         guard let targetEntity = targetEntity,
               let rangeComponent = targetEntity.component(ofType: RangeComponent.self),
@@ -65,3 +73,4 @@ class TroopControlSystem {
         }
     }
 }
+

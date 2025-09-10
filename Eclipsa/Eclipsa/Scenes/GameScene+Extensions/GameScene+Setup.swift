@@ -62,6 +62,8 @@ extension GameScene {
                 scene.addChild(rangeComp.node)
             }
         }
+        // Garante que o novo player tenha o observer de morte
+        observePlayerDeath()
     }
     
     func setupCamera() {
@@ -120,4 +122,3 @@ extension GameScene {
         camera?.addChild(releaseButton)
     }
 }
-

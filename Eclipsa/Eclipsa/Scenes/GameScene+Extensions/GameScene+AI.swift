@@ -36,8 +36,8 @@ extension GameScene {
                     behavior.setTarget(enemy)
                 } else if behavior.manualTargetPoint != nil {
                     behavior.setTarget(nil) // mantém ponto manual
-                } else {
-                    behavior.setTarget(controlledEntity) // volta pro follow
+                } else if let player = controlledEntity {
+                    behavior.setTarget(player) // volta pro follow, se houver player
                 }
             }
         }

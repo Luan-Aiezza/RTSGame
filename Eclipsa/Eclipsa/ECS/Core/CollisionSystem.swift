@@ -11,6 +11,15 @@ final class CollisionSystem {
         self.testBlockNode = testBlockNode
     }
     
+    // MARK: - Public API
+    func setControlledEntity(_ entity: UnitEntity?) {
+        self.controlledEntity = entity
+    }
+    
+    func clearControlledEntity() {
+        self.controlledEntity = nil
+    }
+    
     func handleDidBegin(_ contact: SKPhysicsContact) {
         let maskA = contact.bodyA.categoryBitMask
         let maskB = contact.bodyB.categoryBitMask
@@ -46,3 +55,4 @@ final class CollisionSystem {
         }
     }
 }
+

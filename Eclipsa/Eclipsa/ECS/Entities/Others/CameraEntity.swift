@@ -25,7 +25,8 @@ class CameraEntity: GKEntity {
         return self.component(ofType: FollowComponent.self)
     }
     
-    func followPlayer(player: GKEntity) {
+    // Accept optional to allow clearing the follow target
+    func followPlayer(player: GKEntity?) {
         followComponent?.target = player
     }
     

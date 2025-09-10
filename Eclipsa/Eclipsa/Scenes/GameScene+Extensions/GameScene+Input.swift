@@ -81,7 +81,7 @@ extension GameScene {
                 for troop in self?.troops ?? [] {
                     guard
                         let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
-                        let playerTeam = self?.controlledEntity.component(ofType: TeamComponent.self)?.team,
+                        let playerTeam = self?.controlledEntity?.component(ofType: TeamComponent.self)?.team,
                         troopTeam == playerTeam
                     else { continue }
 
@@ -111,4 +111,3 @@ extension GameScene {
         commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
 }
-

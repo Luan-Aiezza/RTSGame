@@ -4,9 +4,14 @@ import BehindGameKit
 
 extension GameScene {
     func updatePlayerState() {
-        guard let moveComponent = controlledEntity.moveComponent else { return }
+        // Se não há player (ex.: durante respawn), não faz nada
+        guard let player = controlledEntity else { return }
+        // Se o player não tem componente de movimento, também não há o que fazer
+        guard let moveComponent = player.moveComponent else { return }
+        
         let isMoving = moveComponent.direction != .zero
-        if let stateMachineComponent = controlledEntity.component(ofType: StateMachineComponent.self) {
+        
+        if let stateMachineComponent = player.component(ofType: StateMachineComponent.self) {
             if isMoving {
                 stateMachineComponent.stateMachine.enter(WalkingState.self)
             } else {
