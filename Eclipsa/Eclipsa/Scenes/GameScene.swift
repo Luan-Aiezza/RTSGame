@@ -9,15 +9,16 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var cameraEntity: CameraEntity!
     public var troopNode: SKSpriteNode?
     public var enemyNode: SKSpriteNode?
+   
     var commandController: AdaptedVirtualController?
     var commandInput = InputHandler()
+    var gameController: AdaptedVirtualController?
+    var aimingSystem: AimingSystem?
+
     private var wallNode: SKSpriteNode?
     
     var buttons: ButtonsSet!
-    
-    var gameController: AdaptedVirtualController?
-    var aimingSystem: AimingSystem?
-    
+
     var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
     var troopControlSystem: TroopControlSystem!
@@ -58,7 +59,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupTreeCollisions(forTilemapNamed: "Tree_1")
         
         setupVirtualController() // precisa vir ANTES do player
-        commandController = .init(scene: self, analogRadius: 50)
+        commandController = .init(scene: self, analogRadius: 50, color: .systemRed)
         commandController?.setAnalogVisible(value: false)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
@@ -146,8 +147,9 @@ extension GameScene {
 
 extension GameScene {
     func setupAdatpedVirtualController() {
-        gameController = AdaptedVirtualController(scene: self, analogRadius: 50)
-        gameController?.setAnalogVisible(value: false)
+        gameController = AdaptedVirtualController(scene: self, analogRadius: 50, color: .systemBlue)
+        gameController?.changePosition(Position.gameController(size: size))
+        gameController?.setAnalogVisible(value: true)
         controlledEntity.component(ofType: AdaptedControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: gameController)
     }
 }

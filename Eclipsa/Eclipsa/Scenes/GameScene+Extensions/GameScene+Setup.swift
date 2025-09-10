@@ -6,7 +6,7 @@ import BehindGameKit
 extension GameScene {
     func setupInputControllerIfNeeded() {
         if commandController == nil {
-            commandController = AdaptedVirtualController(scene: self)
+            commandController = AdaptedVirtualController(scene: self, color: .red)
         }
     }
     
