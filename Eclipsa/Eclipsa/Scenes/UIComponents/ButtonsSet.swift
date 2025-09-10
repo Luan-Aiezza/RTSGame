@@ -65,23 +65,22 @@ class ButtonsSet {
         camera?.addChild(invokeMeleeButton)
     }
     func setupInvokeRangedButton(){
-        if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
-            guard let invokeRangedButton = invokeRangedButton else { return }
+        guard let invokeRangedButton = invokeRangedButton else { return }
             invokeRangedButton.onTouch = { [weak self] in
                 guard let self = self else { return }
+                if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
                 self.entity.generator?.generateRanged(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
                        let troop = troop{
                         self.scene.addChild(node)
                         SKEntityManager.shared.add(troop)
+                        ResourceHandler.shared.spendResources(TroopCost.rangedCost)
                     }
                 }
             }
-            
-            invokeRangedButton.toggleCommand(value: false)
-            ResourceHandler.shared.spendResources(TroopCost.rangedCost)
-            camera?.addChild(invokeRangedButton)
         }
+            invokeRangedButton.toggleCommand(value: false)
+            camera?.addChild(invokeRangedButton)
     }
     
     func setupFollowButton(){
