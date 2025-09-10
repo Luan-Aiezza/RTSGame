@@ -35,8 +35,8 @@ extension GameScene {
         buttons.invokeRangedButton.handleTouch(location)
         buttons.invokeMeleeButton?.handleTouch(location)
         if location.x <= 0 {
-            gameController?.setAnalogVisible(value: true)
-            gameController?.changePosition(location)
+//            gameController?.setAnalogVisible(value: true)
+//            gameController?.changePosition(location)
             gameController?.touchBegan(touches, with: event)
         } else if location.x > 0 && (aimingSystem?.aimingComponent?.isAiming ?? false) {
             commandController?.setAnalogVisible(value: true)
@@ -73,7 +73,7 @@ extension GameScene {
               let location = touches.first?.location(in: camera) else { return }
         if location.x <= 0 {
             gameController?.touchesEnded(touches, with: event)
-            gameController?.setAnalogVisible(value: false, withDuration: 0.6)
+//            gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         } else if location.x > 0 {
             cancelButton.handleTouch(location)
             
@@ -106,7 +106,7 @@ extension GameScene {
             return
         }
         gameController?.touchesCancelled(touches, with: event)
-        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
+//        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
         commandController?.setAnalogVisible(value: false, withDuration: 0.6)
     }
