@@ -30,4 +30,8 @@ enum Position {
     static func resourceLabel(size: CGSize) -> CGPoint {
         return CGPoint(x: -size.width/3, y: size.height/3)
     }
+    
+    static func gameController(size: CGSize) -> CGPoint {
+        return CGPoint(x: -size.width/3, y: -size.height/7 + 20)
+    }
 }
