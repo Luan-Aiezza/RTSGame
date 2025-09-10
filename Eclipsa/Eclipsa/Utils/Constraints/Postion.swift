@@ -6,7 +6,7 @@
 //
 import SpriteKit
 
-struct Position {
+enum Position {
     static func cancelButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 80, y: size.height/2 - 80)
     }
