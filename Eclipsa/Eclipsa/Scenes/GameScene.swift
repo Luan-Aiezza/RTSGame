@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import SpriteKit
 import BehindGameKit
 import GameplayKit
@@ -35,6 +36,19 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Flag para evitar múltiplos respawns concorrentes
     private var isRespawningPlayer = false
     
+    private var resourceLabel: SKLabelNode!
+    private var cancellables = Set<AnyCancellable>()
+    
+    private func setupBindings() {
+        ResourceHandler.shared.$storedResources
+            .receive(on: RunLoop.main) // garante atualização na main thread
+            .sink { [weak self] newValue in
+                self?.resourceLabel.text = "\(newValue)"
+            }
+            .store(in: &cancellables)
+    }
+    
+    
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
@@ -67,6 +81,14 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
+        
+        resourceLabel = SKLabelNode(fontNamed: "Arial")
+                resourceLabel.fontSize = 50
+                resourceLabel.fontColor = .red
+        resourceLabel.position = Position.resourceLabel(size: size)
+        self.camera?.addChild(resourceLabel)
+                
+                setupBindings()
     }
     
     
