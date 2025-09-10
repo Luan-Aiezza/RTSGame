@@ -9,7 +9,7 @@ class ResourceHandler{
     static let shared = ResourceHandler()
     
     private let maxAmountOfResources: Int = 20
-    private var storedResources: Int = 0
+    private var storedResources: Int = 6
     
     private init() {}
     
