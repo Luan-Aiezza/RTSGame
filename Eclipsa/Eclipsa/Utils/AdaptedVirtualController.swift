@@ -7,7 +7,7 @@ public class AdaptedVirtualController: ObservableObject, AimAdapter{
     
     private var analogNode: AdaptedAnalogNode
     
-    public init(scene: SKScene, analogRadius: CGFloat = 20) {
+    public init(scene: SKScene, analogRadius: CGFloat = 20, color: UIColor = .white) {
         analogNode = AdaptedAnalogNode(radius: analogRadius)
         
         if (scene.camera != nil) {
@@ -17,6 +17,7 @@ public class AdaptedVirtualController: ObservableObject, AimAdapter{
         }
         
         setup(scene: scene)
+        analogNode.changeAnalogColor(color: color)
     }
     
     private func setup(scene: SKScene) {
