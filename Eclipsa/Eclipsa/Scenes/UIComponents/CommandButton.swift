@@ -44,6 +44,7 @@ class CommandButton: SKNode {
         image = SKSpriteNode(imageNamed: name)
         image!.size = CGSize(width: 36, height: 36)
         image!.name = name
+        image!.texture?.filteringMode = .nearest
         button.addChild(image!)
     }
     
