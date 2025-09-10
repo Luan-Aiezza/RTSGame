@@ -6,7 +6,7 @@
 //
 import SpriteKit
 
-struct Position {
+enum Position {
     static func cancelButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 80, y: size.height/2 - 80)
     }
@@ -25,5 +25,13 @@ struct Position {
     
     static func invokeRangeButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/2 - 240, y: -size.height/2 + 80)
+    }
+    
+    static func resourceLabel(size: CGSize) -> CGPoint {
+        return CGPoint(x: -size.width/3, y: size.height/3)
+    }
+    
+    static func gameController(size: CGSize) -> CGPoint {
+        return CGPoint(x: -size.width/3, y: -size.height/7 + 20)
     }
 }

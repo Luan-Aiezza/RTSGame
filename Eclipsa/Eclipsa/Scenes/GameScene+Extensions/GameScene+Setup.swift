@@ -6,7 +6,7 @@ import BehindGameKit
 extension GameScene {
     func setupInputControllerIfNeeded() {
         if commandController == nil {
-            commandController = AdaptedVirtualController(scene: self)
+            commandController = AdaptedVirtualController(scene: self, color: .red)
         }
     }
     
@@ -82,19 +82,6 @@ extension GameScene {
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node, node.parent == nil {
             addChild(node)
         }
-    }
-    
-    func setupTroops() {
-        for _ in 0..<6{
-            controlledEntity.generator?.startGenerating(troops: troops) { troop in
-                if let troop = troop,
-                   let node = troop.component(ofType: AnimationComponent.self)?.node{
-                    self.addChild(node)
-                    SKEntityManager.shared.add(troop)
-                }
-            }
-        }
-        
     }
     
     func setupUI() {

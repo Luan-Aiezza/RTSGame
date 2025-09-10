@@ -12,12 +12,12 @@ import BehindGameKit
 class ButtonsSet {
     var scene: GameScene
     var followButton: CommandButton!
-    var invokeMeleeButton: CommandButton!
+    var invokeMeleeButton: CommandButton?
     var invokeRangedButton: CommandButton!
     
     init(scene: GameScene) {
         self.scene = scene
-        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
+//        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
         followButton = CommandButton(position: Position.followButton(size: size), name: "Follow", color: .green)
         
@@ -49,6 +49,7 @@ class ButtonsSet {
     }
     
     func setupInvokeMeleeButton(){
+        guard let invokeMeleeButton = invokeMeleeButton else { return }
         invokeMeleeButton.toggleCommand(value: false)
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
@@ -64,20 +65,24 @@ class ButtonsSet {
         camera?.addChild(invokeMeleeButton)
     }
     func setupInvokeRangedButton(){
-        invokeRangedButton.onTouch = { [weak self] in
-            guard let self = self else { return }
-            self.entity.generator?.generateRanged(troops: self.troops) { troop in
-                if let node = troop?.component(ofType: AnimationComponent.self)?.node,
-                   let troop = troop{
-                    self.scene.addChild(node)
-                    SKEntityManager.shared.add(troop)
+        guard let invokeRangedButton = invokeRangedButton else { return }
+            invokeRangedButton.onTouch = { [weak self] in
+                guard let self = self else { return }
+                if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
+                self.entity.generator?.generateRanged(troops: self.troops) { troop in
+                    if let node = troop?.component(ofType: AnimationComponent.self)?.node,
+                       let troop = troop{
+                        self.scene.addChild(node)
+                        SKEntityManager.shared.add(troop)
+                        ResourceHandler.shared.spendResources(TroopCost.rangedCost)
+                    }
                 }
             }
         }
-        
-        invokeRangedButton.toggleCommand(value: false)
-        camera?.addChild(invokeRangedButton)
+            invokeRangedButton.toggleCommand(value: false)
+            camera?.addChild(invokeRangedButton)
     }
+    
     func setupFollowButton(){
         
         followButton.onTouch = { [weak self] in

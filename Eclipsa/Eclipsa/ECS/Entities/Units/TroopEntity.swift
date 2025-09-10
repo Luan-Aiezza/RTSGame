@@ -11,6 +11,7 @@ import BehindGameKit
 // Entidade de Tropa baseada em BaseUnitEntity, sem controle manual do jogador
 public class TroopEntity: BaseUnitEntity {
     public init(team: Team = .sun, maxHealth: Int = 50, spriteSize: CGSize = .init(width: 32, height: 32), allTroops: @escaping () -> [TroopEntity]) {
+        
         super.init(team: team, maxHealth: maxHealth, spriteSize: spriteSize)
         
         self.removeComponent(ofType: ControlableComponent.self)
@@ -65,7 +66,6 @@ extension TroopEntity {
             anim.runAnimation(for: .die)
         }
         
-        // espera a animação terminar
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
             self?.destroy()
         }
