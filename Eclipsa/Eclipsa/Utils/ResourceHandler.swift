@@ -5,13 +5,17 @@
 //  Created by Joseph Pereira on 09/09/25.
 //
 
-class ResourceHandler{
+import Combine
+
+class ResourceHandler: ObservableObject {
     static let shared = ResourceHandler()
     
     private let maxAmountOfResources: Int = 20
-    private var storedResources: Int = 6
+    @Published private(set) var storedResources: Int
     
-    private init() {}
+    private init() {
+        storedResources = 0
+    }
     
     func getStoredResources() -> Int {
         return storedResources
