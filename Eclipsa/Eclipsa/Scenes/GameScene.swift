@@ -53,8 +53,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         // Observa a morte do player atual para respawn
         observePlayerDeath()
         
-        setupTroops()
-        
         setupNexus()   // cria base do jogador
         setupInhibitors() // cria inibidores aliados
         

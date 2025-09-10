@@ -84,19 +84,6 @@ extension GameScene {
         }
     }
     
-    func setupTroops() {
-        for _ in 0..<6{
-            controlledEntity.generator?.startGenerating(troops: troops) { troop in
-                if let troop = troop,
-                   let node = troop.component(ofType: AnimationComponent.self)?.node{
-                    self.addChild(node)
-                    SKEntityManager.shared.add(troop)
-                }
-            }
-        }
-        
-    }
-    
     func setupUI() {
         self.troopControlSystem = TroopControlSystem(scene: self, targetEntity: controlledEntity)
         setupCommandButton()
