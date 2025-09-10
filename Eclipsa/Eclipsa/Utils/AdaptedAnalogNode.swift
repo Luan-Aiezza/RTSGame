@@ -28,14 +28,16 @@ public class AdaptedAnalogNode: SKNode, ObservableObject {
         self.isUserInteractionEnabled = true
     }
     
+    func changeAnalogColor(color: UIColor){
+        knob.fillColor = color.withAlphaComponent(0.8)
+        knob.strokeColor = color
+        background.fillColor = color.withAlphaComponent(0.4)
+        background.strokeColor = color
+    }
+    
     private func setup() {
         background.zPosition = -10
         knob.zPosition = 5
-        
-        background.alpha = 0.5
-        
-        knob.fillColor = .white
-        background.fillColor = .white
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -58,12 +60,12 @@ public class AdaptedAnalogNode: SKNode, ObservableObject {
     
     public func touchesEndedAlias(_ touches: SetTouches, with event: UIEventAlias?) {
         moveKnob(location: .zero)
-        setVisible(value: false, withDuration: 0.6)
+//        setVisible(value: false, withDuration: 0.6)
     }
     
     public func touchesCancelledAlias(_ touches: SetTouches, with event: UIEventAlias?) {
         moveKnob(location: .zero)
-        setVisible(value: false, withDuration: 0.6)
+//        setVisible(value: false, withDuration: 0.6)
     }
     
     private func moveKnob(location: CGPoint) {
