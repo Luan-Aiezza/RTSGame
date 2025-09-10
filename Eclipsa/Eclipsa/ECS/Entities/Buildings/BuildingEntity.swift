@@ -26,6 +26,21 @@ public class BuildingEntity: BaseUnitEntity {
         }
         self.addComponent(GKSKNodeComponent(node: node))
         
+        // Atualiza o AnimationComponent para usar o node do .sks e configura animação de destruição
+        if let existingAnim = self.component(ofType: AnimationComponent.self) {
+            self.removeComponent(ofType: AnimationComponent.self)
+        }
+        let buildingAnim = AnimationComponent(spriteNode: node)
+        // Configura animação de morte: Building_Destroy_1 ... Building_Destroy_23
+        let destroyTextures: [SKTexture] = (1...23).map { SKTexture(imageNamed: "Building_Destroy_\($0)") }
+        buildingAnim.addAnimation(textures: destroyTextures, for: .die, timePerFrame: 0.05, repeatForever: false)
+        
+        // Opcional: manter um "idle" estático com a textura atual do nó
+        if let baseTexture = node.texture {
+            buildingAnim.addAnimation(textures: [baseTexture], for: .idle, timePerFrame: 0.2, repeatForever: true)
+        }
+        self.addComponent(buildingAnim)
+        
         // remove comportamentos que não fazem sentido em prédios
         self.removeComponent(ofType: RangeComponent.self)
         self.removeComponent(ofType: AgentComponent.self)
@@ -58,3 +73,4 @@ public class BuildingEntity: BaseUnitEntity {
         fatalError("init(coder:) has not been implemented")
     }
 }
+

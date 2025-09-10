@@ -55,12 +55,22 @@ public class HealthComponent: GKComponent {
         if let anim = entity.component(ofType: AnimationComponent.self) {
             anim.runAnimation(for: .die)
 
+            // Opção B:
+            // Captura o node antes de remover do manager para garantir limpeza visual/física
+            let capturedNode = entity.component(ofType: GKSKNodeComponent.self)?.node
+
             // remove do EntityManager logo aqui (para sair de allTroops)
             SKEntityManager.shared.remove(entity)
 
-            // espera só para remover o nó visual
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak entity] in
-                entity?.destroy()
+            // espera só para remover o nó visual, sem depender da entidade existir
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                // Limpa ações e filhos, remove da cena
+                capturedNode?.removeAllActions()
+                capturedNode?.removeAllChildren()
+                capturedNode?.removeFromParent()
+                // Como o SKPhysicsBodyComponent zera physicsBody no willRemoveFromEntity,
+                // e a entidade pode já ter sido desalocada, garantimos aqui que o physicsBody não permaneça.
+                capturedNode?.physicsBody = nil
             }
         } else {
             SKEntityManager.shared.remove(entity)
@@ -73,3 +83,4 @@ public class HealthComponent: GKComponent {
         fatalError("init(coder:) has not been implemented")
     }
 }
+
