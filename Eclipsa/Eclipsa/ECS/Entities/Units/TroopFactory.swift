@@ -16,6 +16,7 @@ enum TroopFactory{
         let walkTextures = TextureHandler.makeTexture(name: "Sun_Mage_Walk_", quantity: 4)
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Mage_Casting_", quantity: 12)
         let deathTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Dead_", quantity: 12)
+        let risingTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
         let maxHealth = 50
         
@@ -27,6 +28,8 @@ enum TroopFactory{
         animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
         animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
         animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
+        // Nova animação de invocação
+        animationComponent.addAnimation(textures: risingTextures, for: .custom("rising"), timePerFrame: 0.08, repeatForever: false)
         
         let idle = TroopIdleState(troop: rangedTroop)
         let follow = TroopFollowState(troop: rangedTroop)
@@ -37,20 +40,32 @@ enum TroopFactory{
         rangedTroop.stateMachineComponent = StateMachineComponent(stateMachine)
         rangedTroop.addComponent(rangedTroop.stateMachineComponent)
         
-        stateMachine.enter(TroopIdleState.self)
-        
-       rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 3, cooldown: 2.0))
-       PhysicsSystem.setupTroopPhysics(for: rangedTroop)
+        // Física, ataque e range
+        rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 3, cooldown: 2.0))
+        PhysicsSystem.setupTroopPhysics(for: rangedTroop)
        
-       if let rangeComp = rangedTroop.component(ofType: RangeComponent.self),
-          let nodeComp = rangedTroop.component(ofType: GKSKNodeComponent.self) {
-           let scene = nodeComp.node.scene
-           let positionInScene = nodeComp.node.position
-           rangeComp.node.position = positionInScene
-           if rangeComp.node.parent !== scene {
-               scene?.addChild(rangeComp.node)
-           }
-       }
+        if let rangeComp = rangedTroop.component(ofType: RangeComponent.self),
+           let nodeComp = rangedTroop.component(ofType: GKSKNodeComponent.self) {
+            let scene = nodeComp.node.scene
+            let positionInScene = nodeComp.node.position
+            rangeComp.node.position = positionInScene
+            if rangeComp.node.parent !== scene {
+                scene?.addChild(rangeComp.node)
+            }
+        }
+        
+        // Rodar animação de invocação e depois entrar em Idle
+        if let node = rangedTroop.component(ofType: GKSKNodeComponent.self)?.node {
+            animationComponent.runAnimation(for: .custom("rising"))
+            // Captura a duração da ação atual "animation" no sprite
+            let duration = animationComponent.node.action(forKey: "animation")?.duration ?? (0.08 * Double(risingTextures.count))
+            node.run(.sequence([
+                .wait(forDuration: duration),
+                .run { stateMachine.enter(TroopIdleState.self) }
+            ]))
+        } else {
+            stateMachine.enter(TroopIdleState.self)
+        }
         
         return rangedTroop
     }
@@ -62,6 +77,7 @@ enum TroopFactory{
         let walkTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Walk_", quantity: 8)
         let attackTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Attack_", quantity: 3)
         let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
+        let risingTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
         let maxHealth = 150
         
@@ -73,6 +89,8 @@ enum TroopFactory{
         animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
         animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
         animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
+        // Nova animação de invocação
+        animationComponent.addAnimation(textures: risingTextures, for: .custom("rising"), timePerFrame: 0.08, repeatForever: false)
         
         let idle = TroopIdleState(troop: meleeTroop)
         let follow = TroopFollowState(troop: meleeTroop)
@@ -96,8 +114,9 @@ enum TroopFactory{
             rangeComp.node.physicsBody?.collisionBitMask = 0
             rangeComp.node.physicsBody?.contactTestBitMask = PhysicsCategory.troop
         }
-        stateMachine.enter(TroopIdleState.self)
         
+        // Física e range posicionamento
+        stateMachine.enter(TroopIdleState.self) // entrada default caso não haja node
         PhysicsSystem.setupTroopPhysics(for: meleeTroop)
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self),
@@ -108,6 +127,16 @@ enum TroopFactory{
             if rangeComp.node.parent !== scene {
                 scene?.addChild(rangeComp.node)
             }
+        }
+        
+        // Rodar animação de invocação e depois entrar em Idle (sobrescreve a entrada imediata)
+        if let node = meleeTroop.component(ofType: GKSKNodeComponent.self)?.node {
+            animationComponent.runAnimation(for: .custom("rising"))
+            let duration = animationComponent.node.action(forKey: "animation")?.duration ?? (0.08 * Double(risingTextures.count))
+            node.run(.sequence([
+                .wait(forDuration: duration),
+                .run { stateMachine.enter(TroopIdleState.self) }
+            ]))
         }
         
         return meleeTroop
