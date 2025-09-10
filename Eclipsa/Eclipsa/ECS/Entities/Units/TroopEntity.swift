@@ -11,47 +11,10 @@ import BehindGameKit
 // Entidade de Tropa baseada em BaseUnitEntity, sem controle manual do jogador
 public class TroopEntity: BaseUnitEntity {
     public init(team: Team = .sun, maxHealth: Int = 50, spriteSize: CGSize = .init(width: 32, height: 32), allTroops: @escaping () -> [TroopEntity]) {
-        
-        
-        // Texturas específicas da tropa (Mage)
-//        let idleTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Idle_\($0)") }
-//        let walkTextures = (1...4).map { SKTexture(imageNamed: "Sun_Mage_Walk_\($0)") }
-        
         super.init(team: team, maxHealth: maxHealth, spriteSize: spriteSize)
         
         self.removeComponent(ofType: ControlableComponent.self)
         self.removeComponent(ofType: AdaptedControlableComponent.self)
-        
-        // Ajusta animações adicionais: attack e death
-//        if let animationComponent = self.component(ofType: AnimationComponent.self) {
-//            let attackTextures = (1...12).map { SKTexture(imageNamed: "Sun_Mage_Casting_\($0)") }
-//            let deathTextures = (1...6).map { SKTexture(imageNamed: "Sun_Soldier_Death_\($0)") }
-//            
-//            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
-//            animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
-//        }
-
-        // Substituir a máquina anterior:
-//        let idle = TroopIdleState(troop: self)
-//        let follow = TroopFollowState(troop: self)
-//        let attack = TroopAttackState(troop: self)
-//        let die = TroopDieState(troop: self)
-
-//        let stateMachine = GKStateMachine(states: [idle, follow, attack, die])
-//        self.stateMachineComponent = StateMachineComponent(stateMachine)
-//        self.addComponent(stateMachineComponent)
-
-//        stateMachine.enter(TroopIdleState.self)
-        
-        // Componentes exclusivos da tropa
-//        if self.component(ofType: AttackComponent.self) == nil {
-//            self.addComponent(AttackComponent(unit: self, damage: 3, cooldown: 2.0))
-//        }
-        
-        // Remove controle manual do jogador
-
-        
-//        stateMachine.enter(TroopIdleState.self)
     }
     
     /// Command the troop to move to a given point, disabling any follow behavior.
@@ -112,17 +75,6 @@ extension TroopEntity {
             return troops
         }
          troop.component(ofType: GKSKNodeComponent.self)?.node.position = position
-//         PhysicsSystem.setupTroopPhysics(for: troop)
-//
-//         if let rangeComp = troop.component(ofType: RangeComponent.self),
-//            let nodeComp = troop.component(ofType: GKSKNodeComponent.self) {
-//             let scene = nodeComp.node.scene
-//             let positionInScene = nodeComp.node.position
-//             rangeComp.node.position = positionInScene
-//             if rangeComp.node.parent !== scene {
-//                 scene?.addChild(rangeComp.node)
-//             }
-//         }
          return troop
      }
 }

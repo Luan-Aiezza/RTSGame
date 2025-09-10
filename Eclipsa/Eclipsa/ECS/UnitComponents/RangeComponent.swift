@@ -12,13 +12,12 @@ public class RangeComponent: GKComponent {
     /// Handler chamado ao terminar contato
     public var didEndContact: ((SKNode) -> Void)?
 
-    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.01)) {
+    public init(radius: CGFloat, color: SKColor = .cyan.withAlphaComponent(0.0)) {
         self.radius = radius
         self.color = color
         self.node = SKShapeNode(circleOfRadius: radius)
         super.init()
         node.fillColor = color
-        node.strokeColor = color.withAlphaComponent(0.01)
         node.lineWidth = 0
         node.zPosition = 100
         let body = SKPhysicsBody(circleOfRadius: radius)
@@ -34,8 +33,6 @@ public class RangeComponent: GKComponent {
 
     public override func didAddToEntity() {
         super.didAddToEntity()
-        // Remove adding the node as child of the entity's node
-        // The node will be added to the scene later in update.
     }
     
     override public func update(deltaTime: TimeInterval) {
@@ -52,11 +49,6 @@ public class RangeComponent: GKComponent {
     override public func willRemoveFromEntity() {
         super.willRemoveFromEntity()
         node.removeFromParent()
-    }
-
-    public func setContactColor(_ color: SKColor) {
-        node.fillColor = color
-        node.strokeColor = color.withAlphaComponent(0.9)
     }
     public func resetColor() {
         node.fillColor = self.color

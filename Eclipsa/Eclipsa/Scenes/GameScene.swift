@@ -71,10 +71,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         physicsWorld.contactDelegate = self
     }
     
-    
     override func update(_ currentTime: TimeInterval) {
-        
-        
+    
         let deltaTime = currentTime - lastUpdateTime
         lastUpdateTime = currentTime
         SKEntityManager.shared.update(deltaTime) //Trocar para DeltaTime
@@ -100,16 +98,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
     }
     
-}
-
-extension GameScene {
-    func didBegin(_ contact: SKPhysicsContact) {
-        collisionSystem.handleDidBegin(contact)
-    }
-    
-    func didEnd(_ contact: SKPhysicsContact) {
-        collisionSystem.handleDidEnd(contact)
-    }
 }
 
 extension GameScene {
