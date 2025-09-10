@@ -12,12 +12,12 @@ import BehindGameKit
 class ButtonsSet {
     var scene: GameScene
     var followButton: CommandButton!
-    var invokeMeleeButton: CommandButton!
+    var invokeMeleeButton: CommandButton?
     var invokeRangedButton: CommandButton!
     
     init(scene: GameScene) {
         self.scene = scene
-        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
+//        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
         followButton = CommandButton(position: Position.followButton(size: size), name: "Follow", color: .green)
         
@@ -49,6 +49,7 @@ class ButtonsSet {
     }
     
     func setupInvokeMeleeButton(){
+        guard let invokeMeleeButton = invokeMeleeButton else { return }
         invokeMeleeButton.toggleCommand(value: false)
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
@@ -64,6 +65,7 @@ class ButtonsSet {
         camera?.addChild(invokeMeleeButton)
     }
     func setupInvokeRangedButton(){
+        guard let invokeRangedButton = invokeRangedButton else { return }
         invokeRangedButton.onTouch = { [weak self] in
             guard let self = self else { return }
             self.entity.generator?.generateRanged(troops: self.troops) { troop in
