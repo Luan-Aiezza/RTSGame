@@ -5,8 +5,6 @@
 	<key>UIAppFonts</key>
 	<array>
 		<string></string>
-		<string>CCPixelArcade-Display.otf</string>
-		<string>CCPixelArcade-Joystick.otf</string>
 	</array>
 </dict>
 </plist>
