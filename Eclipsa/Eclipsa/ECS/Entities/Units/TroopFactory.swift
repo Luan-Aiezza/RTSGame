@@ -10,13 +10,17 @@ import GameplayKit
 import BehindGameKit
 
 enum TroopFactory{
-   static func makeRanged(team: Team, allTroops: @escaping () -> [TroopEntity]) -> TroopEntity {
+    static func makeRanged(team: Team, allTroops: @escaping () -> [TroopEntity]) -> TroopEntity {
         
-        let idleTextures = TextureHandler.makeTexture(name: "Sun_Mage_Idle_", quantity: 4)
-        let walkTextures = TextureHandler.makeTexture(name: "Sun_Mage_Walk_", quantity: 4)
-        let attackTextures = TextureHandler.makeTexture(name: "Sun_Mage_Casting_", quantity: 12)
-        let deathTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Dead_", quantity: 12)
-        let risingTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Rising_", quantity: 12)
+        // Define prefixos por time
+        let magePrefix: String = (team == .sun) ? "Sun_Mage_" : "Moon_Mage_"
+        let soldierPrefix: String = (team == .sun) ? "Soldier_Sun_" : "Soldier_Moon_"
+        
+        let idleTextures = TextureHandler.makeTexture(name: "\(magePrefix)Idle_", quantity: 4)
+        let walkTextures = TextureHandler.makeTexture(name: "\(magePrefix)Walk_", quantity: 4)
+        let attackTextures = TextureHandler.makeTexture(name: "\(magePrefix)Casting_", quantity: 12)
+        let deathTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Dead_", quantity: 12)
+        let risingTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
         let maxHealth = 50
         
@@ -43,7 +47,7 @@ enum TroopFactory{
         // Física, ataque e range
         rangedTroop.addComponent(AttackComponent(unit: rangedTroop, damage: 3, cooldown: 2.0))
         PhysicsSystem.setupTroopPhysics(for: rangedTroop)
-       
+        
         if let rangeComp = rangedTroop.component(ofType: RangeComponent.self),
            let nodeComp = rangedTroop.component(ofType: GKSKNodeComponent.self) {
             let scene = nodeComp.node.scene
@@ -72,12 +76,16 @@ enum TroopFactory{
     
     static func makeMelee(team: Team, allTroops: @escaping () -> [TroopEntity]) -> TroopEntity {
         
-        let idleTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Idle_", quantity: 12)
+        // Define prefixos por time
+        let soldierPrefix: String = (team == .sun) ? "Sun_Soldier_" : "Moon_Soldier_"
+        let risingPrefix: String = (team == .sun) ? "Soldier_Sun_" : "Soldier_Moon_"
+        
+        let idleTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Idle_", quantity: 12)
         print(idleTextures[0])
-        let walkTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Walk_", quantity: 8)
-        let attackTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Attack_", quantity: 3)
-        let deathTextures = TextureHandler.makeTexture(name: "Sun_Soldier_Death_", quantity: 6)
-        let risingTextures = TextureHandler.makeTexture(name: "Soldier_Sun_Rising_", quantity: 12)
+        let walkTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Walk_", quantity: 8)
+        let attackTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Attack_", quantity: 3)
+        let deathTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Death_", quantity: 6)
+        let risingTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
         let maxHealth = 150
         

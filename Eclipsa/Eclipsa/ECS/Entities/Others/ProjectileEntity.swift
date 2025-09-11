@@ -25,10 +25,14 @@ public class ProjectileEntity: GKEntity {
         bullet.zPosition = 2000 - bullet.position.y
         bullet.isHidden = true
         
+        // Define prefixo conforme o time do caster
+        let casterTeam = caster.component(ofType: TeamComponent.self)?.team ?? .sun
+        let prefix = (casterTeam == .sun) ? "Sun_" : "Moon_"
+        
         // ============================
         // 2) Bullet animação
         // ============================
-        let bulletTextures = (1...4).map { SKTexture(imageNamed: "Sun_Magic_Bullet_\($0)") }
+        let bulletTextures = (1...4).map { SKTexture(imageNamed: "\(prefix)Magic_Bullet_\($0)") }
         animationComponent.addAnimation(
             textures: bulletTextures,
             for: .custom("bullet"),
@@ -36,15 +40,13 @@ public class ProjectileEntity: GKEntity {
             repeatForever: true
         )
         
-        
-        // Como o cast agora está acoplado ao personagem, não precisamos mais do castNode/castTextures.
-        // Basta iniciar o projétil.
+        // Inicia o projétil
         startBullet()
         
         // ============================
-        // 3) Hit animação (32x32 → corrigir base)
+        // 3) Hit animação (32x32)
         // ============================
-        let contactTextures = (1...13).map { SKTexture(imageNamed: "Sun_Magic_Hit_\($0)") }
+        let contactTextures = (1...13).map { SKTexture(imageNamed: "\(prefix)Magic_Hit_\($0)") }
         animationComponent.addAnimation(
             textures: contactTextures,
             for: .custom("contact"),
@@ -104,11 +106,11 @@ public class ProjectileEntity: GKEntity {
             }
         }
         
-        // troca bullet -> animação de impacto (32x32 → corrigir base)
+        // troca bullet -> animação de impacto (32x32)
         bullet.size = CGSize(width: 32, height: 32)
         bullet.position = CGPoint(
-            x: bullet.position.x,  // desloca levemente à esquerda
-            y: bullet.position.y   // sobe para alinhar base
+            x: bullet.position.x,
+            y: bullet.position.y
         )
         
         animationComponent.runAnimation(for: .custom("contact"))
