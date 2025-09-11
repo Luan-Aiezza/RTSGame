@@ -16,10 +16,10 @@ class CommandButton: SKNode {
     
     init(position: CGPoint, name: String = "Default", color: UIColor = .red) {
         
-        let buttonSize = CGSize(width: 50, height: 50)
+        let buttonSize = CGSize(width: 47, height: 47)
         button = SKShapeNode(ellipseOf: buttonSize)
-        button.fillColor = color
-        button.strokeColor = color.withAlphaComponent(0.3)
+        button.fillColor = color.withAlphaComponent(0.5)
+        button.strokeColor = color
         super.init()
         button.position = position
         button.zPosition = 1000
@@ -46,6 +46,16 @@ class CommandButton: SKNode {
         image!.name = name
         image!.texture?.filteringMode = .nearest
         button.addChild(image!)
+    }
+    
+    public func changeButtonColors(buttonColor: UIColor?, strokeColor: UIColor?){
+        if let strokeColor = strokeColor{
+            button.strokeColor = strokeColor
+            button.lineWidth = 3
+        }
+        if let buttonColor = buttonColor{
+            button.fillColor = buttonColor
+        }
     }
     
     public func handleTouch(_ location: CGPoint){

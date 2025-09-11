@@ -31,8 +31,8 @@ extension GameScene {
         // Converter o ponto de toque da coordenada da câmera para a cena global (caso necessário para outras lógicas)
         _ = camera.convert(location, to: self)
         releaseButton.handleTouch(location)
-        buttons.followButton.handleTouch(location)
-        buttons.invokeRangedButton.handleTouch(location)
+        buttons.followButton?.handleTouch(location)
+        buttons.invokeRangedButton?.handleTouch(location)
         buttons.invokeMeleeButton?.handleTouch(location)
         if location.x <= 0 {
 //            gameController?.setAnalogVisible(value: true)
@@ -96,7 +96,7 @@ extension GameScene {
                 self?.cancelButton.toggleCommand(value: true)
             }
             commandController?.touchesEnded(touches, with: event)
-            commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+            commandController?.setAnalogVisible(value: false, withDuration: 0.3)
         }
     }
     
@@ -108,6 +108,6 @@ extension GameScene {
         gameController?.touchesCancelled(touches, with: event)
 //        gameController?.setAnalogVisible(value: false, withDuration: 0.6)
         commandController?.touchesEnded(touches, with: event)
-        commandController?.setAnalogVisible(value: false, withDuration: 0.6)
+        commandController?.setAnalogVisible(value: false, withDuration: 0.3)
     }
 }
