@@ -16,4 +16,7 @@ enum Colors {
     
     static let followButtonFillColor = UIColor.init(hex: "#22C167ff")
     static let followButtonStrokeColor = UIColor.init(hex: "#292424ff")
+    
+    static let homeTitleStrokeColor = UIColor.init(hex: "#FFAA6Eff")
+    static let homeTitleFillColor = UIColor.init(hex: "#FFEDBDff")
 }
