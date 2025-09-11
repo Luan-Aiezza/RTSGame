@@ -6,6 +6,11 @@
 //
 
 import GameplayKit
+import SpriteKit
+
+extension Notification.Name {
+    static let inhibitorDidGenerateResource = Notification.Name("inhibitorDidGenerateResource")
+}
 
 class ResourceGeneratorComponent: GKComponent {
     var rate: TimeInterval
@@ -34,6 +39,17 @@ class ResourceGeneratorComponent: GKComponent {
     
     func generateResource() {
         ResourceHandler.shared.addResources(maxResourcePerGeneration)
+        
+        // Emite notificação para UI sobre geração neste Inhibitor/Building
+        if let building = entity as? BuildingEntity,
+           let node = building.component(ofType: GKSKNodeComponent.self)?.node {
+            NotificationCenter.default.post(
+                name: .inhibitorDidGenerateResource,
+                object: building,
+                userInfo: ["node": node]
+            )
+        }
     }
     
 }
+

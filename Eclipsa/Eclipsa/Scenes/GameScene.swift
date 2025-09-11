@@ -41,6 +41,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     private var resourceHUD: UIResourceComponent?
     private var cancellables = Set<AnyCancellable>()
     
+    // Novo: componente visual para geração de recurso nos Inhibitors
+    private var solarGeneratorUI: UISolarGeneratorComponent?
+    
     // Removido: setupBindings() e resourceLabel
     
     override func sceneDidLoad() {
@@ -83,12 +86,18 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
-        // Novo: adiciona HUD de recursos baseado em ícones
+        
+        // HUD de recursos (ícones)
         if let camera = self.camera {
             let hud = UIResourceComponent(scene: self, camera: camera)
             camera.addChild(hud)
             resourceHUD = hud
         }
+        
+        // Componente visual de geração dos Inhibitors
+        let solarUI = UISolarGeneratorComponent()
+        addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
+        solarGeneratorUI = solarUI
     }
     
     override func update(_ currentTime: TimeInterval) {
