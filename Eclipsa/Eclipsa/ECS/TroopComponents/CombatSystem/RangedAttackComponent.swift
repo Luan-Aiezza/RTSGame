@@ -35,6 +35,9 @@ public class AttackComponent: GKComponent {
                 performAttack(on: target)
                 lastAttackTime = CACurrentMediaTime()
             }
+        } else {
+            // Fora do range: não atacar. A TroopAttackState cuidará da transição de estado.
+            // Opcionalmente, poderíamos acionar a máquina de estados aqui, mas manteremos a responsabilidade no estado.
         }
     }
     
@@ -71,3 +74,4 @@ public class AttackComponent: GKComponent {
 
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }
+
