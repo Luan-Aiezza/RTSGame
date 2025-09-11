@@ -56,13 +56,16 @@ class ButtonsSet {
         invokeMeleeButton.toggleCommand(value: false)
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
-            self.entity.generator?.generateMelee(troops: self.troops) { troop in
-                if let node = troop?.component(ofType: AnimationComponent.self)?.node,
-                   let troop = troop{
-                    self.scene.addChild(node)
-                    SKEntityManager.shared.add(troop)
+            if ResourceHandler.shared.getStoredResources() >= TroopCost.meleeCost{
+                self.entity.generator?.generateMelee(troops: self.troops) { troop in
+                    if let node = troop?.component(ofType: AnimationComponent.self)?.node,
+                       let troop = troop{
+                        self.scene.addChild(node)
+                        SKEntityManager.shared.add(troop)
+                        ResourceHandler.shared.spendResources(TroopCost.meleeCost)
+                    }
+                    
                 }
-                
             }
         }
         camera?.addChild(invokeMeleeButton)
@@ -95,7 +98,7 @@ class ButtonsSet {
     }
     
     private func setupFollowButtonUI(){
-        followButton = CommandButton(position: Position.followButton(size: size), name: "Follow", color: .green)
+        followButton = CommandButton(position: Position.followButton(size: size), name: "", color: .green)
         followButton?.changeButtonColors(buttonColor: Colors.followButtonFillColor, strokeColor: Colors.followButtonStrokeColor)
         
         setupFollowButton()
