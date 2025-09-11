@@ -11,16 +11,12 @@ import BehindGameKit
 
 class ButtonsSet {
     var scene: GameScene
-    var followButton: CommandButton!
+    var followButton: CommandButton?
     var invokeMeleeButton: CommandButton?
-    var invokeRangedButton: CommandButton!
+    var invokeRangedButton: CommandButton?
     
     init(scene: GameScene) {
         self.scene = scene
-//        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
-        invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
-        followButton = CommandButton(position: Position.followButton(size: size), name: "Follow", color: .green)
-        
         self.setupButtons()
     }
     
@@ -42,13 +38,20 @@ class ButtonsSet {
     var troops: Set<TroopEntity> {
         scene.troops
     }
-    func setupButtons(){
-        setupFollowButton()
-        setupInvokeRangedButton()
+    private func setupButtons(){
+        setupFollowButtonUI()
+        setupInvokeRangedButtonUI()
+        setupInvokeMeleeButtonUI()
+    }
+    
+    private func setupInvokeMeleeButtonUI(){
+        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
+        invokeMeleeButton?.changeLabelToImage(with: "Knight_Invoke_Icon")
+        invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: Colors.meleeButtonStrokeColor)
         setupInvokeMeleeButton()
     }
     
-    func setupInvokeMeleeButton(){
+    private func setupInvokeMeleeButton(){
         guard let invokeMeleeButton = invokeMeleeButton else { return }
         invokeMeleeButton.toggleCommand(value: false)
         invokeMeleeButton.onTouch = { [weak self] in
@@ -64,12 +67,19 @@ class ButtonsSet {
         }
         camera?.addChild(invokeMeleeButton)
     }
-    func setupInvokeRangedButton(){
+    
+    private func setupInvokeRangedButtonUI(){
+        invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
+        invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon-export_small")
+        invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: Colors.rangedButtonStrokeColor)
+        setupInvokeRangedButton()
+    }
+    
+    private func setupInvokeRangedButton(){
         guard let invokeRangedButton = invokeRangedButton else { return }
-        invokeRangedButton.changeLabelToImage(with: "Mage_Invoke_Icon-export_small")
-            invokeRangedButton.onTouch = { [weak self] in
-                guard let self = self else { return }
-                if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
+        invokeRangedButton.onTouch = { [weak self] in
+            guard let self = self else { return }
+            if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
                 self.entity.generator?.generateRanged(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
                        let troop = troop{
@@ -80,16 +90,22 @@ class ButtonsSet {
                 }
             }
         }
-            invokeRangedButton.toggleCommand(value: false)
-            camera?.addChild(invokeRangedButton)
+        invokeRangedButton.toggleCommand(value: false)
+        camera?.addChild(invokeRangedButton)
     }
     
-    func setupFollowButton(){
+    private func setupFollowButtonUI(){
+        followButton = CommandButton(position: Position.followButton(size: size), name: "Follow", color: .green)
+        followButton?.changeButtonColors(buttonColor: Colors.followButtonFillColor, strokeColor: Colors.followButtonStrokeColor)
         
+        setupFollowButton()
+    }
+    
+    private func setupFollowButton(){
+        guard let followButton = followButton else { return }
         followButton.onTouch = { [weak self] in
             guard let self = self else { return }
             self.scene.troopControlSystem.commandTroopsToFollow()
-            // Dispara efeito visual na posição do jogador
             self.scene.playFollowEffectAtPlayer()
         }
         followButton.toggleCommand(value: false)
