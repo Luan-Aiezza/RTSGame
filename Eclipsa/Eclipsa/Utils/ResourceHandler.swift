@@ -10,7 +10,7 @@ import Combine
 class ResourceHandler: ObservableObject {
     static let shared = ResourceHandler()
     
-    private let maxAmountOfResources: Int = 20
+    private let maxAmountOfResources: Int = 5
     @Published private(set) var storedResources: Int
     
     private init() {

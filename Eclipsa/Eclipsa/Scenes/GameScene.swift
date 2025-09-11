@@ -37,18 +37,11 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Flag para evitar múltiplos respawns concorrentes
     private var isRespawningPlayer = false
     
-    private var resourceLabel: SKLabelNode!
+    // Substituímos o label numérico por um componente de HUD com ícones
+    private var resourceHUD: UIResourceComponent?
     private var cancellables = Set<AnyCancellable>()
     
-    private func setupBindings() {
-        ResourceHandler.shared.$storedResources
-            .receive(on: RunLoop.main) // garante atualização na main thread
-            .sink { [weak self] newValue in
-                self?.resourceLabel.text = "\(newValue)"
-            }
-            .store(in: &cancellables)
-    }
-    
+    // Removido: setupBindings() e resourceLabel
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -90,14 +83,12 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
-        
-        resourceLabel = SKLabelNode(fontNamed: "Arial")
-                resourceLabel.fontSize = 50
-                resourceLabel.fontColor = .red
-        resourceLabel.position = Position.resourceLabel(size: size)
-        self.camera?.addChild(resourceLabel)
-                
-                setupBindings()
+        // Novo: adiciona HUD de recursos baseado em ícones
+        if let camera = self.camera {
+            let hud = UIResourceComponent(scene: self, camera: camera)
+            camera.addChild(hud)
+            resourceHUD = hud
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
@@ -138,6 +129,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         updatePlayerState()
         depthSortNodes()
         aimingSystem?.updateDynamicAiming()
+        
+        // Garante que o HUD se reposicione se a escala da câmera mudar (caso ocorra)
+        resourceHUD?.handleCameraOrSceneChange()
     }
 
 }
@@ -209,3 +203,4 @@ extension GameScene {
         isRespawningPlayer = false
     }
 }
+
