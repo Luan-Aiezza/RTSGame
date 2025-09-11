@@ -42,12 +42,12 @@ final class HomeView: UIView {
     private let titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.text = "SunCrown"
+        titleLabel.text = "SunCro  n"
         titleLabel.textColor = .yellow
-        if let displayFont = UIFont(name: "CCPixelArcade-Display", size: 48) {
+        if let displayFont = UIFont(name: "CCPixelArcade-Display", size: 64) {
             titleLabel.font = displayFont
         } else {
-            titleLabel.font = UIFont.systemFont(ofSize: 48, weight: .heavy)
+            titleLabel.font = UIFont.systemFont(ofSize: 64, weight: .heavy)
         }
         titleLabel.textAlignment = .center
         titleLabel.numberOfLines = 1
