@@ -14,6 +14,9 @@ extension GameScene {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {
             let nexus = NexusEntity(node: node)
             
+            // Adiciona o indicador de ataque
+            nexus.addComponent(IndicatorAttackComponent())
+            
             nexus.onDestroyed = { [weak self] in
                 self?.handleDefeat()
             }
@@ -34,6 +37,9 @@ extension GameScene {
         for name in inhibitorNames {
             if let node = childNode(withName: name) as? SKSpriteNode {
                 let inhibitor = InhibitorEntity(node: node)
+                // Adiciona o indicador de ataque
+                inhibitor.addComponent(IndicatorAttackComponent())
+                
                 SKEntityManager.shared.add(inhibitor)
             } else {
                 print("Node '\(name)' não encontrado na cena!")
