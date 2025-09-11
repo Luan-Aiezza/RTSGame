@@ -20,7 +20,7 @@ final class DialogueHUD: SKNode {
         textLabel = SKLabelNode(text: "")
         textLabel.fontSize = 14
         textLabel.fontColor = .white
-        textLabel.fontName = "CCPixelArcade-Display"
+        textLabel.fontName = "PixelifySans-Regular"
         textLabel.numberOfLines = 0
         textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.85
         textLabel.verticalAlignmentMode = .top

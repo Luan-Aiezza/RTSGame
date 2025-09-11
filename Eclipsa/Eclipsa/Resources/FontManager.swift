@@ -13,8 +13,7 @@ public struct FontManager {
     public static func registerFonts() {
         registerFont(bundle: Bundle.main , fontName: "CCPixelArcade-Display", fontExtension: "otf")
         registerFont(bundle: Bundle.main , fontName: "CCPixelArcade-Joystick", fontExtension: "otf")
-        registerFont(bundle: Bundle.main , fontName: "SquareDance00", fontExtension: "ttf")
-        registerFont(bundle: Bundle.main , fontName: "SquareDance10", fontExtension: "ttf")
+        registerFont(bundle: Bundle.main , fontName: "PixelifySans-Regular", fontExtension: "ttf")
     }
     fileprivate static func registerFont(bundle: Bundle, fontName: String, fontExtension: String) {
         
