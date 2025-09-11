@@ -30,6 +30,8 @@ class TroopGeneratorComponent: GKComponent {
         if limitTroops > generatedTroops.count {
             let position = spawnPosition + spawnOffset
             let troop = TroopEntity.createTroop(at: position, team: Team.sun, troops: troops)
+            // Anexa o comportamento de follow ao jogador para tropas aliadas
+            attachAutoFollowIfAllied(to: troop)
             generatedTroops.insert(troop)
             return troop
         }
@@ -61,6 +63,8 @@ class TroopGeneratorComponent: GKComponent {
             return Array(troops)
         }
         troop.spriteNode.position = position
+        // Anexa o comportamento de follow ao jogador para tropas aliadas
+        attachAutoFollowIfAllied(to: troop)
         generatedTroops.insert(troop)
         completion(troop)
         
@@ -72,6 +76,8 @@ class TroopGeneratorComponent: GKComponent {
             return Array(troops)
         }
         troop.spriteNode.position = position
+        // Anexa o comportamento de follow ao jogador para tropas aliadas
+        attachAutoFollowIfAllied(to: troop)
         generatedTroops.insert(troop)
         completion(troop)
         
@@ -100,5 +106,39 @@ class TroopGeneratorComponent: GKComponent {
         
         // Não achou nenhuma posição livre depois de N tentativas
         return spawnPosition
+    }
+}
+
+// MARK: - Private helpers
+private extension TroopGeneratorComponent {
+    func attachAutoFollowIfAllied(to troop: TroopEntity) {
+        // Garante que só aplicamos a tropas aliadas (.sun)
+        guard troop.component(ofType: TeamComponent.self)?.team == .sun else { return }
+        
+        // Recupera o jogador do time .sun
+        guard let player = SKEntityManager.shared.getFirstEntity(ofType: UnitEntity.self),
+              player.component(ofType: TeamComponent.self)?.team == .sun
+        else { return }
+        
+        // Evita duplicar o componente se já existir
+        if troop.component(ofType: TroopBehaviorComponent.self) == nil {
+            let behavior = TroopBehaviorComponent(
+                troop: troop,
+                target: player,
+                allTroops: {
+                    // Snapshot das tropas atuais para o comportamento (igual ao usado no TroopControlSystem)
+                    return SKEntityManager.shared.getAllGameTroops()
+                }
+            )
+            // Força prioridade ao follow do jogador inicialmente
+            behavior.manualTargetPoint = nil
+            behavior.setTarget(player)
+            troop.addComponent(behavior)
+        } else {
+            // Se já existir, apenas reconfigura para seguir o jogador
+            let behavior = troop.component(ofType: TroopBehaviorComponent.self)
+            behavior?.manualTargetPoint = nil
+            behavior?.setTarget(player)
+        }
     }
 }
