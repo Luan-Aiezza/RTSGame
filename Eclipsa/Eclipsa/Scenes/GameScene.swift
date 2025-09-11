@@ -53,6 +53,14 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     override func sceneDidLoad() {
         super.sceneDidLoad()
         
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.willEnterForegroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.customLastUpdateTime = nil
+        }
+        
         applyNearestFilterRecursively()
         
         setupTreeCollisionsBorder(forTilemapNamed: "Tree_2")
@@ -93,15 +101,29 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     }
     
     override func update(_ currentTime: TimeInterval) {
-    
-        let deltaTime = currentTime - lastUpdateTime
-        lastUpdateTime = currentTime
-        SKEntityManager.shared.update(deltaTime) //Trocar para DeltaTime
+        // --- Protege contra primeira chamada ou retorno do background ---
+        guard let lastTime = customLastUpdateTime else {
+            customLastUpdateTime = currentTime
+            return
+        }
+        
+        var deltaTime = currentTime - lastTime
+        customLastUpdateTime = currentTime
+        
+        // --- Clampa o deltaTime para evitar saltos absurdos ---
+        // ex: máximo 1/30 ≈ 0.033s (30 FPS)
+        if deltaTime > 1.0 / 60.0 {
+            deltaTime = 1.0 / 60.0
+        }
+        
+        // --- Atualiza sistemas normalmente ---
+        SKEntityManager.shared.update(deltaTime)
         
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }
         cameraEntity?.followPlayer(player: controlledEntity)
         cameraEntity?.update(deltaTime: deltaTime)
+        
         // Protege quando o player não existe (janela de respawn)
         controlledEntity?.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
         troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
@@ -116,8 +138,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         updatePlayerState()
         depthSortNodes()
         aimingSystem?.updateDynamicAiming()
-        
     }
+
 }
 
 extension GameScene {
