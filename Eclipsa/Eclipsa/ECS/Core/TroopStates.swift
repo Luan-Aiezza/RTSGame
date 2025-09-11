@@ -107,6 +107,29 @@ class TroopAttackState: GKState {
             return
         }
         
+        // Novo: sair do estado de ataque se o alvo sair do range (ou do alcance de melee)
+        if let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
+           let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position {
+            let dx = troopPos.x - targetPos.x
+            let dy = troopPos.y - targetPos.y
+            let distanceSquared = dx * dx + dy * dy
+            
+            var attackThreshold: CGFloat
+            if troop.component(ofType: MeleeAttackComponent.self) != nil {
+                attackThreshold = 32
+            } else if let range = troop.component(ofType: RangeComponent.self)?.radius {
+                attackThreshold = range
+            } else {
+                attackThreshold = 32
+            }
+            
+            if distanceSquared > attackThreshold * attackThreshold {
+                // fora do alcance: voltar a perseguir
+                stateMachine?.enter(TroopFollowState.self)
+                return
+            }
+        }
+        
         _ = attack.tryAttack(on: target)
         attack.update(deltaTime: seconds)
     }
@@ -133,5 +156,4 @@ class TroopDieState: GKState {
 
     override func isValidNextState(_ stateClass: AnyClass) -> Bool { false }
 }
-
 
