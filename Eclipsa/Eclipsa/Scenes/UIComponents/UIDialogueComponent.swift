@@ -25,7 +25,7 @@ final class DialogueHUD: SKNode {
     init(sceneSize: CGSize) {
         // Texto
         textLabel = SKLabelNode(text: "")
-        textLabel.fontSize = 14
+        textLabel.fontSize = 16
         textLabel.fontColor = .white
         textLabel.fontName = "PixelifySans-Regular"
         textLabel.numberOfLines = 0
