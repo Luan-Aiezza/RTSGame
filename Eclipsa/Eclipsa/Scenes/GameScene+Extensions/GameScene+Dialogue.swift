@@ -1,146 +1,5 @@
 import SpriteKit
 
-struct DialogueLine {
-    let text: String
-    let portraitImageName: String? // mantemos por compatibilidade, mas não usamos
-}
-
-final class DialogueHUD: SKNode {
-    private let backgroundBox: SKShapeNode
-    private let textLabel: SKLabelNode
-    private let starNode: SKSpriteNode
-    
-    private var fullText: String = ""
-    private var typingTimer: Timer?
-    private var currentCharIndex: Int = 0
-    private var onTypingCompleted: (() -> Void)?
-    
-    init(sceneSize: CGSize) {
-        // Texto
-        textLabel = SKLabelNode(text: "")
-        textLabel.fontSize = 14
-        textLabel.fontColor = .white
-        textLabel.fontName = "PixelifySans-Regular"
-        textLabel.numberOfLines = 0
-        textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.85
-        textLabel.verticalAlignmentMode = .top
-        textLabel.horizontalAlignmentMode = .center
-        textLabel.zPosition = 10_510
-        
-        // Caixa preta com borda dourada
-        backgroundBox = SKShapeNode()
-        backgroundBox.fillColor = SKColor.black.withAlphaComponent(0.8)
-        backgroundBox.strokeColor = SKColor.yellow.withAlphaComponent(0.8)
-        backgroundBox.lineWidth = 1
-        backgroundBox.zPosition = 10_500
-        backgroundBox.isAntialiased = false // estilo pixel
-        
-        // Estrela animada
-        let initialTexture = SKTexture(imageNamed: "Star_Icon_1")
-        starNode = SKSpriteNode(texture: initialTexture, size: CGSize(width: 32, height: 32))
-        starNode.zPosition = 10_520
-        starNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        super.init()
-        
-        // Posições relativas
-        let topY = sceneSize.height / 3
-        textLabel.position = CGPoint(x: 0, y: topY - 10)
-        backgroundBox.position = CGPoint(x: 0, y: topY - 5)
-        starNode.position = CGPoint(x: 0, y: topY + 25)
-        
-        addChild(backgroundBox)
-        addChild(starNode)
-        addChild(textLabel)
-        
-        alpha = 0.0
-        isHidden = true
-        
-        startStarAnimation()
-    }
-    
-    required init?(coder aDecoder: NSCoder) { fatalError() }
-    
-    func configure(line: DialogueLine) {
-        fullText = line.text
-        textLabel.text = ""
-        currentCharIndex = 0
-        updateBoxSize()
-    }
-    
-    private func updateBoxSize() {
-        // Calcula o tamanho necessário baseado no texto atual
-        let labelFrame = textLabel.frame
-        let padding: CGFloat = 20
-        let width = labelFrame.width + padding
-        let height = labelFrame.height + padding
-        
-        let rect = CGRect(
-            x: -width/2,
-            y: -height,
-            width: width,
-            height: height
-        )
-        backgroundBox.path = CGPath(roundedRect: rect, cornerWidth: 8, cornerHeight: 8, transform: nil)
-    }
-    
-    func present(animated: Bool = true) {
-        isHidden = false
-        removeAllActions()
-        run(.fadeAlpha(to: 1.0, duration: animated ? 0.25 : 0.0))
-    }
-    
-    func dismiss(animated: Bool = true, completion: (() -> Void)? = nil) {
-        typingTimer?.invalidate()
-        typingTimer = nil
-        removeAllActions()
-        run(.fadeAlpha(to: 0.0, duration: animated ? 0.25 : 0.0)) {
-            self.isHidden = true
-            completion?()
-        }
-    }
-    
-    func startTypewriter(charInterval: TimeInterval = 0.03, onCompleted: @escaping () -> Void) {
-        typingTimer?.invalidate()
-        currentCharIndex = 0
-        textLabel.text = ""
-        onTypingCompleted = onCompleted
-        
-        guard !fullText.isEmpty else {
-            onCompleted()
-            return
-        }
-        
-        typingTimer = Timer.scheduledTimer(withTimeInterval: charInterval, repeats: true) { [weak self] timer in
-            guard let self = self else { return }
-            if self.currentCharIndex < self.fullText.count {
-                let idx = self.fullText.index(self.fullText.startIndex, offsetBy: self.currentCharIndex + 1)
-                let substring = String(self.fullText[..<idx])
-                self.textLabel.text = substring
-                self.currentCharIndex += 1
-                self.updateBoxSize() // ← atualiza a caixa conforme cresce
-            } else {
-                timer.invalidate()
-                self.typingTimer = nil
-                self.onTypingCompleted?()
-            }
-        }
-        RunLoop.main.add(typingTimer!, forMode: .common)
-    }
-    
-    private func startStarAnimation() {
-        let textures = [
-            SKTexture(imageNamed: "Star_Icon_1"),
-            SKTexture(imageNamed: "Star_Icon_2"),
-            SKTexture(imageNamed: "Star_Icon_3"),
-            SKTexture(imageNamed: "Star_Icon_4"),
-        ]
-        let animate = SKAction.animate(with: textures, timePerFrame: 0.15, resize: false, restore: false)
-        let forever = SKAction.repeatForever(animate)
-        starNode.run(forever, withKey: "starLoop")
-    }
-}
-
 extension GameScene {
     // Retém o HUD e controle de diálogo por cena
     private struct DialogueRuntime {
@@ -175,15 +34,46 @@ extension GameScene {
         isDialogueRunning = true
         
         let lines: [DialogueLine] = [
-            .init(text: "Criança... me escute, nosso poder aumenta, conforme subirmos as terras altas.", portraitImageName: nil),
-            .init(text: "Chegou a hora da sua primeira provação, a força que temos agora é apenas um fragmento da meu poder original, porém... Será o suficiente para esse desafio", portraitImageName: nil),
-            .init(text: "Mas primeiro você deve se acostumar com frio clima dessas terras, tente dar uma volta utilizando análogico azul.", portraitImageName: nil),
-            .init(text: "Ve aquela estrutura dourada? aquele é um santuario solar! a muito erguido para minha adoração, eles serão nossa base por enquanto.", portraitImageName: nil),
-            .init(text: "Mas uma base precisa de proteção, tente clicar no botão amarelo no canto esquerdo. Ele lhe permitira invocar os soldados do sol, os antigos guardioes do meu reino, longe de seu auge...", portraitImageName: nil),
-            .init(text: "Estes são apenas cascas sem consciencia, precisam receber ordens para combater, primeiro de o comando para eles lhe seguirem no botão verde há direita...", portraitImageName: nil),
-            .init(text: "Agora com o análogico vermelho, você pode comandalos para marchar.", portraitImageName: nil),
-            .init(text: "Eles são resistentes, porém não tão poderosos, mas sua força aumentara conforme recuperarmos os santuarios.", portraitImageName: nil),
-            .init(text: "E falando nisso... eles chegaram, os lunarianos perceberam a nossa presença, se prepare para o combate, maneje suas tropas para defender o santuario.", portraitImageName: nil),
+            
+            //FASE 1
+            .init(text: "Criança... me escute, nosso poder aumenta, conforme subirmos as terras altas. eu lhe ajudarei durante sua jornada.", portraitImageName: nil),
+            
+            .init(text: "Primeiramente tente se mover usando o análogico esquerdo e se acostume com o ambiente.", portraitImageName: nil),
+            
+            .init(text: "Agora precisamos invocar algumas tropas para defender nossa base, experimente clicar no botão amarelo no canto direito", portraitImageName: nil),
+            
+            .init(text: "Esses são os cavaleiros do sol, não são tão fortes, mas são bem resistentes, experimente comanda-los com o análogico direito", portraitImageName: nil),
+            
+            .init(text: "Uma vez que recebem uma ordem se quiser que eles lhe sigam novamente, precisara clicar no botão há direita, e eles voltarão a segui-lá.", portraitImageName: nil),
+            
+            .init(text: "Os cavaleiros da lua estão vindo, defenda o santuário!", portraitImageName: nil),
+            
+            .init(text: "Você deve encontrar os portais de onde eles vem e destruilos!", portraitImageName: nil),
+            
+            //FASE 2
+            
+            .init(text: "A escalada se tornara cada vez mais difil! Para isso precisará de mais poder, defenda o pilar do sol e ele lhe permitira invocar mais tropas ao seu exército.", portraitImageName: nil),
+            
+            .init(text: "Não deixe que os inimigos destruam seus pilares! ou ficará mais difil criar soldados.", portraitImageName: nil),
+            
+            
+            //FASE 3
+            
+            .init(text: "Agora que você aprendeu a manejar seus recursos, você pode invocar um novo tipo de tropa, os poderosos magos amarelos.", portraitImageName: nil),
+            
+            .init(text: "Eles tem muito dano e a vantagem de atacar a distancia, mas são frageis e facilmente derrotados. Por isso faça um bom controle entre cavaleiros e magos.", portraitImageName: nil),
+            
+            .init(text: "O inimigos está vindo, derrote-o!", portraitImageName: nil),
+            
+            //FASE 4
+            
+            
+            .init(text: "Eu já lhe ensinei tudo o que podia...", portraitImageName: nil),
+            
+            .init(text: "Agora cabe a você continuar a escalada e libertar as terras altas do eclipse", portraitImageName: nil),
+            
+            .init(text: "Que a deusa do sol a proteja, boa sorte em sua jornada...", portraitImageName: nil),
+            
         ]
         
         runDialogueSequence(lines: lines, hud: hud)
