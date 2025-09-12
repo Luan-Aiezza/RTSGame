@@ -27,17 +27,24 @@ class ResourceGeneratorComponent: GKComponent {
         fatalError("init(coder:) has not been implemented")
     }
     
-    
     override func update(deltaTime seconds: TimeInterval) {
+        // Se já está no máximo, não acumula tempo (pausa/reset do cronômetro)
+        if ResourceHandler.shared.getStoredResources() >= ResourceHandler.shared.getMaxAmountOfResources() {
+            lastTimeUpdate = 0
+            return
+        }
+        
+        // Só acumula tempo quando há capacidade para gerar
         lastTimeUpdate += seconds
         
-        if lastTimeUpdate >= rate && ResourceHandler.shared.getMaxAmountOfResources() > ResourceHandler.shared.getStoredResources(){
+        if lastTimeUpdate >= rate {
             generateResource()
             lastTimeUpdate = 0
         }
     }
     
     func generateResource() {
+        // Gera respeitando o máximo (ResourceHandler já faz clamp)
         ResourceHandler.shared.addResources(maxResourcePerGeneration)
         
         // Emite notificação para UI sobre geração neste Inhibitor/Building
@@ -50,6 +57,5 @@ class ResourceGeneratorComponent: GKComponent {
             )
         }
     }
-    
 }
 

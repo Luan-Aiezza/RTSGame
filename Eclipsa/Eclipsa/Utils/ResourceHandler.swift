@@ -26,10 +26,17 @@ class ResourceHandler: ObservableObject {
     }
     
     func addResources(_ amount: Int) {
-        storedResources += amount
+        guard amount > 0 else { return }
+        // Impede ultrapassar o máximo
+        let newValue = min(storedResources + amount, maxAmountOfResources)
+        storedResources = newValue
     }
     
     func spendResources(_ amount: Int) {
-        storedResources -= amount
+        guard amount > 0 else { return }
+        // Impede ir abaixo de zero
+        let newValue = max(storedResources - amount, 0)
+        storedResources = newValue
     }
 }
+
