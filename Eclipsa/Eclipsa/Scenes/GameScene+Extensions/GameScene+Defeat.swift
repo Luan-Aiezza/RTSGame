@@ -11,26 +11,27 @@ extension GameScene {
         overlay.zPosition = 11_000
 
         // Fundo escuro ocupa a tela da câmera
-        let bg = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.6),
+        let bg = SKSpriteNode(color: UIColor.black.withAlphaComponent(0.8),
                               size: size)
         bg.name = "DefeatOverlayBG"
         bg.position = .zero
         bg.zPosition = 0
         overlay.addChild(bg)
 
-        // Texto "Defeat"
-        let defeatLabel = SKLabelNode(text: "Defeat")
-        defeatLabel.fontName = "Avenir-Black"
-        defeatLabel.fontSize = 72
-        defeatLabel.fontColor = .red
-        defeatLabel.position = CGPoint(x: 0, y: 100)
-        defeatLabel.zPosition = 1
-        overlay.addChild(defeatLabel)
+        // Título "Defeat" agora como sprite do asset "Defeat_Title"
+        let defeatTitle = SKSpriteNode(imageNamed: "Defeat_Title")
+        defeatTitle.name = "DefeatTitle"
+        defeatTitle.position = CGPoint(x: 15, y: 100)
+        defeatTitle.setScale(0.3)
+        defeatTitle.zPosition = 1
+        // Mantém consistência com o filtro nearest usado no projeto
+        defeatTitle.texture?.filteringMode = .nearest
+        overlay.addChild(defeatTitle)
 
         // Botão "Restart"
         let restartLabel = SKLabelNode(text: "Restart")
-        restartLabel.fontName = "Avenir-Heavy"
-        restartLabel.fontSize = 48
+        restartLabel.fontName = "CCPixelArcade-Joystick"
+        restartLabel.fontSize = 24
         restartLabel.fontColor = .white
         restartLabel.position = CGPoint(x: 0, y: -50)
         restartLabel.name = "RestartButton"
@@ -59,4 +60,3 @@ extension GameScene {
         }
     }
 }
-
