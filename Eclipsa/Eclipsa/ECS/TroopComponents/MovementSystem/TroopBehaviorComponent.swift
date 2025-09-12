@@ -106,6 +106,19 @@ public class TroopBehaviorComponent: GKComponent {
                     }
                 }
             }
+            
+            // Se esta tropa é do time .sun, considerar SpawnEntity do time .moon
+            if myTeam == .sun {
+                let allEntitiesSnapshot = SKEntityManager.shared.getAllEntities()
+                let enemySpawns = allEntitiesSnapshot
+                    .compactMap { $0 as? SpawnEntity }
+                    .compactMap { $0 as BaseUnitEntity }
+                    .filter {
+                        ($0.component(ofType: TeamComponent.self)?.team == .moon) &&
+                        ($0.component(ofType: HealthComponent.self)?.isDead == false)
+                    }
+                candidateEntities.append(contentsOf: enemySpawns)
+            }
 
             // Filter candidates by range (use troopLocal's range helper)
             let inRangeCandidates: [BaseUnitEntity] = candidateEntities.filter {

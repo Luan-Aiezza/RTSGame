@@ -74,6 +74,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         
         setupNexus()   // cria base do jogador
         setupInhibitors() // cria inibidores aliados
+        setupSpawners()
         
         setupCamera() //Instancia a camera na cena
         startDialogue() //Instancia os dialogos na cena
