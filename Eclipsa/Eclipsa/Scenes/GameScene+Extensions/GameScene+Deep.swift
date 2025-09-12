@@ -147,6 +147,7 @@ extension GameScene {
                     node.zPosition = 10_600
                     return
                 }
+                
                 // 2.1) FollowEffect → sempre acima do chão e abaixo de tudo do mundo
                 if name == "FollowEffect" {
                     // Chão está em -10_000; colocamos o efeito em -5_000 para ficar acima do chão e atrás do resto

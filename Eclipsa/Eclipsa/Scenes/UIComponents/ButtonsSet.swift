@@ -73,7 +73,7 @@ class ButtonsSet {
     
     private func setupInvokeRangedButtonUI(){
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
-        invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon-export_small")
+        invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon")
         invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: Colors.rangedButtonStrokeColor)
         setupInvokeRangedButton()
     }
