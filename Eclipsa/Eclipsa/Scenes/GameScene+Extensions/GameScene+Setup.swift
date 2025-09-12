@@ -47,6 +47,20 @@ extension GameScene {
         }
     }
     
+    func setupSpawners() {
+        let spawnersNames = ["Spawn_1", "Spawn_2", "Spawn_3"]
+        
+        for name in spawnersNames {
+            if let node = childNode(withName: name) as? SKSpriteNode {
+                let spawner = SpawnEntity(node: node)
+                
+                SKEntityManager.shared.add(spawner)
+            } else {
+                print("Node '\(name)' não encontrado na cena!")
+            }
+        }
+    }
+    
     
     func setupPlayer() {
         setupInputControllerIfNeeded()
