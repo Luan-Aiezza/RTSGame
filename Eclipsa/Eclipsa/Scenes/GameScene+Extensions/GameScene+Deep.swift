@@ -43,10 +43,38 @@ extension GameScene {
             // 1) Nós na hierarquia da câmera (HUD/UI/Overlays) têm regras específicas
             if let cam = self.camera, node.inParentHierarchy(cam) {
                 
-                // 1.1) Defeat overlay e seus filhos → topo absoluto
+                // 1.1) Defeat overlay e seus filhos → sempre à frente do jogo
                 if node.name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
-                    node.zPosition = 11_000
-                    return
+                    // Base para o overlay todo
+                    let baseZ: CGFloat = 11_000.0
+                    
+                    // Ordenação interna do overlay:
+                    // Menu_Background < DefeatOverlayBG < LoseEffect < Labels/Botões/Título
+                    if let name = node.name {
+                        switch name {
+                        case "DefeatOverlay":
+                            node.zPosition = baseZ
+                            return
+                        case "DefeatMenuBackground":
+                            node.zPosition = baseZ + 0.0
+                            return
+                        case "DefeatOverlayBG":
+                            node.zPosition = baseZ + 0.1
+                            return
+                        case "RestartButton", "DefeatTitle":
+                            node.zPosition = baseZ + 0.3
+                            return
+                        default:
+                            // Qualquer outro filho do overlay que não seja reconhecido:
+                            // por segurança, coloque acima do efeito e abaixo dos botões/título
+                            node.zPosition = baseZ + 0.25
+                            return
+                        }
+                    } else {
+                        // Nó sem nome mas filho do overlay: posiciona acima do efeito
+                        node.zPosition = baseZ + 0.25
+                        return
+                    }
                 }
                 
                 // 1.2) DialogueHUD (por classe, por pai ou por nome) → atrás do DefeatOverlay
@@ -93,7 +121,20 @@ extension GameScene {
                 }
                 // Defeat overlay e seus filhos → topo absoluto (fallback)
                 if name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
-                    node.zPosition = 11_000
+                    // Mesma regra interna do overlay, fallback
+                    let baseZ: CGFloat = 11_000.0
+                    switch name {
+                    case "DefeatOverlay":
+                        node.zPosition = baseZ
+                    case "DefeatMenuBackground":
+                        node.zPosition = baseZ + 0.0
+                    case "DefeatOverlayBG":
+                        node.zPosition = baseZ + 0.1
+                    case "RestartButton", "DefeatTitle":
+                        node.zPosition = baseZ + 0.3
+                    default:
+                        node.zPosition = baseZ + 0.25
+                    }
                     return
                 }
                 // Dialogue HUD por nome/pai (fallback)
@@ -106,7 +147,6 @@ extension GameScene {
                     node.zPosition = 10_600
                     return
                 }
-                
                 // 2.1) FollowEffect → sempre acima do chão e abaixo de tudo do mundo
                 if name == "FollowEffect" {
                     // Chão está em -10_000; colocamos o efeito em -5_000 para ficar acima do chão e atrás do resto

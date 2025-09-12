@@ -36,7 +36,7 @@ extension GameScene {
         let lines: [DialogueLine] = [
             
             //FASE 1
-            .init(text: "Criança... me escute, nosso poder aumenta, conforme subirmos as terras altas. eu lhe ajudarei durante sua jornada.", portraitImageName: nil),
+            .init(text: "Minha jovem... me escute, vou lhe ensinar o caminho para que você possa subir as terras altas.", portraitImageName: nil),
             
             .init(text: "Primeiramente tente se mover usando o análogico esquerdo e se acostume com o ambiente.", portraitImageName: nil),
             
