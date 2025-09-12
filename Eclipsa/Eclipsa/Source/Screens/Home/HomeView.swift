@@ -39,81 +39,16 @@ final class HomeView: UIView {
         return container
     }()
     
-    // MARK: - Title components
-    private let titleStackView: UIStackView = {
-        let stack = UIStackView()
-        stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.axis = .horizontal
-        stack.alignment = .center
-        stack.distribution = .fill
-        stack.spacing = 0 // sem espaço extra entre as partes
-        return stack
-    }()
-    
-    private let leftTitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "SunCro"
-        if let displayFont = UIFont(name: "CCPixelArcade-Display", size: 64) {
-            label.font = displayFont
-        } else {
-            label.font = UIFont.systemFont(ofSize: 64, weight: .heavy)
-        }
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        
-        // Stroke + fill
-        let strokeColor = UIColor.black
-        let fillColor = Colors.homeTitleFillColor
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: fillColor,
-            .strokeColor: strokeColor,
-            .strokeWidth: -3,
-            .font: label.font as Any
-        ]
-        if let text = label.text {
-            label.attributedText = NSAttributedString(string: text, attributes: attributes)
-        }
-        return label
-    }()
-    
-    private let crownImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "Crown_Title_Yellow"))
+    // MARK: - Game title (single asset)
+    private let gameTitleImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "Menu_Game_Name"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.contentMode = .scaleAspectFit
-        // Fundo transparente para se integrar ao título
         imageView.backgroundColor = .clear
-        // Evita esticar demais dentro do stack
-        imageView.setContentHuggingPriority(.required, for: .horizontal)
-        imageView.setContentCompressionResistancePriority(.required, for: .horizontal)
+        // Evita esticar demais dentro do container
+        imageView.setContentHuggingPriority(.required, for: .vertical)
+        imageView.setContentCompressionResistancePriority(.required, for: .vertical)
         return imageView
-    }()
-    
-    private let rightTitleLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "n"
-        if let displayFont = UIFont(name: "CCPixelArcade-Display", size: 64) {
-            label.font = displayFont
-        } else {
-            label.font = UIFont.systemFont(ofSize: 64, weight: .heavy)
-        }
-        label.textAlignment = .center
-        label.numberOfLines = 1
-        
-        // Stroke + fill
-        let strokeColor = UIColor.black
-        let fillColor = Colors.homeTitleFillColor
-        let attributes: [NSAttributedString.Key: Any] = [
-            .foregroundColor: fillColor,
-            .strokeColor: strokeColor,
-            .strokeWidth: -3,
-            .font: label.font as Any
-        ]
-        if let text = label.text {
-            label.attributedText = NSAttributedString(string: text, attributes: attributes)
-        }
-        return label
     }()
     
     private let playButton: UIButton = {
@@ -162,17 +97,14 @@ final class HomeView: UIView {
         addSubview(snowView)
         addSubview(container)
         
-        // Monta o título com labels + coroa
-        titleStackView.addArrangedSubview(leftTitleLabel)
-        titleStackView.addArrangedSubview(crownImageView)
-        titleStackView.addArrangedSubview(rightTitleLabel)
-        
-        container.addSubview(titleStackView)
+        // Adiciona o título e o botão ao container
+        container.addSubview(gameTitleImageView)
         container.addSubview(playButton)
         
         setupConstraints()
         
         startBlinkingPlayButton()
+        startPulsingGameTitle()
     }
     
     private func setupConstraints() {
@@ -195,31 +127,19 @@ final class HomeView: UIView {
             container.leadingAnchor.constraint(greaterThanOrEqualTo: safeAreaLayoutGuide.leadingAnchor, constant: 20),
             container.trailingAnchor.constraint(lessThanOrEqualTo: safeAreaLayoutGuide.trailingAnchor, constant: -20),
             
-            // Título (stack) no topo do container
-            titleStackView.topAnchor.constraint(equalTo: container.topAnchor),
-            titleStackView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
-            titleStackView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
+            // Título (imagem) no topo do container
+            gameTitleImageView.topAnchor.constraint(equalTo: container.topAnchor),
+            gameTitleImageView.leadingAnchor.constraint(equalTo: container.leadingAnchor),
+            gameTitleImageView.trailingAnchor.constraint(equalTo: container.trailingAnchor),
             
-            // Botão apenas texto, mais afastado do título
-            playButton.topAnchor.constraint(equalTo: titleStackView.bottomAnchor, constant: 48),
-            playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            // Limite de altura para não extrapolar em telas menores (ajustável)
+            gameTitleImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 240),
+            
+            // Botão um pouco deslocado para a esquerda e 24pt abaixo do título
+            playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 24),
+            playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
             playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor)
         ])
-        
-        // Ajuste de tamanho da coroa para casar com a altura da fonte do título
-        // Usamos a lineHeight da fonte para alinhar visualmente.
-        let titleFont = leftTitleLabel.font ?? UIFont.systemFont(ofSize: 64, weight: .heavy)
-        let targetHeight = titleFont.lineHeight
-        let crownHeightConstraint = crownImageView.heightAnchor.constraint(equalToConstant: targetHeight)
-        crownHeightConstraint.priority = .required
-        crownHeightConstraint.isActive = true
-        
-        // Largura proporcional (ajuste fino pode ser necessário conforme o asset).
-        // Se o asset for mais largo/estreito, ajuste este multiplicador.
-        let approximateAspect: CGFloat = 0.9 // largura ≈ 90% da altura (ajustável)
-        let crownWidthConstraint = crownImageView.widthAnchor.constraint(equalTo: crownImageView.heightAnchor, multiplier: approximateAspect)
-        crownWidthConstraint.priority = .required
-        crownWidthConstraint.isActive = true
     }
     
     private func startBlinkingPlayButton() {
@@ -230,6 +150,18 @@ final class HomeView: UIView {
         animation.autoreverses = true      // volta ao valor inicial
         animation.repeatCount = .infinity  // loop infinito
         playButton.layer.add(animation, forKey: "blink")
+    }
+    
+    private func startPulsingGameTitle() {
+        // Animação de zoom in/out leve
+        let pulse = CABasicAnimation(keyPath: "transform.scale")
+        pulse.fromValue = 1.0
+        pulse.toValue = 1.08
+        pulse.duration = 1.2
+        pulse.autoreverses = true
+        pulse.repeatCount = .infinity
+        pulse.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        gameTitleImageView.layer.add(pulse, forKey: "pulse")
     }
     
     private func setupSnow() {

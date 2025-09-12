@@ -10,9 +10,14 @@ final class UIResourceComponent: SKNode {
     private let iconSize = CGSize(width: 36, height: 36)
     private let horizontalSpacing: CGFloat = 4      // espaço entre ícones
     private let padding = CGPoint(x: 12, y: 24)     // margem do canto superior esquerdo
-    private let maxIcons: Int                       // opcionalmente limitar pelos recursos máximos
+    private let maxIcons: Int                       // total de slots exibidos
     private weak var cameraNode: SKCameraNode?
     private weak var sceneRef: SKScene?
+    
+    // Opacidade dos ícones "vazios" (ajuste para 0.8 se quiser quase cheio)
+    private let emptyAlpha: CGFloat = 0.5
+    // Duração da animação ao preencher/esvaziar
+    private let fillAnimationDuration: TimeInterval = 0.15
     
     // MARK: - State
     private var cancellables = Set<AnyCancellable>()
@@ -30,16 +35,20 @@ final class UIResourceComponent: SKNode {
         // Garante filtro nearest para manter pixel art nítido
         SKTexture(imageNamed: iconName).filteringMode = .nearest
         
+        // Cria todos os slots uma única vez (sempre mostra maxIcons)
+        createAllIconSlots()
+        layoutIcons()
+        
         // Observa mudanças nos recursos
         ResourceHandler.shared.$storedResources
             .receive(on: RunLoop.main)
             .sink { [weak self] newValue in
-                self?.updateIcons(count: newValue)
+                self?.applyResourceCount(newValue, animated: true)
             }
             .store(in: &cancellables)
         
         // Render inicial
-        updateIcons(count: ResourceHandler.shared.getStoredResources())
+        applyResourceCount(ResourceHandler.shared.getStoredResources(), animated: false)
         
         // Posicionamento inicial
         updatePosition()
@@ -49,43 +58,25 @@ final class UIResourceComponent: SKNode {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Layout
-    private func updateIcons(count: Int) {
-        let clamped = max(0, min(count, maxIcons))
-        guard clamped != currentCount else {
-            // Mesmo número, apenas garante posição
-            updatePosition()
-            return
-        }
-        currentCount = clamped
+    // MARK: - Setup
+    private func createAllIconSlots() {
+        // Remove anteriores (se houver)
+        iconNodes.forEach { $0.removeFromParent() }
+        iconNodes.removeAll()
         
-        // Ajusta número de nós para bater com currentCount
-        if clamped > iconNodes.count {
-            // Adiciona nós faltantes
-            let toAdd = clamped - iconNodes.count
-            for _ in 0..<toAdd {
-                let node = SKSpriteNode(imageNamed: iconName)
-                node.size = iconSize
-                node.anchorPoint = CGPoint(x: 0, y: 1) // canto superior esquerdo do próprio node
-                node.zPosition = 0
-                node.texture?.filteringMode = .nearest
-                addChild(node)
-                iconNodes.append(node)
-            }
-        } else if clamped < iconNodes.count {
-            // Remove excedentes
-            let toRemove = iconNodes.count - clamped
-            let removed = iconNodes.suffix(toRemove)
-            removed.forEach { $0.removeFromParent() }
-            iconNodes.removeLast(toRemove)
+        for _ in 0..<maxIcons {
+            let node = SKSpriteNode(imageNamed: iconName)
+            node.size = iconSize
+            node.anchorPoint = CGPoint(x: 0, y: 1) // canto superior esquerdo do próprio node
+            node.zPosition = 0
+            node.texture?.filteringMode = .nearest
+            node.alpha = emptyAlpha
+            addChild(node)
+            iconNodes.append(node)
         }
-        
-        // Reposiciona todos os ícones
-        layoutIcons()
-        // Também atualiza a posição do container em relação à câmera
-        updatePosition()
     }
     
+    // MARK: - Layout
     private func layoutIcons() {
         // Alinha um ao lado do outro a partir do (0,0) do container,
         // lembrando que o container será posicionado no canto sup. esquerdo da câmera.
@@ -93,6 +84,31 @@ final class UIResourceComponent: SKNode {
             let x = CGFloat(index) * (iconSize.width + horizontalSpacing)
             node.position = CGPoint(x: x, y: 0)
         }
+    }
+    
+    /// Atualiza o estado visual (alpha) conforme a quantidade de recursos do jogador.
+    private func applyResourceCount(_ count: Int, animated: Bool) {
+        let clamped = max(0, min(count, maxIcons))
+        
+        // Atualiza cada slot conforme índice e quantidade atual
+        for (index, node) in iconNodes.enumerated() {
+            let shouldBeFilled = index < clamped
+            let targetAlpha: CGFloat = shouldBeFilled ? 1.0 : emptyAlpha
+            
+            guard node.alpha != targetAlpha else { continue }
+            
+            if animated {
+                node.removeAction(forKey: "fillFade")
+                let action = SKAction.fadeAlpha(to: targetAlpha, duration: fillAnimationDuration)
+                node.run(action, withKey: "fillFade")
+            } else {
+                node.alpha = targetAlpha
+            }
+        }
+        
+        currentCount = clamped
+        // Também atualiza a posição do container em relação à câmera (caso necessário)
+        updatePosition()
     }
     
     /// Reposiciona o container no canto superior esquerdo da câmera, respeitando padding e escala.
@@ -117,4 +133,3 @@ final class UIResourceComponent: SKNode {
         updatePosition()
     }
 }
-
