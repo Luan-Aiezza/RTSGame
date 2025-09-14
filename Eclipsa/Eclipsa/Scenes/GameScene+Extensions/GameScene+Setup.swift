@@ -32,7 +32,7 @@ extension GameScene {
 
     
     func setupInhibitors() {
-        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2", "Inhibitor_3", "Inhibitor_4", "Inhibitor_5", "Inhibitor_6"]
+        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2"]
         
         for name in inhibitorNames {
             if let node = childNode(withName: name) as? SKSpriteNode {
@@ -48,7 +48,7 @@ extension GameScene {
     }
     
     func setupSpawners() {
-        let spawnersNames = ["Spawn_1", "Spawn_2", "Spawn_3"]
+        let spawnersNames = ["Spawn_1", "Spawn_2"]
         
         for name in spawnersNames {
             if let node = childNode(withName: name) as? SKSpriteNode {
