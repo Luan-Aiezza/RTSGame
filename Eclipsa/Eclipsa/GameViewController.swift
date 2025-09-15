@@ -40,7 +40,7 @@ class GameViewController: UIViewController {
     
     // MARK: - Start Game
     @objc private func didTapPlay() {
-        startGame(sceneNamed: "GameScene_1")
+        startIntro()
     }
     
     private func startGame(sceneNamed name: String) {
@@ -82,6 +82,42 @@ class GameViewController: UIViewController {
             view.subviews.forEach { $0.removeFromSuperview() }
             setupHomeScreen()
         }
+    }
+
+    // MARK: - Intro Dialogue
+    private func startIntro() {
+        // Remove qualquer SKView ou subviews anteriores (como a home)
+        view.subviews.forEach { $0.removeFromSuperview() }
+        
+        // Cria o SKView e adiciona à hierarquia
+        let skView = SKView(frame: view.bounds)
+        skView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(skView)
+        NSLayoutConstraint.activate([
+            skView.topAnchor.constraint(equalTo: view.topAnchor),
+            skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        self.skView = skView
+        
+        skView.ignoresSiblingOrder = true
+        skView.showsFPS = false
+        skView.showsNodeCount = false
+        skView.showsDrawCount = false
+        skView.isMultipleTouchEnabled = true
+        
+        // Cena de introdução
+        let scene = IntroDialogueScene(size: skView.bounds.size)
+        scene.scaleMode = .aspectFill
+        scene.onFinished = { [weak self] in
+            // Transiciona para a primeira fase
+            DispatchQueue.main.async { [weak self] in
+                self?.startGame(sceneNamed: "GameScene_1")
+            }
+        }
+        let transition = SKTransition.fade(withDuration: 0.4)
+        skView.presentScene(scene, transition: transition)
     }
 
     // MARK: - Public navigation back to Home
