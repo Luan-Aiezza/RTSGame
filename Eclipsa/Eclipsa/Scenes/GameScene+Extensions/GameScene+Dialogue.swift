@@ -36,43 +36,23 @@ extension GameScene {
         let lines: [DialogueLine] = [
             
             //FASE 1
-            .init(text: "Minha jovem... me escute, vou lhe ensinar o caminho para que você possa subir as terras altas.", portraitImageName: nil),
+            .init(text: "Ariah... me escute, vou lhe ensinar o caminho para que você possa subir as terras altas, eu sou a voz de Heliar!", portraitImageName: nil),
             
-            .init(text: "Primeiramente tente se mover usando o análogico esquerdo e se acostume com o ambiente.", portraitImageName: nil),
+                .init(text: "Primeiramente tente se mover usando o análogico esquerdo e se acostume com o ambiente.", portraitImageName: nil),
             
-            .init(text: "Agora precisamos invocar algumas tropas para defender nossa base, experimente clicar no botão amarelo no canto direito", portraitImageName: nil),
+                .init(text: "Agora precisamos invocar algumas tropas para defender nossa base, experimente clicar no botão no canto inferior direito", portraitImageName: nil),
             
-            .init(text: "Esses são os cavaleiros do sol, não são tão fortes, mas são bem resistentes, experimente comanda-los com o análogico direito", portraitImageName: nil),
+                .init(text: "As tropas custam recursos, que são gerados a partir dos altares solares, defenda-os a todo custo.", portraitImageName: nil),
             
-            .init(text: "Uma vez que recebem uma ordem se quiser que eles lhe sigam novamente, precisara clicar no botão há direita, e eles voltarão a segui-lá.", portraitImageName: nil),
+                .init(text: "Posicione suas tropas com o análogico direito, e chame-as com o toque no botão abaixo.", portraitImageName: nil),
             
-            .init(text: "Os cavaleiros da lua estão vindo, defenda o santuário!", portraitImageName: nil),
+                .init(text: "Os cavaleiros da lua estão vindo! não deixe que destruam seus altares, ou ficará mais difil criar soldados.", portraitImageName: nil),
             
-            .init(text: "Você deve encontrar os portais de onde eles vem e destruilos!", portraitImageName: nil),
+                .init(text: "Eles sempre virão atrás do snatuário, se perde-lo é o fim!", portraitImageName: nil),
             
-            //FASE 2
+                .init(text: "Você deve encontrar os portais inimigos e destruilos, é o unico jeito de vencer!", portraitImageName: nil),
             
-            .init(text: "A escalada se tornara cada vez mais difil! Para isso precisará de mais poder, defenda o pilar do sol e ele lhe permitira invocar mais tropas ao seu exército.", portraitImageName: nil),
-            
-            .init(text: "Não deixe que os inimigos destruam seus pilares! ou ficará mais difil criar soldados.", portraitImageName: nil),
-            
-            
-            //FASE 3
-            
-            .init(text: "Agora que você aprendeu a manejar seus recursos, você pode invocar um novo tipo de tropa, os poderosos magos amarelos.", portraitImageName: nil),
-            
-            .init(text: "Eles tem muito dano e a vantagem de atacar a distancia, mas são frageis e facilmente derrotados. Por isso faça um bom controle entre cavaleiros e magos.", portraitImageName: nil),
-            
-            .init(text: "O inimigos está vindo, derrote-o!", portraitImageName: nil),
-            
-            //FASE 4
-            
-            
-            .init(text: "Eu já lhe ensinei tudo o que podia...", portraitImageName: nil),
-            
-            .init(text: "Agora cabe a você continuar a escalada e libertar as terras altas do eclipse", portraitImageName: nil),
-            
-            .init(text: "Que a deusa do sol a proteja, boa sorte em sua jornada...", portraitImageName: nil),
+                .init(text: "Eu lhe ensinei tudo o que podia... agora é com você!", portraitImageName: nil),
             
         ]
         

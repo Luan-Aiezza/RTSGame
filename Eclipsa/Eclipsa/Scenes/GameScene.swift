@@ -77,7 +77,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupSpawners()
         
         setupCamera() //Instancia a camera na cena
-        startDialogue() //Instancia os dialogos na cena
         setupUI()
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
