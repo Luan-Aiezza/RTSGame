@@ -7,8 +7,7 @@
 
 import UIKit
 
-final class TeamView: UIView {
-
+final class TeamLogoView: UIView {
     /// Callback disparado quando a animação terminar
     var onFinished: (() -> Void)?
 
