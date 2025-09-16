@@ -5,13 +5,6 @@
 //  Created by Joseph Pereira on 16/09/25.
 //
 
-//
-//  GameViewController.swift
-//  Eclipsa
-//
-//  Created by Luan Aiezza on 28/07/25.
-//
-
 import UIKit
 import SpriteKit
 import GameplayKit
@@ -19,11 +12,13 @@ import GameplayKit
 class NewGameViewController: UIViewController {
     
     let sceneManager: SceneManager
+    let flowDelegate: FlowController
     
     private var skView: SKView
-    init() {
+    init(flowDelegate: FlowController) {
         self.sceneManager = SceneManager()
         self.skView = SKView()
+        self.flowDelegate = flowDelegate
         super.init(nibName: nil, bundle: nil)
     }
     
