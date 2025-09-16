@@ -32,7 +32,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var releaseButton: CommandButton!
     
     public var customLastUpdateTime: TimeInterval?
-    var sceneEntity: SceneEntity!
+//    var sceneEntity: SceneEntity!
     
     // Flag para evitar múltiplos respawns concorrentes
     private var isRespawningPlayer = false
@@ -82,8 +82,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
         
-        sceneEntity = SceneEntity(scene: self)
-        SKEntityManager.shared.add(sceneEntity)
+//        sceneEntity = SceneEntity(scene: self)
+//        SKEntityManager.shared.add(sceneEntity)
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
@@ -99,6 +99,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let solarUI = UISolarGeneratorComponent()
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+            WaveManager.shared.startNextWave()
+        }
     }
     
     override func update(_ currentTime: TimeInterval) {
