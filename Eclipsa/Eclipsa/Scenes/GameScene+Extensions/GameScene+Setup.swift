@@ -47,18 +47,40 @@ extension GameScene {
         }
     }
     
+//    func setupSpawners() {
+//        WaveManager.shared.scene = self
+//        let spawnersNames = ["Spawn_1", "Spawn_2", "Spawn_3"]
+//        
+//        for name in spawnersNames {
+//            if let node = childNode(withName: name) as? SKSpriteNode {
+//                let spawner = SpawnEntity(node: node)
+//                
+//                SKEntityManager.shared.add(spawner)
+//            } else {
+//                print("Node '\(name)' não encontrado na cena!")
+//            }
+//        }
+//    }
+    
     func setupSpawners() {
+        WaveManager.shared.scene = self
         let spawnersNames = ["Spawn_1", "Spawn_2"]
         
         for name in spawnersNames {
             if let node = childNode(withName: name) as? SKSpriteNode {
+                // Passa a cena para o SpawnEntity
                 let spawner = SpawnEntity(node: node)
-                
+                print("Spawn Position \(node.position)")
                 SKEntityManager.shared.add(spawner)
             } else {
                 print("Node '\(name)' não encontrado na cena!")
             }
         }
+        
+        // Inicia as waves após um pequeno delay
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+//            WaveManager.shared.startNextWave()
+//        }
     }
     
     

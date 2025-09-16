@@ -43,7 +43,7 @@ public class SpawnerWaveComponent: GKComponent {
         self.maximoWaves = maximoWaves
         super.init()
         
-        setupSpawnPoints()
+//        setupSpawnPoints()
         setupNexusTarget()
         tempoRestante = intervaloEntreWaves
     }
@@ -51,17 +51,17 @@ public class SpawnerWaveComponent: GKComponent {
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     // MARK: - Setup
-    private func setupSpawnPoints() {
-        guard let scene = scene else { return }
-        var index = 1
-        while let node = scene.childNode(withName: "Spawn_\(index)") {
-            spawnPoints.append(node.position)
-            index += 1
-        }
-        if spawnPoints.isEmpty {
-            print("⚠️ Nenhum Spawn_X encontrado na cena!")
-        }
-    }
+//    private func setupSpawnPoints() {
+//        guard let scene = scene else { return }
+//        var index = 1
+//        while let node = scene.childNode(withName: "Spawn_\(index)") {
+//            spawnPoints.append(node.position)
+//            index += 1
+//        }
+//        if spawnPoints.isEmpty {
+//            print("⚠️ Nenhum Spawn_X encontrado na cena!")
+//        }
+//    }
     
     private func setupNexusTarget() {
         guard let scene = scene else { return }
