@@ -16,27 +16,27 @@ class GameViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupHomeScreen()
+//        setupHomeScreen()
     }
     
     // MARK: - Home Screen
-    private func setupHomeScreen() {
-        view.backgroundColor = .black
-        
-        let home = HomeView()
-        home.translatesAutoresizingMaskIntoConstraints = false
-        home.onPlayTapped = { [weak self] in
-            self?.didTapPlay()
-        }
-        view.addSubview(home)
-        
-        NSLayoutConstraint.activate([
-            home.topAnchor.constraint(equalTo: view.topAnchor),
-            home.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            home.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            home.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-    }
+//    private func setupHomeScreen() {
+//        view.backgroundColor = .black
+//        
+//        let home = HomeView()
+//        home.translatesAutoresizingMaskIntoConstraints = false
+//        home.onPlayTapped = { [weak self] in
+//            self?.didTapPlay()
+//        }
+//        view.addSubview(home)
+//        
+//        NSLayoutConstraint.activate([
+//            home.topAnchor.constraint(equalTo: view.topAnchor),
+//            home.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            home.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+//            home.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+//        ])
+//    }
     
     // MARK: - Start Game
     @objc private func didTapPlay() {
@@ -80,7 +80,7 @@ class GameViewController: UIViewController {
             assertionFailure("Não foi possível carregar a cena \(name)")
             // Em caso de falha, volta para a Home
             view.subviews.forEach { $0.removeFromSuperview() }
-            setupHomeScreen()
+//            setupHomeScreen()
         }
     }
 
@@ -126,7 +126,7 @@ class GameViewController: UIViewController {
         skView?.presentScene(nil)
         skView?.removeFromSuperview()
         skView = nil
-        setupHomeScreen()
+//        setupHomeScreen()
     }
 
     // MARK: - Orientation & Status Bar
