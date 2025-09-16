@@ -10,7 +10,8 @@ import SpriteKit
 
 final class HomeView: UIView {
     
-    var onPlayTapped: (() -> Void)?
+//    var onPlayTapped: (() -> Void)?
+    weak var delegate: HomeViewDelegate?
     
     // Flag para configurar a neve apenas uma vez quando tivermos bounds válidos
     private var didSetupSnow = false
@@ -185,6 +186,6 @@ final class HomeView: UIView {
     }
     
     @objc private func handlePlayTapped() {
-        onPlayTapped?()
+        delegate?.didTapPlayButton()
     }
 }

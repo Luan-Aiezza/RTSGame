@@ -10,7 +10,13 @@ import SpriteKit
 class FlowController {
     
     var navigation: UINavigationController?
-    var factory = ViewControllerFactory()
+    var window: UIWindow
+    var factory: ViewControllerFactory
+    
+    init(window: UIWindow) {
+        self.window = window
+        self.factory = ViewControllerFactory()
+    }
     
     func start() -> UINavigationController? {
         let teamLogoView = factory.makeTeamLogoViewController(flowDelegate: self)
@@ -20,17 +26,33 @@ class FlowController {
     
 }
 
+// MARK: TeamLogo to Home
 extension FlowController: TeamLogoFlowDelegate {
     func goHome() {
-        let homeViewController = factory.makeHomeViewController()
+        let homeViewController = factory.makeHomeViewController(flowDelegate: self)
         navigation?.navigationBar.isHidden = true
         
         let transition = CATransition()
             transition.duration = 0.3
             transition.type = .fade
             transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-
+        navigation?.dismiss(animated: false)
         navigation?.view.layer.add(transition, forKey: kCATransition)
         navigation?.pushViewController(homeViewController, animated: false)
+    }
+}
+
+// MARK: Home to Game
+extension FlowController: HomeFlowDelegate {
+    func goToGame() {
+        let gameViewController = factory.makeGameViewController(flowDelegate: self)
+        
+//        let transition = CATransition()
+//            transition.duration = 0.3
+//            transition.type = .fade
+//            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+
+//        navigation?.view.layer.add(transition, forKey: kCATransition)
+        window.rootViewController = gameViewController
     }
 }

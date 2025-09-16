@@ -15,10 +15,16 @@ struct ViewControllerFactory {
         return viewController
     }
     
-    func makeHomeViewController() -> HomeViewController {
+    func makeHomeViewController(flowDelegate: HomeFlowDelegate) -> HomeViewController {
         let homeView = HomeView()
-        let homeViewController = HomeViewController(homeView: homeView)
+        let homeViewController = HomeViewController(homeView: homeView, flowDelegate: flowDelegate)
         
         return homeViewController
+    }
+    
+    func makeGameViewController(flowDelegate: FlowController) -> NewGameViewController {
+        let gameViewController = NewGameViewController(flowDelegate: flowDelegate)
+        
+        return gameViewController
     }
 }
