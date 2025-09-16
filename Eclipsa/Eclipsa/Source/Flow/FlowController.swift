@@ -10,7 +10,13 @@ import SpriteKit
 class FlowController {
     
     var navigation: UINavigationController?
-    var factory = ViewControllerFactory()
+    var window: UIWindow
+    var factory: ViewControllerFactory
+    
+    init(window: UIWindow) {
+        self.window = window
+        self.factory = ViewControllerFactory()
+    }
     
     func start() -> UINavigationController? {
         let teamLogoView = factory.makeTeamLogoViewController(flowDelegate: self)
@@ -47,6 +53,6 @@ extension FlowController: HomeFlowDelegate {
 //            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
 
 //        navigation?.view.layer.add(transition, forKey: kCATransition)
-        navigation?.pushViewController(gameViewController, animated: false)
+        window.rootViewController = gameViewController
     }
 }

@@ -19,11 +19,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FontManager.registerFonts()
 
         let window = UIWindow(frame: UIScreen.main.bounds)
-        flowController = FlowController()
-
+        flowController = FlowController(window: window)
+        self.window = window
         window.rootViewController = flowController?.start()
         window.makeKeyAndVisible()
-        self.window = window
+        
 
         return true
     }
