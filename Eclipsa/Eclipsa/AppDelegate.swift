@@ -11,6 +11,7 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var flowController: FlowController?
 
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -18,10 +19,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         FontManager.registerFonts()
 
         let window = UIWindow(frame: UIScreen.main.bounds)
+        flowController = FlowController()
 
-        // Fluxo inicial: Team (splash) -> Home -> Game
-        let teamVC = TeamViewController(teamView: TeamView(frame: .zero))
-        window.rootViewController = teamVC
+        window.rootViewController = flowController?.start()
         window.makeKeyAndVisible()
         self.window = window
 
