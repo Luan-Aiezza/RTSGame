@@ -16,6 +16,11 @@ public class TroopBehaviorComponent: GKComponent {
     
     private var lastDefeatedTargetPosition: CGPoint?
     
+    // Defaults we can restore when not closing in
+    private let defaultAgentRadius: Float = 32.0
+    private let meleeApproachRadius: Float = 14.0
+    private let meleeApproachWindow: CGFloat = 96.0   // start relaxing avoidance when closer than this
+    
     public init(
         troop: TroopEntity,
         target: GKEntity?,
@@ -143,8 +148,16 @@ public class TroopBehaviorComponent: GKComponent {
         // --- 4) Build GKBehavior for agent (seek target or manual point) ---
         let behavior = GKBehavior()
 
+        // Detect melee (knight) vs ranged by component presence
+        let isMelee = troopLocal.component(ofType: MeleeAttackComponent.self) != nil
+
+        // We may need distance to target to adjust avoidance/radius
+        var distanceToTarget: CGFloat?
+        var targetHasAgent = false
+
         if let enemy = self.target {
             if let targetAgent = enemy.component(ofType: AgentComponent.self)?.agent {
+                targetHasAgent = true
                 let seekGoal = GKGoal(toSeekAgent: targetAgent)
                 behavior.setWeight(1.0, for: seekGoal)
             } else if let nexusNode = enemy.component(ofType: GKSKNodeComponent.self)?.node {
@@ -160,6 +173,15 @@ public class TroopBehaviorComponent: GKComponent {
                 // If the referenced enemy doesn't expose agent/node, fallback to defaultTarget.
                 self.target = defaultTarget
             }
+
+            // compute distance to target position if available
+            if let myPos = troopLocal.component(ofType: GKSKNodeComponent.self)?.node.position {
+                if let enemyPos = (enemy.component(ofType: GKSKNodeComponent.self)?.node.position) {
+                    let dx = myPos.x - enemyPos.x
+                    let dy = myPos.y - enemyPos.y
+                    distanceToTarget = sqrt(dx*dx + dy*dy)
+                }
+            }
         } else if let manualPoint = manualTargetPoint {
             if manualTargetAgent == nil {
                 manualTargetAgent = GKAgent2D()
@@ -172,11 +194,41 @@ public class TroopBehaviorComponent: GKComponent {
         }
 
         // --- 5) Avoid other agents: use snapshot and compare to troopLocal ---
-        let snapshotForAgents = allTroops()
-        let otherAgents = snapshotForAgents.compactMap { $0 !== troopLocal ? $0.component(ofType: AgentComponent.self)?.agent : nil }
-        if !otherAgents.isEmpty {
-            let avoidGoal = GKGoal(toAvoid: otherAgents, maxPredictionTime: 0.5)
-            behavior.setWeight(2.0, for: avoidGoal)
+        // For melee closing in, relax avoidance and reduce radius so they can reach melee range.
+        var shouldAddAvoidAgents = true
+        var avoidAgentsWeight: Float = 2.0
+
+        if isMelee, let d = distanceToTarget {
+            // When approaching a valid target, start relaxing avoidance within a window.
+            // Also shrink the agent radius temporarily so separation doesn't keep them too far.
+            if d <= meleeApproachWindow {
+                agentComponent.agent.radius = meleeApproachRadius
+                avoidAgentsWeight = 0.25
+                // Optionally, if the target itself has an agent, we can disable avoidance entirely
+                // to avoid "orbiting" right at the edge:
+                if targetHasAgent {
+                    shouldAddAvoidAgents = false
+                }
+            } else {
+                // Far away: use default radius and normal avoidance to navigate crowds.
+                agentComponent.agent.radius = defaultAgentRadius
+                avoidAgentsWeight = 2.0
+                shouldAddAvoidAgents = true
+            }
+        } else {
+            // Ranged or no target: keep defaults
+            agentComponent.agent.radius = defaultAgentRadius
+            avoidAgentsWeight = 2.0
+            shouldAddAvoidAgents = true
+        }
+
+        if shouldAddAvoidAgents {
+            let snapshotForAgents = allTroops()
+            let otherAgents = snapshotForAgents.compactMap { $0 !== troopLocal ? $0.component(ofType: AgentComponent.self)?.agent : nil }
+            if !otherAgents.isEmpty {
+                let avoidGoal = GKGoal(toAvoid: otherAgents, maxPredictionTime: 0.5)
+                behavior.setWeight(avoidAgentsWeight, for: avoidGoal)
+            }
         }
         
         // --- 6) Avoid static obstacles (trees) ---
@@ -185,7 +237,8 @@ public class TroopBehaviorComponent: GKComponent {
            !obstacles.isEmpty {
 
             let avoidObstaclesGoal = GKGoal(toAvoid: obstacles, maxPredictionTime: 1.0)
-            behavior.setWeight(5.0, for: avoidObstaclesGoal) // peso mais alto para respeitar árvores
+            // Keep this weight; obstacle avoidance is still important even for melee.
+            behavior.setWeight(5.0, for: avoidObstaclesGoal)
         }
 
         // Finally apply behavior

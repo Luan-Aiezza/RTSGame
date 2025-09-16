@@ -43,13 +43,68 @@ extension GameScene {
             // 1) Nós na hierarquia da câmera (HUD/UI/Overlays) têm regras específicas
             if let cam = self.camera, node.inParentHierarchy(cam) {
                 
-                // 1.1) Defeat overlay e seus filhos → topo absoluto
-                if node.name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
-                    node.zPosition = 11_000
-                    return
+                // 1.0) Phase overlay (tela de início de fase / carregamento) → topo absoluto
+                if node.name == "PhaseOverlay" || node.parent?.name == "PhaseOverlay" {
+                    let baseZ: CGFloat = 11_000.0
+                    if let name = node.name {
+                        switch name {
+                        case "PhaseOverlay":
+                            node.zPosition = baseZ
+                            return
+                        case "PhaseOverlayBG":
+                            node.zPosition = baseZ + 0.0 // fundo preto
+                            return
+                        case "PhaseSnow":
+                            node.zPosition = baseZ + 0.1 // neve à frente do fundo
+                            return
+                        case "PhaseTitle", "PhaseCrown", "PhaseIcon", "PhaseGirl":
+                            node.zPosition = baseZ + 0.3 // conteúdo à frente da neve
+                            return
+                        default:
+                            node.zPosition = baseZ + 0.25
+                            return
+                        }
+                    } else {
+                        node.zPosition = baseZ + 0.25
+                        return
+                    }
                 }
                 
-                // 1.2) DialogueHUD (por classe, por pai ou por nome) → atrás do DefeatOverlay
+                // 1.1) Defeat overlay e seus filhos → sempre à frente do jogo
+                if node.name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
+                    // Base para o overlay todo
+                    let baseZ: CGFloat = 11_000.0
+                    
+                    // Ordenação interna do overlay:
+                    // Menu_Background < DefeatOverlayBG < LoseEffect < Labels/Botões/Título
+                    if let name = node.name {
+                        switch name {
+                        case "DefeatOverlay":
+                            node.zPosition = baseZ
+                            return
+                        case "DefeatMenuBackground":
+                            node.zPosition = baseZ + 0.0
+                            return
+                        case "DefeatOverlayBG":
+                            node.zPosition = baseZ + 0.1
+                            return
+                        case "RestartButton", "DefeatTitle":
+                            node.zPosition = baseZ + 0.3
+                            return
+                        default:
+                            // Qualquer outro filho do overlay que não seja reconhecido:
+                            // por segurança, coloque acima do efeito e abaixo dos botões/título
+                            node.zPosition = baseZ + 0.25
+                            return
+                        }
+                    } else {
+                        // Nó sem nome mas filho do overlay: posiciona acima do efeito
+                        node.zPosition = baseZ + 0.25
+                        return
+                    }
+                }
+                
+                // 1.2) DialogueHUD (por classe, por pai ou por nome) → atrás do DefeatOverlay/PhaseOverlay
                 if (node is DialogueHUD) || (node.parent is DialogueHUD) || node.name == "DialogueHUD" || node.parent?.name == "DialogueHUD" {
                     node.zPosition = 10_800
                     return
@@ -65,7 +120,7 @@ extension GameScene {
                     node.zPosition = 10_600
                     return
                 }
-                // Fallback para outros nós de HUD com z alto (evita reclassificar DialogueHUD/DefeatOverlay que já retornaram)
+                // Fallback para outros nós de HUD com z alto (evita reclassificar DialogueHUD/DefeatOverlay/PhaseOverlay que já retornaram)
                 if node.zPosition >= 900 {
                     node.zPosition = 10_600
                     return
@@ -91,9 +146,39 @@ extension GameScene {
                     node.zPosition = 10_600
                     return
                 }
+                // Phase overlay (fallback absoluto)
+                if name == "PhaseOverlay" || node.parent?.name == "PhaseOverlay" {
+                    let baseZ: CGFloat = 11_000.0
+                    switch name {
+                    case "PhaseOverlay":
+                        node.zPosition = baseZ
+                    case "PhaseOverlayBG":
+                        node.zPosition = baseZ + 0.0
+                    case "PhaseSnow":
+                        node.zPosition = baseZ + 0.1
+                    case "PhaseTitle", "PhaseCrown", "PhaseIcon", "PhaseGirl":
+                        node.zPosition = baseZ + 0.3
+                    default:
+                        node.zPosition = baseZ + 0.25
+                    }
+                    return
+                }
                 // Defeat overlay e seus filhos → topo absoluto (fallback)
                 if name == "DefeatOverlay" || node.parent?.name == "DefeatOverlay" {
-                    node.zPosition = 11_000
+                    // Mesma regra interna do overlay, fallback
+                    let baseZ: CGFloat = 11_000.0
+                    switch name {
+                    case "DefeatOverlay":
+                        node.zPosition = baseZ
+                    case "DefeatMenuBackground":
+                        node.zPosition = baseZ + 0.0
+                    case "DefeatOverlayBG":
+                        node.zPosition = baseZ + 0.1
+                    case "RestartButton", "DefeatTitle":
+                        node.zPosition = baseZ + 0.3
+                    default:
+                        node.zPosition = baseZ + 0.25
+                    }
                     return
                 }
                 // Dialogue HUD por nome/pai (fallback)
@@ -136,3 +221,4 @@ extension GameScene {
         }
     }
 }
+

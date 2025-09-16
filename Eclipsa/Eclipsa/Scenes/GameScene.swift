@@ -77,7 +77,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupSpawners()
         
         setupCamera() //Instancia a camera na cena
-        startDialogue() //Instancia os dialogos na cena
         setupUI()
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
@@ -99,6 +98,14 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let solarUI = UISolarGeneratorComponent()
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
+        
+        // Exibe overlay de início de fase (carregamento)
+        // Ajuste os parâmetros de fase conforme sua lógica (ex.: carregar de um GameState)
+        showPhaseOverlay(currentPhase: 1, previousPhase: nil)
+        
+        // Oculta a overlay automaticamente após 5 segundos
+        run(.wait(forDuration: 5.0)) { [weak self] in
+            self?.hidePhaseOverlay()
         DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
             WaveManager.shared.startNextWave()
         }
@@ -216,4 +223,3 @@ extension GameScene {
         isRespawningPlayer = false
     }
 }
-

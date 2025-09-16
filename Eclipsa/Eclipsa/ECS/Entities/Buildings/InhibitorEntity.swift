@@ -11,7 +11,7 @@ public class InhibitorEntity: BuildingEntity {
     
     public init(node: SKSpriteNode) {
         super.init(node: node, team: .sun, maxHealth: 1000)
-        self.addComponent(ResourceGeneratorComponent(rate: 5, maxResourcePerGeneration: 1))
+        self.addComponent(ResourceGeneratorComponent(rate: 10, maxResourcePerGeneration: 1))
     }
     
     required init?(coder: NSCoder) {

@@ -45,7 +45,7 @@ class ButtonsSet {
     }
     
     private func setupInvokeMeleeButtonUI(){
-        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .purple)
+        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .yellow)
         invokeMeleeButton?.changeLabelToImage(with: "Knight_Invoke_Icon")
         invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: Colors.meleeButtonStrokeColor)
         setupInvokeMeleeButton()
@@ -73,7 +73,7 @@ class ButtonsSet {
     
     private func setupInvokeRangedButtonUI(){
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
-        invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon-export_small")
+        invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon")
         invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: Colors.rangedButtonStrokeColor)
         setupInvokeRangedButton()
     }

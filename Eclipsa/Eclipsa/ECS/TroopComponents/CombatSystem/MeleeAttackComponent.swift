@@ -18,8 +18,7 @@ public class MeleeAttackComponent: GKComponent {
         guard let behaviorComponent = unit.component(ofType: TroopBehaviorComponent.self),
               let target = behaviorComponent.target as? BaseUnitEntity,
               let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
-              let range = unit.component(ofType: RangeComponent.self)?.radius else { return }
+              let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position else { return }
         
         // não ataca aliados
         guard let targetTeam = target.component(ofType: TeamComponent.self)?.team,
@@ -30,8 +29,8 @@ public class MeleeAttackComponent: GKComponent {
         let dy = unitPos.y - enemyPos.y
         let distanceSquared = dx * dx + dy * dy
 
-        // Definindo uma distância mínima de ataque (melee precisa estar bem colado)
-        let attackRadius: CGFloat = 32   // ajuste fino: pode testar 16~24
+        // Alcance de ataque melee (dobrado)
+        let attackRadius: CGFloat = 64
 
         if distanceSquared <= attackRadius * attackRadius {
             if CACurrentMediaTime() - lastAttackTime >= cooldown {
@@ -68,3 +67,4 @@ public class MeleeAttackComponent: GKComponent {
 
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
 }
+
