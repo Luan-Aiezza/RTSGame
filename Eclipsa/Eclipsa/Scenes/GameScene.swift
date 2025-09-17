@@ -100,73 +100,72 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         showPhaseOverlay(currentPhase: 1, previousPhase: nil)
         
         // Oculta a overlay automaticamente após 5 segundos
-        
-        func update(_ currentTime: TimeInterval) {
-            // --- Protege contra primeira chamada ou retorno do background ---
-            guard let lastTime = customLastUpdateTime else {
-                customLastUpdateTime = currentTime
-                return
-            }
-            
-            var deltaTime = currentTime - lastTime
+    }
+    override func update(_ currentTime: TimeInterval) {
+        // --- Protege contra primeira chamada ou retorno do background ---
+        guard let lastTime = customLastUpdateTime else {
             customLastUpdateTime = currentTime
-            
-            // --- Clampa o deltaTime para evitar saltos absurdos ---
-            // ex: máximo 1/30 ≈ 0.033s (30 FPS)
-            if deltaTime > 1.0 / 60.0 {
-                deltaTime = 1.0 / 60.0
-            }
-            
-            // --- Atualiza sistemas normalmente ---
-            SKEntityManager.shared.update(deltaTime)
-            
-            controlledEntity?.update(deltaTime: deltaTime)
-            troops.forEach { $0.update(deltaTime: deltaTime) }
-            cameraEntity?.followPlayer(player: controlledEntity)
-            cameraEntity?.update(deltaTime: deltaTime)
-            
-            // Protege quando o player não existe (janela de respawn)
-            controlledEntity?.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
-            troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
-            
-            if let projectiles = self.userData?["projectiles"] as? [ProjectileEntity] {
-                for projectile in projectiles {
-                    projectile.update(deltaTime: deltaTime)
-                }
-            }
-            
-            updateTroopTargets()
-            updatePlayerState()
-            depthSortNodes()
-            aimingSystem?.updateDynamicAiming()
-            
-            // Garante que o HUD se reposicione se a escala da câmera mudar (caso ocorra)
-            resourceHUD?.handleCameraOrSceneChange()
+            return
         }
         
+        var deltaTime = currentTime - lastTime
+        customLastUpdateTime = currentTime
+        
+        // --- Clampa o deltaTime para evitar saltos absurdos ---
+        // ex: máximo 1/30 ≈ 0.033s (30 FPS)
+        if deltaTime > 1.0 / 60.0 {
+            deltaTime = 1.0 / 60.0
+        }
+        
+        // --- Atualiza sistemas normalmente ---
+        SKEntityManager.shared.update(deltaTime)
+        
+        controlledEntity?.update(deltaTime: deltaTime)
+        troops.forEach { $0.update(deltaTime: deltaTime) }
+        cameraEntity?.followPlayer(player: controlledEntity)
+        cameraEntity?.update(deltaTime: deltaTime)
+        
+        // Protege quando o player não existe (janela de respawn)
+        controlledEntity?.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
+        troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
+        
+        if let projectiles = self.userData?["projectiles"] as? [ProjectileEntity] {
+            for projectile in projectiles {
+                projectile.update(deltaTime: deltaTime)
+            }
+        }
+        
+        updateTroopTargets()
+        updatePlayerState()
+        depthSortNodes()
+        aimingSystem?.updateDynamicAiming()
+        
+        // Garante que o HUD se reposicione se a escala da câmera mudar (caso ocorra)
+        resourceHUD?.handleCameraOrSceneChange()
+    }
+    
+}
+
+extension GameScene {
+    func setupRTSAiming() {
+        let aimingSystem = AimingSystem(scene: self)
+        aimingSystem.player = controlledEntity
+        
+        if let player = controlledEntity{
+            aimingSystem.addComponent(foundIn: player)
+        }
+        self.aimingSystem = aimingSystem
     }
 }
-    
-    extension GameScene {
-        func setupRTSAiming() {
-            let aimingSystem = AimingSystem(scene: self)
-            aimingSystem.player = controlledEntity
-            
-            if let player = controlledEntity{
-                aimingSystem.addComponent(foundIn: player)
-            }
-            self.aimingSystem = aimingSystem
-        }
+
+extension GameScene {
+    func setupAdatpedVirtualController() {
+        gameController = AdaptedVirtualController(scene: self, analogRadius: 50, color: .systemBlue)
+        gameController?.changePosition(Position.gameController(size: size))
+        gameController?.setAnalogVisible(value: true)
+        controlledEntity.component(ofType: AdaptedControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: gameController)
     }
-    
-    extension GameScene {
-        func setupAdatpedVirtualController() {
-            gameController = AdaptedVirtualController(scene: self, analogRadius: 50, color: .systemBlue)
-            gameController?.changePosition(Position.gameController(size: size))
-            gameController?.setAnalogVisible(value: true)
-            controlledEntity.component(ofType: AdaptedControlableComponent.self)?.setupController(inputHandler: inputHandler, virtualController: gameController)
-        }
-    }
+}
 // MARK: - Respawn do Player
 extension GameScene {
     // Observa o HealthComponent do player atual e agenda respawn quando morrer
