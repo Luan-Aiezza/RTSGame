@@ -47,12 +47,13 @@ extension FlowController: HomeFlowDelegate {
     func goToGame() {
         let gameViewController = factory.makeGameViewController(flowDelegate: self)
         
-//        let transition = CATransition()
-//            transition.duration = 0.3
-//            transition.type = .fade
-//            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        let transition = CATransition()
+            transition.duration = 0.3
+            transition.type = .fade
+            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
 
-//        navigation?.view.layer.add(transition, forKey: kCATransition)
-        window.rootViewController = gameViewController
+        navigation?.view.layer.add(transition, forKey: kCATransition)
+//        window.rootViewController = gameViewController
+        navigation?.setViewControllers([gameViewController], animated: true)
     }
 }
