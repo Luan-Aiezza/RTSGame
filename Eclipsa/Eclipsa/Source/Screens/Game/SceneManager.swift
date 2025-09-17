@@ -11,6 +11,13 @@ struct SceneManager {
 
     func phaseOne() -> GameScene? {
         let scene = makeScene(with: "GameScene_1")
+        scene?.configureScene(with: Phase1())
+        return scene
+    }
+    
+    func phaseTwo() -> GameScene? {
+        let scene = makeScene(with: "GameScene_2")
+        scene?.configureScene(with: Phase1())
         return scene
     }
     
