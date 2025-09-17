@@ -10,7 +10,15 @@ extension GameScene {
         }
     }
     
-    func setupNexus() {
+    func configureScene(with sceneConfiguration: SceneConfiguration) {
+        self.sceneConfiguration = sceneConfiguration
+        setupNexus()
+        setupInhibitors()
+        setupSpawners()
+        WaveManager.shared.setupWaves()
+    }
+    
+    private func setupNexus() {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {
             let nexus = NexusEntity(node: node)
             
@@ -29,12 +37,9 @@ extension GameScene {
             print("Node 'Nexus' não encontrado na cena!")
         }
     }
-
     
-    func setupInhibitors() {
-        let inhibitorNames = ["Inhibitor_1", "Inhibitor_2"]
-        
-        for name in inhibitorNames {
+    private func setupInhibitors() {
+        for name in sceneConfiguration!.inhibitors {
             if let node = childNode(withName: name) as? SKSpriteNode {
                 let inhibitor = InhibitorEntity(node: node)
                 // Adiciona o indicador de ataque
@@ -47,26 +52,9 @@ extension GameScene {
         }
     }
     
-//    func setupSpawners() {
-//        WaveManager.shared.scene = self
-//        let spawnersNames = ["Spawn_1", "Spawn_2", "Spawn_3"]
-//        
-//        for name in spawnersNames {
-//            if let node = childNode(withName: name) as? SKSpriteNode {
-//                let spawner = SpawnEntity(node: node)
-//                
-//                SKEntityManager.shared.add(spawner)
-//            } else {
-//                print("Node '\(name)' não encontrado na cena!")
-//            }
-//        }
-//    }
-    
-    func setupSpawners() {
+    private func setupSpawners() {
         WaveManager.shared.scene = self
-        let spawnersNames = ["Spawn_1", "Spawn_2"]
-        
-        for name in spawnersNames {
+        for name in sceneConfiguration!.spawners {
             if let node = childNode(withName: name) as? SKSpriteNode {
                 // Passa a cena para o SpawnEntity
                 let spawner = SpawnEntity(node: node)
@@ -76,13 +64,7 @@ extension GameScene {
                 print("Node '\(name)' não encontrado na cena!")
             }
         }
-        
-        // Inicia as waves após um pequeno delay
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-//            WaveManager.shared.startNextWave()
-//        }
     }
-    
     
     func setupPlayer() {
         setupInputControllerIfNeeded()

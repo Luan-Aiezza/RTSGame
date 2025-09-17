@@ -44,7 +44,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Novo: componente visual para geração de recurso nos Inhibitors
     private var solarGeneratorUI: UISolarGeneratorComponent?
     
-    // Removido: setupBindings() e resourceLabel
+    var sceneConfiguration: SceneConfiguration?
     
     override func sceneDidLoad() {
         super.sceneDidLoad()
@@ -71,10 +71,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupPlayer() //Instancia o player na cena
         // Observa a morte do player atual para respawn
         observePlayerDeath()
-        
-        setupNexus()   // cria base do jogador
-        setupInhibitors() // cria inibidores aliados
-        setupSpawners()
         
         setupCamera() //Instancia a camera na cena
         setupUI()
@@ -104,12 +100,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         showPhaseOverlay(currentPhase: 1, previousPhase: nil)
         
         // Oculta a overlay automaticamente após 5 segundos
-        run(.wait(forDuration: 5.0)) { [weak self] in
-            self?.hidePhaseOverlay()
-            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
-                WaveManager.shared.startNextWave()
-            }
-        }
         
         func update(_ currentTime: TimeInterval) {
             // --- Protege contra primeira chamada ou retorno do background ---
