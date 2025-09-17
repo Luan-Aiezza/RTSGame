@@ -104,6 +104,34 @@ extension GameScene {
                     }
                 }
                 
+                // 1.1b) Win overlay e seus filhos → sempre à frente do jogo (mesmas regras do Defeat)
+                if node.name == "WinOverlay" || node.parent?.name == "WinOverlay" {
+                    let baseZ: CGFloat = 11_000.0
+                    if let name = node.name {
+                        switch name {
+                        case "WinOverlay":
+                            node.zPosition = baseZ
+                            return
+                        case "WinMenuBackground":
+                            node.zPosition = baseZ + 0.0
+                            return
+                        case "DefeatOverlayBG", "WinOverlayBG":
+                            // aceitar tanto o nome antigo quanto o novo para o fundo escuro
+                            node.zPosition = baseZ + 0.1
+                            return
+                        case "ContinueButton", "WinTitle":
+                            node.zPosition = baseZ + 0.3
+                            return
+                        default:
+                            node.zPosition = baseZ + 0.25
+                            return
+                        }
+                    } else {
+                        node.zPosition = baseZ + 0.25
+                        return
+                    }
+                }
+                
                 // 1.2) DialogueHUD (por classe, por pai ou por nome) → atrás do DefeatOverlay/PhaseOverlay
                 if (node is DialogueHUD) || (node.parent is DialogueHUD) || node.name == "DialogueHUD" || node.parent?.name == "DialogueHUD" {
                     node.zPosition = 10_800
@@ -175,6 +203,23 @@ extension GameScene {
                     case "DefeatOverlayBG":
                         node.zPosition = baseZ + 0.1
                     case "RestartButton", "DefeatTitle":
+                        node.zPosition = baseZ + 0.3
+                    default:
+                        node.zPosition = baseZ + 0.25
+                    }
+                    return
+                }
+                // Win overlay e seus filhos → topo absoluto (fallback)
+                if name == "WinOverlay" || node.parent?.name == "WinOverlay" {
+                    let baseZ: CGFloat = 11_000.0
+                    switch name {
+                    case "WinOverlay":
+                        node.zPosition = baseZ
+                    case "WinMenuBackground":
+                        node.zPosition = baseZ + 0.0
+                    case "DefeatOverlayBG", "WinOverlayBG":
+                        node.zPosition = baseZ + 0.1
+                    case "ContinueButton", "WinTitle":
                         node.zPosition = baseZ + 0.3
                     default:
                         node.zPosition = baseZ + 0.25

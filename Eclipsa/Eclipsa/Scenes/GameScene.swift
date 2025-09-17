@@ -95,11 +95,12 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
         
-        // Exibe overlay de início de fase (carregamento)
-        // Ajuste os parâmetros de fase conforme sua lógica (ex.: carregar de um GameState)
-        showPhaseOverlay(currentPhase: 1, previousPhase: nil)
-        
-        // Oculta a overlay automaticamente após 5 segundos
+        showPhaseOverlay(currentPhase: 2, previousPhase: 1)
+
+        // Oculta a overlay automaticamente após um curto atraso para garantir que a fase iniciou
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+            self?.hidePhaseOverlay()
+        }
     }
     override func update(_ currentTime: TimeInterval) {
         // --- Protege contra primeira chamada ou retorno do background ---
@@ -212,3 +213,4 @@ extension GameScene {
         isRespawningPlayer = false
     }
 }
+

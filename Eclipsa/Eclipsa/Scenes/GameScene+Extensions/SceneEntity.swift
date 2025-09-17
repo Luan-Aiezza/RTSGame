@@ -14,10 +14,10 @@ class SceneEntity: GKEntity {
             scene: scene,
             intervaloEntreWaves: 15,
             pisoTropas: 2,
-            limiteTropas: 12,
-            crescimentoPorWave: 2,
+            limiteTropas: 4,
+            crescimentoPorWave: 1,
             tipoDeTropa: .mage,
-            maximoWaves: 4 // 🔹 Exemplo: essa fase terá 3 waves
+            maximoWaves: 2 // 🔹 Exemplo: essa fase terá 3 waves
         )
         addComponent(spawner)
     }

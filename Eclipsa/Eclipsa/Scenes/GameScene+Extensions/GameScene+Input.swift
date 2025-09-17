@@ -6,7 +6,7 @@ import GameplayKit
 extension GameScene {
     
     private func overlayIsActive() -> Bool {
-        return camera?.childNode(withName: "DefeatOverlay") != nil
+        return camera?.childNode(withName: "DefeatOverlay") != nil || camera?.childNode(withName: "WinOverlay") != nil
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -14,7 +14,9 @@ extension GameScene {
         if overlayIsActive() {
             if let touch = touches.first, let camera {
                 let locationInCamera = touch.location(in: camera)
-                _ = tryHandleOverlayTouch(locationInCamera) // tenta clicar no Restart
+                // Tenta primeiro overlays (Win e Defeat)
+                if tryHandleWinOverlayTouch(locationInCamera) { return }
+                if tryHandleOverlayTouch(locationInCamera) { return }
             }
             return
         }
@@ -22,9 +24,8 @@ extension GameScene {
         // Sem overlay: se houver câmera, também priorizamos clique em overlay (no caso de corrida de estado)
         if let touch = touches.first, let camera {
             let locationInCamera = touch.location(in: camera)
-            if tryHandleOverlayTouch(locationInCamera) {
-                return // se foi clique no overlay, não processa input normal
-            }
+            if tryHandleWinOverlayTouch(locationInCamera) { return }
+            if tryHandleOverlayTouch(locationInCamera) { return }
         }
         
         guard let camera, let location = touches.first?.location(in: camera) else { return }
@@ -64,6 +65,7 @@ extension GameScene {
         if overlayIsActive() {
             if let touch = touches.first, let camera {
                 let locationInCamera = touch.location(in: camera)
+                if tryHandleWinOverlayTouch(locationInCamera) { return }
                 _ = tryHandleOverlayTouch(locationInCamera)
             }
             return
@@ -111,3 +113,4 @@ extension GameScene {
         commandController?.setAnalogVisible(value: false, withDuration: 0.3)
     }
 }
+
