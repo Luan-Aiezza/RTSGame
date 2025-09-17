@@ -22,6 +22,27 @@ class NewGameViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
     
+//    lazy var button: UIButton = {
+//        let button = UIButton(type: .system)
+//        button.titleLabel?.text = "Mudar Cena"
+//        button.titleLabel?.textColor = .green
+//        button.layer.cornerRadius = 10
+//        button.layer.borderColor = UIColor.green.cgColor
+//        button.layer.borderWidth = 2
+//        button.addTarget(self, action: #selector(nextPhase), for: .touchUpInside)
+//        
+//        button.translatesAutoresizingMaskIntoConstraints = false
+//        return button
+//    }()
+    
+//    @objc
+//    func nextPhase(){
+//        if let scene = sceneManager.phaseTwo(){
+//            skView.presentScene(scene)
+//        }
+//    }
+    
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -37,6 +58,7 @@ class NewGameViewController: UIViewController {
     func setupUI() {
         skView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(skView)
+//        view.addSubview(button)
         skView.isMultipleTouchEnabled = true
         setupConstraints()
         setupDebugOptions()
