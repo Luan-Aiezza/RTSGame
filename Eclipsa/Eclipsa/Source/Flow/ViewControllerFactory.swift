@@ -22,8 +22,8 @@ struct ViewControllerFactory {
         return homeViewController
     }
     
-    func makeGameViewController(flowDelegate: FlowController) -> NewGameViewController {
-        let gameViewController = NewGameViewController(flowDelegate: flowDelegate)
+    func makeGameViewController(flowDelegate: FlowController) -> GameViewController {
+        let gameViewController = GameViewController(flowDelegate: flowDelegate)
         
         return gameViewController
     }

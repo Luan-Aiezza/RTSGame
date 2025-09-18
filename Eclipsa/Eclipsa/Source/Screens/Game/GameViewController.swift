@@ -9,7 +9,7 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
-class NewGameViewController: UIViewController {
+class GameViewController: UIViewController {
     
     let sceneManager: SceneManager
     let flowDelegate: FlowController
