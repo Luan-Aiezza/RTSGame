@@ -17,7 +17,7 @@ class AudioManager {
     private init() {}
 
     // MARK: - Fades para Música de Background
-    func fadeInBackgroundMusic(named name: String, duration: TimeInterval = 1.5) {
+    func fadeInBackgroundMusic(named name: String, duration: TimeInterval = 6.0) {
         // Começa com volume 0 e aumenta até o volume global
         guard let url = supportedExtensions.compactMap({ Bundle.main.url(forResource: name, withExtension: $0) }).first else { return }
         do {
@@ -32,7 +32,7 @@ class AudioManager {
                 player.volume = target
                 return
             }
-            let steps = 30
+            let steps = 60
             let stepDuration = duration / Double(steps)
             for i in 1...steps {
                 let delay = stepDuration * Double(i)
@@ -47,7 +47,7 @@ class AudioManager {
         }
     }
 
-    func fadeOutBackgroundMusic(duration: TimeInterval = 1.0, stopAfter: Bool = true) {
+    func fadeOutBackgroundMusic(duration: TimeInterval = 3.0, stopAfter: Bool = true) {
         guard let player = backgroundMusicPlayer else { return }
         let startVolume = player.volume
         guard duration > 0 else {
@@ -55,7 +55,7 @@ class AudioManager {
             if stopAfter { stopBackgroundMusic() }
             return
         }
-        let steps = 30
+        let steps = 60
         let stepDuration = duration / Double(steps)
         for i in 1...steps {
             let delay = stepDuration * Double(i)

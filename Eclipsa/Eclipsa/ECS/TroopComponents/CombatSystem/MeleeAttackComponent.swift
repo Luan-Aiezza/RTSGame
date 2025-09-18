@@ -30,7 +30,7 @@ public class MeleeAttackComponent: GKComponent {
         let distanceSquared = dx * dx + dy * dy
 
         // Alcance de ataque melee (dobrado)
-        let attackRadius: CGFloat = 64
+        let attackRadius: CGFloat = 49
 
         if distanceSquared <= attackRadius * attackRadius {
             if CACurrentMediaTime() - lastAttackTime >= cooldown {

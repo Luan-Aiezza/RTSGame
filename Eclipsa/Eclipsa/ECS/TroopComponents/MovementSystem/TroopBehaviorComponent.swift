@@ -18,8 +18,8 @@ public class TroopBehaviorComponent: GKComponent {
     
     // Defaults we can restore when not closing in
     private let defaultAgentRadius: Float = 32.0
-    private let meleeApproachRadius: Float = 14.0
-    private let meleeApproachWindow: CGFloat = 96.0   // start relaxing avoidance when closer than this
+    private let meleeApproachRadius: Float = 8.0      // menor ainda para encostar
+    private let meleeApproachWindow: CGFloat = 32.0   // só relaxa avoidance bem perto
     
     public init(
         troop: TroopEntity,
