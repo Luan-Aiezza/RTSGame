@@ -52,4 +52,10 @@ struct SceneManager {
         intro.scaleMode = .aspectFill
         return intro
     }
+    
+    func endScene() -> EndDialogueScene {
+        let ending = EndDialogueScene()
+        ending.scaleMode = .aspectFill
+        return ending
+    }
 }
