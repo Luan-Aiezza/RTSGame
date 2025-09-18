@@ -107,7 +107,7 @@ extension GameScene {
         let sceneManager = SceneManager()
 
         // Determine next scene based on currentSceneName
-        var nextScene: GameScene?
+        var nextScene: SKScene?
 
         if let name = currentSceneName {
             switch name {
