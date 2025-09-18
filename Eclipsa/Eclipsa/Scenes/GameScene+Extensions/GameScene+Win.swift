@@ -123,7 +123,7 @@ extension GameScene {
                 // go to phase 5 if available; fallback to 4 or 3
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
-                returnToHome()
+                nextScene = sceneManager.endScene()
             default:
                 nextScene = sceneManager.phaseTwo()
             }
