@@ -17,25 +17,25 @@ struct SceneManager {
     
     func phaseTwo() -> GameScene? {
         let scene = makeScene(with: "GameScene_2")
-        scene?.configureScene(with: Phase1())
+        scene?.configureScene(with: Phase2())
         return scene
     }
     
     func phaseThree() -> GameScene? {
         let scene = makeScene(with: "GameScene_3")
-        scene?.configureScene(with: Phase1())
+        scene?.configureScene(with: Phase3())
         return scene
     }
     
     func phaseFour() -> GameScene? {
         let scene = makeScene(with: "GameScene_4")
-        scene?.configureScene(with: Phase1())
+        scene?.configureScene(with: Phase4())
         return scene
     }
     
     func phaseFive() -> GameScene? {
         let scene = makeScene(with: "GameScene_5")
-        scene?.configureScene(with: Phase1())
+        scene?.configureScene(with: Phase5())
         return scene
     }
     
@@ -45,5 +45,17 @@ struct SceneManager {
             sceneNode.scaleMode = .aspectFill
             sceneNode.name = name
             return sceneNode
+    }
+    
+    func introScene(size: CGSize) -> IntroDialogueScene {
+        let intro = IntroDialogueScene(size: size)
+        intro.scaleMode = .aspectFill
+        return intro
+    }
+    
+    func endScene() -> EndDialogueScene {
+        let ending = EndDialogueScene()
+        ending.scaleMode = .aspectFill
+        return ending
     }
 }
