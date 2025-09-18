@@ -37,7 +37,7 @@ class GameViewController: UIViewController {
                 DispatchQueue.main.async {
                     self?.skView.presentScene(phaseOne)
                     // Start in-game background music with lower volume, looping, and fade in
-                    AudioManager.shared.setBackgroundMusicVolume(0.10)
+                    AudioManager.shared.setBackgroundMusicVolume(0.15)
                     AudioManager.shared.fadeInBackgroundMusic(named: "OST_InGame", duration: 1.0)
                 }
             }
