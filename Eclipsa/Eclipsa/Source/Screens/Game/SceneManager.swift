@@ -47,7 +47,7 @@ struct SceneManager {
             return sceneNode
     }
     
-    func intro(size: CGSize) -> IntroDialogueScene {
+    func introScene(size: CGSize) -> IntroDialogueScene {
         let intro = IntroDialogueScene(size: size)
         intro.scaleMode = .aspectFill
         return intro

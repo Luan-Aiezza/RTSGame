@@ -31,7 +31,7 @@ class GameViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        let scene = sceneManager.intro(size: skView.bounds.size)
+        let scene = sceneManager.introScene(size: skView.bounds.size)
         scene.onFinished = { [weak self] in
             if let phaseOne = self?.sceneManager.phaseOne(){
                 DispatchQueue.main.async {
