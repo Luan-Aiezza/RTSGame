@@ -23,11 +23,24 @@ class HomeViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        // Inicia a trilha com fade in
+        AudioManager.shared.fadeInBackgroundMusic(named: "OST_HomeView", duration: 1.5)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Faz fade out ao sair da Home
+        AudioManager.shared.fadeOutBackgroundMusic(duration: 1.0, stopAfter: true)
+    }
 }
 
 // MARK: Bindando ViewController com View
 extension HomeViewController: HomeViewDelegate {
     func didTapPlayButton() {
+        AudioManager.shared.playSound(named: "Effect_Confirm_1")
         flowDelegate?.goToGame()
     }
 }

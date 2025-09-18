@@ -278,6 +278,8 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eclipsa/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Suncrown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
@@ -315,6 +317,8 @@
 				DEVELOPMENT_TEAM = K4H4UFJU24;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Eclipsa/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Suncrown;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.strategy-games";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIStatusBarHidden = YES;
