@@ -8,10 +8,11 @@ class AudioManager {
     private var audioPlayers: [String: [AVAudioPlayer]] = [:]
     private var backgroundMusicPlayer: AVAudioPlayer?
     private let maxSimultaneousPlays = 3
-    private var globalVolume: Float = 1.0 {
-        didSet {
-            updateAllVolumes()
-        }
+    private var sfxVolume: Float = 1.0 {
+        didSet { updateAllVolumes() }
+    }
+    private var bgmVolume: Float = 1.0 {
+        didSet { updateAllVolumes() }
     }
 
     private init() {}
@@ -24,7 +25,7 @@ class AudioManager {
             let player = try AVAudioPlayer(contentsOf: url)
             backgroundMusicPlayer = player
             player.numberOfLoops = -1
-            let target = globalVolume
+            let target = bgmVolume
             player.volume = 0.0
             player.prepareToPlay()
             player.play()
@@ -74,21 +75,21 @@ class AudioManager {
     func playSound(named name: String) {
         if let players = audioPlayers[name] {
             if let availablePlayer = players.first(where: { !$0.isPlaying }) {
-                availablePlayer.volume = globalVolume
+                availablePlayer.volume = sfxVolume
                 availablePlayer.play()
                 return
             }
 
             if players.count < maxSimultaneousPlays {
                 if let player = createPlayer(for: name) {
-                    player.volume = globalVolume
+                    player.volume = sfxVolume
                     audioPlayers[name]?.append(player)
                     player.play()
                 }
             }
         } else {
             if let player = createPlayer(for: name) {
-                player.volume = globalVolume
+                player.volume = sfxVolume
                 audioPlayers[name] = [player]
                 player.play()
             }
@@ -104,7 +105,7 @@ class AudioManager {
         do {
             backgroundMusicPlayer = try AVAudioPlayer(contentsOf: url)
             backgroundMusicPlayer?.numberOfLoops = -1 // loop infinito
-            backgroundMusicPlayer?.volume = globalVolume
+            backgroundMusicPlayer?.volume = bgmVolume
             backgroundMusicPlayer?.prepareToPlay()
             backgroundMusicPlayer?.play()
         } catch {
@@ -119,16 +120,27 @@ class AudioManager {
 
     // MARK: - Controle de Volume
     func setVolume(to value: Float) {
-        globalVolume = min(max(value, 0.0), 1.0) // Clamp entre 0.0 e 1.0
+        let clamped = min(max(value, 0.0), 1.0)
+        bgmVolume = clamped
+    }
+
+    func setBackgroundMusicVolume(_ value: Float) {
+        let clamped = min(max(value, 0.0), 1.0)
+        bgmVolume = clamped
+    }
+
+    func setEffectsVolume(_ value: Float) {
+        let clamped = min(max(value, 0.0), 1.0)
+        sfxVolume = clamped
     }
 
     private func updateAllVolumes() {
         for (_, players) in audioPlayers {
             for player in players {
-                player.volume = globalVolume
+                player.volume = sfxVolume
             }
         }
-        backgroundMusicPlayer?.volume = globalVolume
+        backgroundMusicPlayer?.volume = bgmVolume
     }
 
     // MARK: - Internal

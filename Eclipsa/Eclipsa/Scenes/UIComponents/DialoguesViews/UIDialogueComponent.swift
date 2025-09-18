@@ -6,6 +6,7 @@
 //
 
 import SpriteKit
+import AVFoundation
 
 struct DialogueLine {
     let text: String
@@ -21,6 +22,7 @@ final class DialogueHUD: SKNode {
     private var typingTimer: Timer?
     private var currentCharIndex: Int = 0
     private var onTypingCompleted: (() -> Void)?
+    private var nextAllowedSoundTime: TimeInterval = 0
     
     init(sceneSize: CGSize) {
         // Texto
@@ -112,6 +114,7 @@ final class DialogueHUD: SKNode {
         currentCharIndex = 0
         textLabel.text = ""
         onTypingCompleted = onCompleted
+        nextAllowedSoundTime = 0
         
         guard !fullText.isEmpty else {
             onCompleted()
@@ -123,9 +126,20 @@ final class DialogueHUD: SKNode {
             if self.currentCharIndex < self.fullText.count {
                 let idx = self.fullText.index(self.fullText.startIndex, offsetBy: self.currentCharIndex + 1)
                 let substring = String(self.fullText[..<idx])
+
+                // Character just revealed
+                let newChar = self.fullText[self.fullText.index(self.fullText.startIndex, offsetBy: self.currentCharIndex)]
+
                 self.textLabel.text = substring
                 self.currentCharIndex += 1
                 self.updateBoxSize() // ← atualiza a caixa conforme cresce
+
+                // Play typing sound by time (every 0.5s) to avoid noisy audio
+                let now = CACurrentMediaTime()
+                if now >= self.nextAllowedSoundTime {
+                    AudioManager.shared.playSound(named: "Effect_Text_1")
+                    self.nextAllowedSoundTime = now + 0.1
+                }
             } else {
                 timer.invalidate()
                 self.typingTimer = nil
@@ -147,3 +161,4 @@ final class DialogueHUD: SKNode {
         starNode.run(forever, withKey: "starLoop")
     }
 }
+

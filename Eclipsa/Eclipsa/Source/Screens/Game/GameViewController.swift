@@ -36,11 +36,21 @@ class GameViewController: UIViewController {
             if let phaseOne = self?.sceneManager.phaseOne(){
                 DispatchQueue.main.async {
                     self?.skView.presentScene(phaseOne)
+                    // Start in-game background music with lower volume, looping, and fade in
+                    AudioManager.shared.setBackgroundMusicVolume(0.10)
+                    AudioManager.shared.fadeInBackgroundMusic(named: "OST_InGame", duration: 1.0)
                 }
             }
         }
         let transition = SKTransition.fade(withDuration: 0.4)
         skView.presentScene(scene, transition: transition)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        // Fade out background music when leaving the game view
+        AudioManager.shared.fadeOutBackgroundMusic(duration: 1.0, stopAfter: true)
+        AudioManager.shared.setBackgroundMusicVolume(1)
     }
     
     func setupUI() {
