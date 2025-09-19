@@ -125,7 +125,7 @@ extension GameScene {
             case "GameScene_5":
                 nextScene = sceneManager.endScene()
             default:
-                nextScene = sceneManager.phaseTwo()
+                nextScene = sceneManager.phaseOne()
             }
         } else {
             // Fallback if no scene name
