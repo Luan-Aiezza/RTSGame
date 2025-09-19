@@ -57,8 +57,8 @@ struct SceneManager {
         return intro
     }
     
-    func endScene() -> EndDialogueScene {
-        let ending = EndDialogueScene()
+    func endScene(size: CGSize) -> EndDialogueScene {
+        let ending = EndDialogueScene(size: size)
         ending.scaleMode = .aspectFill
         NotificationCenter.default.post(name: .stopBackgroundMusic, object: nil)
         return ending

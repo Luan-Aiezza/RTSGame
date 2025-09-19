@@ -115,7 +115,7 @@ extension GameScene {
                 // go to phase 5 if available; fallback to 4 or 3
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
-                nextScene = sceneManager.endScene()
+                nextScene = sceneManager.endScene(size: view.bounds.size)
             default:
                 nextScene = sceneManager.phaseOne()
             }
