@@ -31,7 +31,7 @@ final class CreditsScene: SKScene {
     var onFinished: (() -> Void)?
 
     override func didMove(to view: SKView) {
-        backgroundColor = .black
+        backgroundColor = .red
         isUserInteractionEnabled = false // sem skip
 
         addChild(container)

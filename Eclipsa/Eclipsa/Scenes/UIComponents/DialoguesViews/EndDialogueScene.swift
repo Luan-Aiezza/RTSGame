@@ -28,7 +28,7 @@ final class EndDialogueScene: SKScene {
     }
     
     // Configurações
-    private let perParagraphVisibleDuration: TimeInterval = 8.0
+    private let perParagraphVisibleDuration: TimeInterval = 6.0
     private let typeCharInterval: TimeInterval = 0.05
     
     // Callback para quando terminar o final
@@ -66,9 +66,7 @@ final class EndDialogueScene: SKScene {
             
             "Para assim libertar as terras altas do frio e da escuridão.",
             
-            "A jornada de Ariah continuará…",
-            
-            "Fim."
+            "A jornada de Ariah continuará…"
         ]
         paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }
     }

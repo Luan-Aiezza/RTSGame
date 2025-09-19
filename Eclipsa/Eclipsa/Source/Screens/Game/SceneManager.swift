@@ -69,8 +69,10 @@ struct SceneManager {
     
     func creditsScene(size: CGSize) -> CreditsScene {
         let credits = CreditsScene(size: size)
+        AudioManager.shared.fadeInBackgroundMusic(named: "OST_Credits")
         credits.scaleMode = .aspectFill
         credits.onFinished = {
+            AudioManager.shared.fadeOutBackgroundMusic()
             flowController.goHome()
         }
         return credits

@@ -138,7 +138,7 @@ final class DialogueHUD: SKNode {
                 let now = CACurrentMediaTime()
                 if now >= self.nextAllowedSoundTime {
                     AudioManager.shared.playSound(named: "Effect_Text_1")
-                    self.nextAllowedSoundTime = now + 0.1
+                    self.nextAllowedSoundTime = now + 0.2
                 }
             } else {
                 timer.invalidate()
