@@ -16,14 +16,14 @@ extension GameScene {
 
         // Background dark overlay
         let darkBackground = SKSpriteNode(color: .black, size: size)
-        darkBackground.alpha = 0.6
+        darkBackground.alpha = 0.7
         darkBackground.zPosition = 0
         winOverlay.addChild(darkBackground)
 
         // Title sprite
         let titleSprite = SKSpriteNode(imageNamed: "Win_Title")
         titleSprite.name = "WinTitle"
-        titleSprite.position = CGPoint(x: 12, y: 100)
+        titleSprite.position = CGPoint(x: 0, y: 100)
         titleSprite.setScale(0.3)
         titleSprite.texture?.filteringMode = .nearest
         titleSprite.zPosition = 2
@@ -40,7 +40,7 @@ extension GameScene {
         let starFrames = (1...4).map { SKTexture(imageNamed: "Star_Icon_\($0)") }
         let starNode = SKSpriteNode(texture: starFrames.first)
         starNode.name = "WinStar"
-        starNode.position = CGPoint(x: 0, y: -100)
+        starNode.position = CGPoint(x: 0, y: -80)
         starNode.zPosition = 2
         winOverlay.addChild(starNode)
 

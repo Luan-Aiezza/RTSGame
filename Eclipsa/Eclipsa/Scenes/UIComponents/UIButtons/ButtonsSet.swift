@@ -66,6 +66,7 @@ class ButtonsSet {
                     }
                     
                 }
+                AudioManager.shared.playSound(named: "Invoke_Effect")
             }
         }
         camera?.addChild(invokeMeleeButton)
@@ -91,6 +92,7 @@ class ButtonsSet {
                         ResourceHandler.shared.spendResources(TroopCost.rangedCost)
                     }
                 }
+                AudioManager.shared.playSound(named: "Invoke_Effect")
             }
         }
         invokeRangedButton.toggleCommand(value: false)
@@ -110,6 +112,7 @@ class ButtonsSet {
             guard let self = self else { return }
             self.scene.troopControlSystem.commandTroopsToFollow()
             self.scene.playFollowEffectAtPlayer()
+
         }
         followButton.toggleCommand(value: false)
         camera?.addChild(followButton)
