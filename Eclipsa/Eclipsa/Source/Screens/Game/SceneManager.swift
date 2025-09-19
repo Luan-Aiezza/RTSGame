@@ -63,5 +63,14 @@ struct SceneManager {
         NotificationCenter.default.post(name: .stopBackgroundMusic, object: nil)
         return ending
     }
+    
+    func creditsScene(size: CGSize) -> CreditsScene {
+        let credits = CreditsScene(size: size)
+        credits.scaleMode = .aspectFill
+        credits.onFinished = {
+            flowController.goHome()
+        }
+        return credits
+    }
 }
 

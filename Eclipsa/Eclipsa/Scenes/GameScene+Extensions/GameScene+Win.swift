@@ -96,12 +96,11 @@ extension GameScene {
         // Determine current scene name
         let currentSceneName = self.name ?? self.scene?.name ?? (self.userData?["SceneName"] as? String)
 
-        let sceneManager = SceneManager()
-
         // Determine next scene based on currentSceneName
         var nextScene: SKScene?
 
-        if let name = currentSceneName {
+        if let name = currentSceneName,
+           let sceneManager = self.sceneManager{
             switch name {
             case "GameScene_1":
                 nextScene = sceneManager.phaseTwo()
@@ -115,7 +114,13 @@ extension GameScene {
                 // go to phase 5 if available; fallback to 4 or 3
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
-                nextScene = sceneManager.endScene(size: view.bounds.size)
+                let endScene = sceneManager.endScene(size: view.bounds.size)
+                endScene.onFinished = {
+                    let credits = sceneManager.creditsScene(size: view.bounds.size)
+                    credits.scaleMode = .aspectFill
+                    view.presentScene(credits)
+                }
+                
             default:
                 nextScene = sceneManager.phaseOne()
             }

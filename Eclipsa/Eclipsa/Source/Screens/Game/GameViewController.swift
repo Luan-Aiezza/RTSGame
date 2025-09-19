@@ -18,7 +18,7 @@ class GameViewController: UIViewController {
     private var stopMusicObserver: NSObjectProtocol?
     
     init(flowDelegate: FlowController) {
-        self.sceneManager = SceneManager()
+        self.sceneManager = SceneManager(flowController: flowDelegate)
         self.skView = SKView()
         self.flowDelegate = flowDelegate
         super.init(nibName: nil, bundle: nil)
