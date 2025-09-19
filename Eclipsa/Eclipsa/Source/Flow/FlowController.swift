@@ -38,7 +38,7 @@ extension FlowController: TeamLogoFlowDelegate {
             transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
         navigation?.dismiss(animated: false)
         navigation?.view.layer.add(transition, forKey: kCATransition)
-        navigation?.pushViewController(homeViewController, animated: false)
+        navigation?.setViewControllers([homeViewController], animated: false)
     }
 }
 
