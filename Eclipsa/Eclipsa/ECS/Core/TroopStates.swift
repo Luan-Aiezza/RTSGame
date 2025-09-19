@@ -83,43 +83,45 @@ class TroopFollowState: GKState {
 
 class TroopAttackState: GKState {
     unowned let troop: BaseUnitEntity
+    private weak var attackTarget: BaseUnitEntity?
+
     init(troop: BaseUnitEntity) { self.troop = troop }
-    
+
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .attack)
-        
+
         if let agent = troop.component(ofType: AgentComponent.self)?.agent {
             agent.maxSpeed = .zero
-            agent.behavior = nil // <- limpa os goals
+            agent.behavior = nil
+        }
+
+        // Congela o alvo no momento da entrada
+        if let target = troop.component(ofType: TroopBehaviorComponent.self)?.getCurrentEnemyTarget() {
+            attackTarget = target
         }
     }
-    
+
     override func update(deltaTime seconds: TimeInterval) {
-        // Aceita tanto ranged quanto melee como "attack component" ativo
-        let attackComponent: GKComponent? =
-            troop.component(ofType: AttackComponent.self) ??
-            troop.component(ofType: MeleeAttackComponent.self)
-        
-        guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-              let target = behavior.getCurrentEnemyTarget(),
-              let health = target.component(ofType: HealthComponent.self),
-              let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
-              let targetTeam = target.component(ofType: TeamComponent.self)?.team,
-              troopTeam != targetTeam,
-              !health.isDead,
-              attackComponent != nil else {
-            // Sem alvo, alvo morto, aliado, ou sem componente de ataque -> sai do estado
+        guard
+            let target = attackTarget, // usa alvo congelado
+            let health = target.component(ofType: HealthComponent.self),
+            let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
+            let targetTeam = target.component(ofType: TeamComponent.self)?.team,
+            troopTeam != targetTeam,
+            !health.isDead
+        else {
+            // alvo morreu ou não é válido → sair
             stateMachine?.enter(TroopIdleState.self)
             return
         }
-        
-        // Sai do estado de ataque se o alvo sair do alcance
+
+        // Confere distância antes de atacar
         if let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
            let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position {
             let dx = troopPos.x - targetPos.x
             let dy = troopPos.y - targetPos.y
             let distanceSquared = dx * dx + dy * dy
-            
+
             var attackThreshold: CGFloat
             if troop.component(ofType: MeleeAttackComponent.self) != nil {
                 attackThreshold = 49
@@ -128,24 +130,25 @@ class TroopAttackState: GKState {
             } else {
                 attackThreshold = 49
             }
-            
+
             if distanceSquared > attackThreshold * attackThreshold {
-                // fora do alcance: voltar a perseguir
+                // alvo saiu do alcance → volta a perseguir
                 stateMachine?.enter(TroopFollowState.self)
                 return
             }
         }
-        
-        // Executa ataque (melee ou ranged)
-        if let melee = attackComponent as? MeleeAttackComponent {
+
+        // Executa ataque
+        if let melee = troop.component(ofType: MeleeAttackComponent.self) {
             _ = melee.tryAttack(on: target)
             melee.update(deltaTime: seconds)
-        } else if let ranged = attackComponent as? AttackComponent {
+        } else if let ranged = troop.component(ofType: AttackComponent.self) {
             _ = ranged.tryAttack(on: target)
             ranged.update(deltaTime: seconds)
         }
     }
 }
+
 
 class TroopDieState: GKState {
     unowned let troop: BaseUnitEntity
