@@ -126,7 +126,7 @@ extension GameScene {
             }
         } else {
             // Fallback if no scene name
-            nextScene = sceneManager.phaseTwo()
+            nextScene = sceneManager?.phaseOne()
         }
 
         if let next = nextScene {
