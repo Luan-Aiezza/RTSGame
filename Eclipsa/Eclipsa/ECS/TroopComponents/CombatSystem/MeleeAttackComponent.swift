@@ -58,6 +58,11 @@ public class MeleeAttackComponent: GKComponent {
         if let animationComp = unit.component(ofType: AnimationComponent.self) {
             animationComp.runAnimation(for: .attack)
         }
+        
+        // 1.1) Play melee attack sound effect (somente se visível pela câmera)
+        if let node = unit.component(ofType: GKSKNodeComponent.self)?.node {
+            AudioManager.shared.playSoundIfVisible(named: "Melee_Attack_Effect", from: node)
+        }
 
         // 2) Apply damage to the target
         guard let health = target.component(ofType: HealthComponent.self) else { return }

@@ -55,6 +55,11 @@ class ResourceGeneratorComponent: GKComponent {
                 object: building,
                 userInfo: ["node": node]
             )
+            // 🔊 Toca efeito sonoro de recurso, apenas se visível na câmera
+            AudioManager.shared.playSoundIfVisible(named: "Resource_Effect", from: node)
+        } else {
+            // Caso não tenha node associado, toca mesmo assim (fallback)
+            AudioManager.shared.playSound(named: "Resource_Effect")
         }
     }
 }

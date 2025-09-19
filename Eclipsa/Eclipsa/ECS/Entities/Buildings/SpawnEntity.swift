@@ -12,7 +12,7 @@ public class SpawnEntity: BuildingEntity {
     public var onDestroyed: (() -> Void)?
     
     public init(node: SKSpriteNode) {
-        super.init(node: node, team: .moon, maxHealth: 1000)
+        super.init(node: node, team: .moon, maxHealth: 1500)
         
         if let health = self.component(ofType: HealthComponent.self) {
             let previousCallback = health.onHealthChanged

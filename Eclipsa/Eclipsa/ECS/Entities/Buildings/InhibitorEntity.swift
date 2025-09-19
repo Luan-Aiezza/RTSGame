@@ -10,7 +10,7 @@ import BehindGameKit
 public class InhibitorEntity: BuildingEntity {
     
     public init(node: SKSpriteNode) {
-        super.init(node: node, team: .sun, maxHealth: 1000)
+        super.init(node: node, team: .sun, maxHealth: 1500)
         self.addComponent(ResourceGeneratorComponent(rate: 5, maxResourcePerGeneration: 1)) //AJUSTAR
     }
     

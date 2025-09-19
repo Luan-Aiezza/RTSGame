@@ -56,6 +56,7 @@ public class BuildingEntity: BaseUnitEntity {
         if let healthComp = self.component(ofType: HealthComponent.self) {
             healthComp.onHealthChanged = { [weak self] hp, max in
                 self?.component(ofType: HealthBarComponent.self)?.updateBar(health: hp, max: max)
+                
             }
         }
 

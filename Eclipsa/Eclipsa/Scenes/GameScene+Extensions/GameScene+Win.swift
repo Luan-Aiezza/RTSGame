@@ -83,6 +83,7 @@ extension GameScene {
         let nodesAtPoint = camera.nodes(at: cameraSpaceLocation)
         for node in nodesAtPoint {
             if node.name == "ContinueButton" {
+                AudioManager.shared.playSound(named: "Effect_Confirm_1")
                 goToNextPhase()
                 return true
             }
@@ -121,7 +122,7 @@ extension GameScene {
             }
         } else {
             // Fallback if no scene name
-            nextScene = sceneManager.phaseTwo()
+            nextScene = sceneManager.phaseOne()
         }
 
         if let next = nextScene {

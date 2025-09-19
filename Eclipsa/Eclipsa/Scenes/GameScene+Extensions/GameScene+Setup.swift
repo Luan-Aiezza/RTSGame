@@ -136,7 +136,7 @@ extension GameScene {
     }
     
     private func setupCommandButton(){
-        cancelButton = CommandButton(position: Position.cancelButton(size: self.size), name: "Cancel")
+        cancelButton = CommandButton(position: Position.cancelButton(size: self.size), name: "X")
         cancelButton.onTouch = { [weak self] in
             self?.aimingSystem?.cancelAiming()
             self?.cancelButton.toggleCommand(value: true)

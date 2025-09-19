@@ -1,4 +1,5 @@
 import Foundation
+import SpriteKit
 import AVFoundation
 
 class AudioManager {
@@ -157,6 +158,15 @@ class AudioManager {
             print("")
             return nil
         }
+    }
+}
+
+extension AudioManager {
+    func playSoundIfVisible(named name: String, from node: SKNode) {
+        guard let scene = node.scene,
+              let camera = scene.camera,
+              camera.isNodeVisible(node, in: scene) else { return }
+        playSound(named: name)
     }
 }
 

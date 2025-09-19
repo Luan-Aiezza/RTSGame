@@ -117,6 +117,7 @@ extension GameScene {
         guard let camera = camera else { return false }
         let nodesAtPoint = camera.nodes(at: cameraSpaceLocation)
         if nodesAtPoint.first(where: { $0.name == "RestartButton" }) != nil {
+            AudioManager.shared.playSound(named: "Effect_Cancel_1")
             restartGame()
             return true
         }

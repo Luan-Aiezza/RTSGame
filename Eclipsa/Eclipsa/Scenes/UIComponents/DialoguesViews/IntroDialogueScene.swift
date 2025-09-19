@@ -82,10 +82,15 @@ final class IntroDialogueScene: SKScene {
         // Parágrafos fornecidos pelo usuário
         let texts: [String] = [
             "Há muito tempo, as Terras Altas eram o lar dos deuses. Onde ao cume, Heliar deusa do sol, iluminava o mundo.",
+            
             "Abaixo, os Zarat viviam em paz adorando seu brilho.",
+            
             "Mas então, Heliar foi traída por sua irmã, Eclipsa. Que mergulhou o mundo em sombras e frio.",
+            
             "Porém antes de sua queda, Heliar lançou um fragmento de sua alma ao longe— uma promessa para quem quer que o encontrasse trazer a luz de volta.",
+            
             "Encontrado por uma criança dos Zarat, agora exilados. A jovem Ariah.",
+            
             "Anos depois, agora guiada pelo poder de sua deusa, Ariah inicia sua campanha na fronteira das Terras Altas… para guiar seu povo de volta ao lar."
         ]
         paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }

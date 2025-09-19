@@ -8,7 +8,7 @@ public class NexusEntity: BuildingEntity {
     public var onDestroyed: (() -> Void)?
     
     public init(node: SKSpriteNode) {
-        super.init(node: node, team: .sun, maxHealth: 2000)
+        super.init(node: node, team: .sun, maxHealth: 2500)
         
         if let health = self.component(ofType: HealthComponent.self) {
             let previousCallback = health.onHealthChanged

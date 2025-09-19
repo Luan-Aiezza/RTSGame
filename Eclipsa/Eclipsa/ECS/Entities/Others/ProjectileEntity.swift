@@ -61,6 +61,7 @@ public class ProjectileEntity: GKEntity {
     private func startBullet() {
         bullet.isHidden = false
         animationComponent.runAnimation(for: .custom("bullet"))
+        AudioManager.shared.playSoundIfVisible(named: "Bullet_Magic_Effect", from: bullet)
     }
     
     public override func update(deltaTime seconds: TimeInterval) {
@@ -114,12 +115,14 @@ public class ProjectileEntity: GKEntity {
         )
         
         animationComponent.runAnimation(for: .custom("contact"))
+        AudioManager.shared.playSoundIfVisible(named: "Building_Damage_Effect", from: bullet)
         
         bullet.run(.sequence([
             .wait(forDuration: 0.4),
             .removeFromParent(),
             .run { [weak self] in self?.target = nil }
         ]))
+        
     }
     
     private func cleanup() {

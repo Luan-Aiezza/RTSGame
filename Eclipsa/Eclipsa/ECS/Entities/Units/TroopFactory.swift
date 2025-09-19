@@ -22,7 +22,7 @@ enum TroopFactory{
         let deathTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Dead_", quantity: 12)
         let risingTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
-        let maxHealth = 50
+        let maxHealth = 100
         
         let rangedTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         
@@ -87,7 +87,7 @@ enum TroopFactory{
         let deathTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Death_", quantity: 6)
         let risingTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
-        let maxHealth = 150
+        let maxHealth = 300
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         
@@ -124,7 +124,6 @@ enum TroopFactory{
         }
         
         // Física e range posicionamento
-        stateMachine.enter(TroopIdleState.self) // entrada default caso não haja node
         PhysicsSystem.setupTroopPhysics(for: meleeTroop)
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self),
@@ -160,3 +159,4 @@ enum TextureHandler{
     }
     
 }
+

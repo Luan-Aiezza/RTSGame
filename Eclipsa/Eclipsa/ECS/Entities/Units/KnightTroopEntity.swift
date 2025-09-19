@@ -44,8 +44,6 @@ public class KnightTroopEntity: BaseUnitEntity {
         self.stateMachineComponent = StateMachineComponent(stateMachine)
         self.addComponent(stateMachineComponent)
         
-        stateMachine.enter(TroopIdleState.self)
-        
         // Componente de ataque corpo a corpo
         if self.component(ofType: MeleeAttackComponent.self) == nil {
             self.addComponent(MeleeAttackComponent(unit: self, damage: 25, cooldown: 1.0))
@@ -65,8 +63,6 @@ public class KnightTroopEntity: BaseUnitEntity {
         // Remove controle manual
         self.removeComponent(ofType: ControlableComponent.self)
         self.removeComponent(ofType: AdaptedControlableComponent.self)
-        
-        stateMachine.enter(TroopIdleState.self)
     }
     
     public override func update(deltaTime seconds: TimeInterval) {
@@ -93,12 +89,11 @@ public class KnightTroopEntity: BaseUnitEntity {
 
 extension KnightTroopEntity {
     public func die() {
-        if let anim = self.component(ofType: AnimationComponent.self) {
-            anim.runAnimation(for: .die)
-        }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
-            self?.destroy()
+        // Unifica o fluxo de morte via máquina de estados.
+        // Se já estiver morto ou sem state machine, não faz nada.
+        if let sm = stateMachineComponent?.stateMachine,
+           !(sm.currentState is TroopDieState) {
+            sm.enter(TroopDieState.self)
         }
     }
     

@@ -59,10 +59,15 @@ final class EndDialogueScene: SKScene {
     private func setupParagraphs() {
         let texts: [String] = [
             "Ariah enfim conquista as fronteiras das terras altas, após derrotar os servos de Eclipsa.",
+            
             "Assim recuperando parte do território de seu povo, que agora poderia voltar a residir ao pé do monte.",
+            
             "Porém… há de faltar um longo caminho, Ariah ainda haveria de subir ao topo e enfrentar Eclipsa.",
+            
             "Para assim libertar as terras altas do frio e da escuridão.",
+            
             "A jornada de Ariah continuará…",
+            
             "Fim."
         ]
         paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }

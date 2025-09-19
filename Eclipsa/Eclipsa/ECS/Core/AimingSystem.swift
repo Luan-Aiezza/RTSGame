@@ -1,10 +1,3 @@
-//
-//  AimingSsystem.swift
-//  Eclipsa
-//
-//  Created by Joseph Pereira on 07/08/25.
-//
-
 import GameplayKit
 import SpriteKit
 import BehindGameKit
@@ -13,7 +6,7 @@ import Combine
 class AimingSystem: GKComponentSystem<AimingComponent> {
     weak var scene: SKScene?
     var player: UnitEntity?
-    private var aimingLine: SKShapeNode?
+    private var aimingMarker: SKShapeNode?   // círculo de destino
     private var rangeIndicator: SKShapeNode?
     
     private var lastAimDirection: CGPoint = .zero
@@ -26,20 +19,21 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     }
     
     private func setupAimingVisuals() {
+        // Círculo verde translúcido para indicar o ponto final
+        aimingMarker = SKShapeNode(circleOfRadius: 48)
+        aimingMarker?.fillColor = .green
+        aimingMarker?.strokeColor = .clear
+        aimingMarker?.alpha = 0.3
+        aimingMarker?.isHidden = true
+        aimingMarker?.zPosition = 100
+        scene?.addChild(aimingMarker!)
         
-        aimingLine = SKShapeNode()
-        aimingLine?.strokeColor = .cyan
-        aimingLine?.lineWidth = 4.0
-        aimingLine?.alpha = 0.9
-        aimingLine?.isHidden = true
-        aimingLine?.zPosition = 100
-        scene?.addChild(aimingLine!)
-        
+        // Indicador de alcance
         rangeIndicator = SKShapeNode()
-        rangeIndicator?.strokeColor = .white
+        rangeIndicator?.strokeColor = .green
         rangeIndicator?.fillColor = .clear
         rangeIndicator?.lineWidth = 2.0
-        rangeIndicator?.alpha = 0.4
+        rangeIndicator?.alpha = 0.3
         rangeIndicator?.isHidden = true
         rangeIndicator?.zPosition = 99
         scene?.addChild(rangeIndicator!)
@@ -57,33 +51,37 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     }
     
     func startAiming() {
-        guard let component = aimingComponent else {return}
+        guard let component = aimingComponent else { return }
         component.isAiming = true
         setupDragAiming()
     }
     
     private func setupDragAiming() {
         let path = CGMutablePath()
-        path.addArc(center: centerPosition, radius: CGFloat(aimingComponent?.maxRange ?? 0), startAngle: 0, endAngle: .pi * 2, clockwise: true)
+        path.addArc(center: centerPosition,
+                    radius: CGFloat(aimingComponent?.maxRange ?? 0),
+                    startAngle: 0,
+                    endAngle: .pi * 2,
+                    clockwise: true)
         
         rangeIndicator?.path = path
         rangeIndicator?.isHidden = false
     }
+    
     func finishAiming(completion: ((_ result: AimingResult) -> Void)) {
         guard let aimingComp = aimingComponent,
               aimingComp.isAiming else { return }
         let result = AimingResult(startPoint: aimingComp.startPoint, endPoint: aimingComp.endPoint)
         aimingComp.isAiming = false
-        aimingLine?.isHidden = true
+        aimingMarker?.isHidden = true
         rangeIndicator?.isHidden = true
         completion(result)
     }
     
     func cancelAiming() {
         guard let aimingComp = aimingComponent else { return }
-        print("cancelado")
         aimingComp.isAiming = false
-        aimingLine?.isHidden = true
+        aimingMarker?.isHidden = true
         rangeIndicator?.isHidden = true
     }
     
@@ -91,13 +89,12 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         guard aimingComponent != nil else { return }
         let path = CGMutablePath()
         path.addArc(
-            center: centerPosition, // Usa a posição atual do jogador
+            center: centerPosition,
             radius: CGFloat(aimingComponent?.maxRange ?? 0),
             startAngle: 0,
             endAngle: .pi * 2,
             clockwise: true
         )
-        
         rangeIndicator?.path = path
     }
 }
@@ -105,34 +102,31 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
 extension AimingSystem: AimingDelegate {
     func handleAim(direction: CGPoint, distance: CGFloat) {
         guard let aimingComp = aimingComponent,
-        aimingComp.isAiming else {return}
+              aimingComp.isAiming else { return }
+        
         let startPoint = centerPosition
         aimingComp.startPoint = startPoint
         
         let realDistance = distance * CGFloat(aimingComp.maxRange) / 50
-        
         let clampedDistance = min(realDistance, CGFloat(aimingComp.maxRange))
         let angle = atan2(direction.y, direction.x)
         let endPoint = CGPoint(
             x: startPoint.x + cos(angle) * clampedDistance,
             y: startPoint.y + sin(angle) * clampedDistance
         )
+        
         lastAimDirection = direction
         lastAimDistance = clampedDistance
         
         aimingComp.endPoint = endPoint
-        updateAimingLine(to: endPoint)
+        updateAimingMarker(to: endPoint)
     }
     
-    func updateAimingLine(to end: CGPoint) {
-            let path = CGMutablePath()
-            path.move(to: centerPosition)
-            path.addLine(to: end)
-        
-        aimingLine?.path = path
-        aimingLine?.isHidden = false
+    private func updateAimingMarker(to end: CGPoint) {
+        aimingMarker?.position = end
+        aimingMarker?.isHidden = false
         updateRangeIndicatorPosition()
-        }
+    }
     
     func updateDynamicAiming() {
         guard let aimingComp = aimingComponent, aimingComp.isAiming else { return }
@@ -147,7 +141,7 @@ extension AimingSystem: AimingDelegate {
             )
             aimingComp.startPoint = currentStartPoint
             aimingComp.endPoint = newEndPoint
-            updateAimingLine(to: newEndPoint)
+            updateAimingMarker(to: newEndPoint)
             updateRangeIndicatorPosition()
         }
     }

@@ -155,9 +155,14 @@ class TroopDieState: GKState {
     override func didEnter(from previousState: GKState?) {
         troop.component(ofType: AnimationComponent.self)?.runAnimation(for: .die)
         troop.component(ofType: TroopBehaviorComponent.self)?.invalidate()
+        
 
-        // só cuida do nó visual
+
+        // toca o efeito sonoro de morte, se visível na câmera
         if let node = troop.component(ofType: GKSKNodeComponent.self)?.node {
+            AudioManager.shared.playSoundIfVisible(named: "Unvoke_Effect", from: node)
+
+            // remove nó visual após delay
             node.run(.sequence([
                 .wait(forDuration: 0.7),
                 .removeFromParent()

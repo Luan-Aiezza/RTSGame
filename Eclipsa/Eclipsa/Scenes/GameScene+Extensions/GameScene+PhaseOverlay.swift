@@ -29,7 +29,7 @@ extension GameScene {
             let sceneSize = size
             snowEmitter.position = CGPoint(x: 0, y: sceneSize.height / 2)
             snowEmitter.particlePositionRange = CGVector(dx: sceneSize.width, dy: 10)
-            snowEmitter.zPosition = 0.2
+            snowEmitter.zPosition = 2
             overlay.addChild(snowEmitter)
         } else {
             #if DEBUG
