@@ -7,6 +7,10 @@
 
 import GameplayKit
 
+extension Notification.Name {
+    static let stopBackgroundMusic = Notification.Name("StopBackgroundMusic")
+}
+
 struct SceneManager {
 
     func phaseOne() -> GameScene? {
@@ -56,6 +60,8 @@ struct SceneManager {
     func endScene() -> EndDialogueScene {
         let ending = EndDialogueScene()
         ending.scaleMode = .aspectFill
+        NotificationCenter.default.post(name: .stopBackgroundMusic, object: nil)
         return ending
     }
 }
+

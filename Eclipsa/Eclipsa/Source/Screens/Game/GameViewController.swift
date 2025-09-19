@@ -15,6 +15,8 @@ class GameViewController: UIViewController {
     let flowDelegate: FlowController
     
     private var skView: SKView
+    private var stopMusicObserver: NSObjectProtocol?
+    
     init(flowDelegate: FlowController) {
         self.sceneManager = SceneManager()
         self.skView = SKView()
@@ -28,6 +30,10 @@ class GameViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        stopMusicObserver = NotificationCenter.default.addObserver(forName: .stopBackgroundMusic, object: nil, queue: .main) { [weak self] _ in
+            // Fade out and stop background music immediately for end/win transitions
+            AudioManager.shared.fadeOutBackgroundMusic(duration: 0.6, stopAfter: true)
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -48,9 +54,20 @@ class GameViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        if let obs = stopMusicObserver {
+            NotificationCenter.default.removeObserver(obs)
+            stopMusicObserver = nil
+        }
         // Fade out background music when leaving the game view
         AudioManager.shared.fadeOutBackgroundMusic(duration: 1.0, stopAfter: true)
         AudioManager.shared.setBackgroundMusicVolume(1)
+    }
+    
+    deinit {
+        if let obs = stopMusicObserver {
+            NotificationCenter.default.removeObserver(obs)
+            stopMusicObserver = nil
+        }
     }
     
     func setupUI() {

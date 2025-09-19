@@ -54,14 +54,36 @@ public class MeleeAttackComponent: GKComponent {
     }
     
     private func performAttack(on target: BaseUnitEntity) {
-        // dispara animação de ataque
+        // 1) Trigger the attack animation on the attacker, if available
         if let animationComp = unit.component(ofType: AnimationComponent.self) {
             animationComp.runAnimation(for: .attack)
         }
-        
-        // aplica dano direto no alvo
-        if let health = target.component(ofType: HealthComponent.self) {
-            health.takeDamage(damage)
+
+        // 2) Apply damage to the target
+        guard let health = target.component(ofType: HealthComponent.self) else { return }
+
+        // Optional: target gets a small hit reaction if it supports it
+        if let targetAnim = target.component(ofType: AnimationComponent.self) {
+            targetAnim.runAnimation(for: .attack)
+        }
+
+        health.takeDamage(damage)
+
+        // 3) Ensure death handling happens immediately for melee (no projectile to finalize the kill)
+        if health.currentHealth <= 0 {
+            // Try to call a `die()` helper if the entity provides it
+            if let troop = target as? TroopEntity {
+                troop.die()
+            } else if let knight = target as? KnightTroopEntity {
+                knight.die()
+            } else {
+                // Fallback: remove/destroy target entity when no typed die() exists
+                if let node = target.component(ofType: GKSKNodeComponent.self)?.node {
+                    node.removeAllActions()
+                    node.removeFromParent()
+                }
+                target.destroy()
+            }
         }
     }
 

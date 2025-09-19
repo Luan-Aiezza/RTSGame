@@ -16,22 +16,14 @@ extension GameScene {
 
         // Background dark overlay
         let darkBackground = SKSpriteNode(color: .black, size: size)
-        darkBackground.alpha = 0.8
+        darkBackground.alpha = 0.6
         darkBackground.zPosition = 0
         winOverlay.addChild(darkBackground)
-
-        // Menu background sprite
-        let menuBackground = SKSpriteNode(imageNamed: "Menu_Background")
-        menuBackground.name = "WinMenuBackground"
-        menuBackground.position = CGPoint.zero
-        menuBackground.zPosition = 1
-        menuBackground.size = size
-        winOverlay.addChild(menuBackground)
 
         // Title sprite
         let titleSprite = SKSpriteNode(imageNamed: "Win_Title")
         titleSprite.name = "WinTitle"
-        titleSprite.position = CGPoint(x: 15, y: 100)
+        titleSprite.position = CGPoint(x: 12, y: 100)
         titleSprite.setScale(0.3)
         titleSprite.texture?.filteringMode = .nearest
         titleSprite.zPosition = 2
@@ -48,7 +40,7 @@ extension GameScene {
         let starFrames = (1...4).map { SKTexture(imageNamed: "Star_Icon_\($0)") }
         let starNode = SKSpriteNode(texture: starFrames.first)
         starNode.name = "WinStar"
-        starNode.position = CGPoint(x: 15, y: 0)
+        starNode.position = CGPoint(x: 0, y: -100)
         starNode.zPosition = 2
         winOverlay.addChild(starNode)
 
@@ -62,7 +54,7 @@ extension GameScene {
         continueButton.name = "ContinueButton"
         continueButton.fontSize = 24
         continueButton.fontColor = .yellow
-        continueButton.position = CGPoint(x: 0, y: -100)
+        continueButton.position = CGPoint(x: 0, y: -125)
         continueButton.zPosition = 2
         winOverlay.addChild(continueButton)
 
@@ -125,7 +117,7 @@ extension GameScene {
             case "GameScene_5":
                 nextScene = sceneManager.endScene()
             default:
-                nextScene = sceneManager.phaseTwo()
+                nextScene = sceneManager.phaseOne()
             }
         } else {
             // Fallback if no scene name
