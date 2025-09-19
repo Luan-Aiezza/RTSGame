@@ -12,6 +12,8 @@ extension Notification.Name {
 }
 
 struct SceneManager {
+    
+    var flowController: FlowController
 
     func phaseOne() -> GameScene? {
         let scene = makeScene(with: "GameScene_1")
@@ -48,6 +50,7 @@ struct SceneManager {
               let sceneNode = gkScene.rootNode as? GameScene else { return nil}
             sceneNode.scaleMode = .aspectFill
             sceneNode.name = name
+            sceneNode.sceneManager = self
             return sceneNode
     }
     
