@@ -29,7 +29,7 @@ extension GameScene {
             guard let behavior = troop.component(ofType: TroopBehaviorComponent.self) else { continue }
             
             // Só tropas que já estavam em follow podem alternar
-            let wasFollowingPlayer = (behavior.target as? UnitEntity) === controlledEntity || behavior.manualTargetPoint != nil
+            let wasFollowingPlayer = (behavior.getCurrentEnemyTarget()) === controlledEntity || behavior.manualTargetPoint != nil
             
             if wasFollowingPlayer {
                 if let enemy = nearestEnemyTroop(inRangeOf: troop) {

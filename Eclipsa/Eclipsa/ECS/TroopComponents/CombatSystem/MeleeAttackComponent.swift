@@ -16,7 +16,7 @@ public class MeleeAttackComponent: GKComponent {
     
     public override func update(deltaTime seconds: TimeInterval) {
         guard let behaviorComponent = unit.component(ofType: TroopBehaviorComponent.self),
-              let target = behaviorComponent.target as? BaseUnitEntity,
+              let target = behaviorComponent.getCurrentEnemyTarget(),
               let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
               let enemyPos = target.component(ofType: GKSKNodeComponent.self)?.node.position else { return }
         

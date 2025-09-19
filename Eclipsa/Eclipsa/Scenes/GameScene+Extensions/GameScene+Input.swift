@@ -89,10 +89,11 @@ extension GameScene {
 
                     // 🔑 Só deixa receber comando manual se já estava em follow do player
                     if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-                       (behavior.target as? UnitEntity) === self?.controlledEntity {
+                       (behavior.getCurrentEnemyTarget()) === self?.controlledEntity {
                         
-                        behavior.manualTargetPoint = result.endPoint
-                        behavior.setTarget(nil) // sem inimigo → vá pro ponto
+                        // 👉 Jogador clicou → tropas que estavam seguindo o player vão para o ponto
+                        behavior.setManualTargetPoint(result.endPoint)
+                        behavior.setTarget(nil) // opcional se quiser garantir troca imediata
                     }
                 }
                 self?.cancelButton.toggleCommand(value: true)

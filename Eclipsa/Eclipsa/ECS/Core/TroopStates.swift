@@ -24,7 +24,7 @@ class TroopIdleState: GKState {
     
     override func update(deltaTime seconds: TimeInterval) {
         if let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-           behavior.target != nil {
+           behavior.getCurrentEnemyTarget() != nil {
             stateMachine?.enter(TroopFollowState.self)
         }
     }
@@ -45,7 +45,7 @@ class TroopFollowState: GKState {
     
     override func update(deltaTime seconds: TimeInterval) {
         guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-              let target = behavior.target as? BaseUnitEntity,
+              let target = behavior.getCurrentEnemyTarget(),
               let troopPos = troop.component(ofType: GKSKNodeComponent.self)?.node.position,
               let targetPos = target.component(ofType: GKSKNodeComponent.self)?.node.position,
               let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
@@ -74,7 +74,7 @@ class TroopFollowState: GKState {
         
         if distanceSquared <= attackThreshold * attackThreshold {
             stateMachine?.enter(TroopAttackState.self)
-        } else if behavior.target == nil {
+        } else if behavior.getCurrentEnemyTarget() == nil {
             stateMachine?.enter(TroopIdleState.self)
         }
     }
@@ -101,7 +101,7 @@ class TroopAttackState: GKState {
             troop.component(ofType: MeleeAttackComponent.self)
         
         guard let behavior = troop.component(ofType: TroopBehaviorComponent.self),
-              let target = behavior.target as? BaseUnitEntity,
+              let target = behavior.getCurrentEnemyTarget(),
               let health = target.component(ofType: HealthComponent.self),
               let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
               let targetTeam = target.component(ofType: TeamComponent.self)?.team,

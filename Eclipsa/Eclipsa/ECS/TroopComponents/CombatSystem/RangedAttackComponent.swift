@@ -16,7 +16,7 @@ public class AttackComponent: GKComponent {
     
     public override func update(deltaTime seconds: TimeInterval) {
         let behaviorComponent = (unit.components.first { $0 is TroopBehaviorComponent } as? TroopBehaviorComponent)
-        let target = behaviorComponent?.target as? BaseUnitEntity
+        let target = behaviorComponent?.getCurrentEnemyTarget()
         
         guard let target = target,
               let unitPos = unit.component(ofType: GKSKNodeComponent.self)?.node.position,
