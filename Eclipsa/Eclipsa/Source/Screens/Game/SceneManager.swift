@@ -12,6 +12,8 @@ extension Notification.Name {
 }
 
 struct SceneManager {
+    
+    var flowController: FlowController
 
     func phaseOne() -> GameScene? {
         let scene = makeScene(with: "GameScene_1")
@@ -48,6 +50,7 @@ struct SceneManager {
               let sceneNode = gkScene.rootNode as? GameScene else { return nil}
             sceneNode.scaleMode = .aspectFill
             sceneNode.name = name
+            sceneNode.sceneManager = self
             return sceneNode
     }
     
@@ -57,11 +60,20 @@ struct SceneManager {
         return intro
     }
     
-    func endScene() -> EndDialogueScene {
-        let ending = EndDialogueScene()
+    func endScene(size: CGSize) -> EndDialogueScene {
+        let ending = EndDialogueScene(size: size)
         ending.scaleMode = .aspectFill
         NotificationCenter.default.post(name: .stopBackgroundMusic, object: nil)
         return ending
+    }
+    
+    func creditsScene(size: CGSize) -> CreditsScene {
+        let credits = CreditsScene(size: size)
+        credits.scaleMode = .aspectFill
+        credits.onFinished = {
+            flowController.goHome()
+        }
+        return credits
     }
 }
 

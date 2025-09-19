@@ -10,6 +10,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var troopNode: SKSpriteNode?
     public var enemyNode: SKSpriteNode?
     
+    var sceneManager: SceneManager?
     var commandController: AdaptedVirtualController?
     var commandInput = InputHandler()
     var gameController: AdaptedVirtualController?
