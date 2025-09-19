@@ -222,7 +222,7 @@ class WaveManager: NSObject {
     
     func setupWaves() {
         waveConfigurations = (scene?.sceneConfiguration!.waveConfig)!
-        scene?.run(.wait(forDuration: 300.0)) { [weak self] in //AJUSTAR
+        scene?.run(.wait(forDuration: 10)) { [weak self] in 
             self?.scene?.hidePhaseOverlay()
             DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
                 WaveManager.shared.startWaveSystem()
