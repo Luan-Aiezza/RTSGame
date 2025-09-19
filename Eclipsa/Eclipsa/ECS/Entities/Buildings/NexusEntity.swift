@@ -19,6 +19,7 @@ public class NexusEntity: BuildingEntity {
                 
                 // adiciona a condição de derrota do Nexus
                 if current <= 0 {
+                    AudioManager.shared.playSoundIfVisible(named: "Unvoke_Effect", from: node)
                     self?.onDestroyed?()
                 }
             }
