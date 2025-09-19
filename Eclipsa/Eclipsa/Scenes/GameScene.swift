@@ -98,7 +98,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         showPhaseOverlay(currentPhase: 2, previousPhase: 1)
 
         // Oculta a overlay automaticamente após um curto atraso para garantir que a fase iniciou
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 8) { [weak self] in
             self?.hidePhaseOverlay()
         }
     }

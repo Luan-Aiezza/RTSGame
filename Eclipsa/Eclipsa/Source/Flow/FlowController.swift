@@ -46,14 +46,18 @@ extension FlowController: TeamLogoFlowDelegate {
 extension FlowController: HomeFlowDelegate {
     func goToGame() {
         let gameViewController = factory.makeGameViewController(flowDelegate: self)
-        
-        let transition = CATransition()
-            transition.duration = 0.3
-            transition.type = .fade
-            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
 
-        navigation?.view.layer.add(transition, forKey: kCATransition)
-//        window.rootViewController = gameViewController
-        navigation?.setViewControllers([gameViewController], animated: true)
+        // Ensure navigation bar is hidden for the game
+        navigation?.navigationBar.isHidden = true
+
+        // Perform a cross-dissolve on the navigation controller's view and swap the stack
+        if let navView = navigation?.view {
+            UIView.transition(with: navView, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]) { [weak self] in
+                self?.navigation?.setViewControllers([gameViewController], animated: false)
+            }
+        } else {
+            // Fallback: set without animation if nav/view not available
+            navigation?.setViewControllers([gameViewController], animated: false)
+        }
     }
 }
