@@ -88,6 +88,15 @@ public class MeleeAttackComponent: GKComponent {
                     node.removeFromParent()
                 }
                 target.destroy()
+
+                // Força o behavior a reavaliar alvo
+                if let behavior = unit.component(ofType: TroopBehaviorComponent.self) {
+                    behavior.setTarget(nil) // limpa o congelado
+                    behavior.configureBehavior()
+                }
+
+                // E força a stateMachine a voltar pro Idle, que já checa novo alvo
+                unit.stateMachineComponent.stateMachine.enter(TroopIdleState.self)
             }
         }
     }
