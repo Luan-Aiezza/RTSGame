@@ -1,0 +1,601 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "continue" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONTINUE"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CONTINUAR"
+          }
+        }
+      }
+    },
+    "credits.0" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credits and Thanks"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créditos e Agradecimentos"
+          }
+        }
+      }
+    },
+    "credits.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Victor Vasconcelos - For providing the Behind GameKit library"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Victor Vasconcelos - Pela disponibilidade da biblioteca Behind GameKit"
+          }
+        }
+      }
+    },
+    "credits.2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini Fantasy - For providing combat effects packages"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mini Fantasy - Pela disponibilidade dos pacotes dos efeitos de combate"
+          }
+        }
+      }
+    },
+    "credits.3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixelify_Sans - Font used in the project"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pixelify_Sans - Fonte utilizada no projeto"
+          }
+        }
+      }
+    },
+    "credits.4" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZUN - Musical inspiration for the game soundtrack"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ZUN - Inspiração musical para trilha sonora do jogo"
+          }
+        }
+      }
+    },
+    "credits.5" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jon Keller - Inspiration for the game’s aesthetics"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jon Keller - Inspiração para a estética do jogo"
+          }
+        }
+      }
+    },
+    "credits.6" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Victor Maxwell - For tips on Game Design"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Victor Maxwell - Pelas dicas sobre Game Design"
+          }
+        }
+      }
+    },
+    "credits.7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guto Kawakami - For help with processes and objectives"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guto Kawakami - Pela ajuda com processos e objetivos"
+          }
+        }
+      }
+    },
+    "credits.8" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariel Marcelo - For feedback during development"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariel Marcelo - Pelas dicas e feedback durante o desenvolvimento"
+          }
+        }
+      }
+    },
+    "credits.9" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We also thank the whole Manaus Academy team, without you this would not be possible"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Também agradecemos a toda equipe do Academy de Manaus, sem vocês isso não seria possível"
+          }
+        }
+      }
+    },
+    "credits.10" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obrigado!"
+          }
+        }
+      }
+    },
+    "credits.11" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team Eclipsa"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team Eclipsa"
+          }
+        }
+      }
+    },
+    "dialogue.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariah... can you hear me? This is Heliar speaking. I’ll teach you the way to climb these lands."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariah... consegue me ouvir? quem vos fala é Heliar. Vou lhe ensinar o caminho para que você possa subir estas terras."
+          }
+        }
+      }
+    },
+    "dialogue.2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First, try moving with the LEFT ANALOG STICK and get used to the environment."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Primeiramente tente se mover usando o ANÁLOGICO ESQUERDO e se acostume com o ambiente."
+          }
+        }
+      }
+    },
+    "dialogue.3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Now we need to summon some troops to defend your base, try pressing the BUTTON at the BOTTOM RIGHT corner."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agora precisamos invocar algumas tropas para defender sua base, experimente clicar no BOTÃO no canto INFERIOR DIREITO."
+          }
+        }
+      }
+    },
+    "dialogue.4" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Troops cost resources, which are generated from the solar altars. Defend them at all costs."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As tropas custam recursos, que são gerados a partir dos altares solares, defenda-os a todo custo."
+          }
+        }
+      }
+    },
+    "dialogue.5" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position your troops with the RIGHT ANALOG STICK, or call them closer with the button below."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Posicione suas tropas com o ANÁLOGICO DIREITO, ou chame-as para perto o botão abaixo."
+          }
+        }
+      }
+    },
+    "dialogue.6" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The moon knights are coming! Don’t let them destroy your altars, or it will be harder to create soldiers."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os cavaleiros da lua estão vindo! não deixe que destruam seus altares, ou ficará mais difícil criar soldados."
+          }
+        }
+      }
+    },
+    "dialogue.7" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "They will always go after the Sanctuary, if you lose it, it’s over!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eles sempre virão atrás do Santuário, se perdê-lo é o fim!"
+          }
+        }
+      }
+    },
+    "dialogue.8" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You must find the enemy portals and destroy them, it’s the only way to win!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Você deve encontrar os portais inimigos e destruí-los, é o único jeito de vencer!"
+          }
+        }
+      }
+    },
+    "dialogue.9" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That’s all for now... it’s up to you!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Isso é tudo por enquanto... agora é com você."
+          }
+        }
+      }
+    },
+    "intro.0" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long ago, the Highlands were home to the gods. From its summit, Heliar, goddess of the sun, illuminated the world."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Há muito tempo, as Terras Altas eram o lar dos deuses. Onde a partir do cume, Heliar, deusa do sol, iluminava o mundo."
+          }
+        }
+      }
+    },
+    "intro.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below, the Zarat lived in peace worshiping the light of their goddess."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abaixo, os Zarat viviam em paz adorando a luz de sua deusa."
+          }
+        }
+      }
+    },
+    "intro.2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "But then, Heliar was betrayed by her sister, Eclipsa. She plunged the world into eternal cold and shadow."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mas então, Heliar foi traída por sua irmã, Eclipsa. Que mergulhou o mundo em frio e sombras eternas."
+          }
+        }
+      }
+    },
+    "intro.3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "However, before her fall, Heliar cast a fragment of her soul far away— a promise for whoever found it to bring her light back."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porém, antes de sua queda, Heliar lançou um fragmento de sua alma ao longe— uma promessa para quem quer que o encontrasse trazer sua luz de volta."
+          }
+        }
+      }
+    },
+    "intro.4" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The fragment was found by a child of the Zarat, now exiled. The young Ariah."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O fragmento foi encontrado por uma criança dos Zarat, agora exilados. A jovem Ariah."
+          }
+        }
+      }
+    },
+    "intro.5" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Years later, now guided by her goddess’s power, Ariah begins her campaign at the Highlands’ frontier… to lead her people back home, and fulfill her goddess’s promise."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Anos depois, agora guiada pelo poder de sua deusa, Ariah inicia sua campanha na fronteira das Terras Altas… para guiar seu povo de volta ao lar, e cumprir a promessa de sua deusa."
+          }
+        }
+      }
+    },
+    "paragraph.0" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariah finally conquers the Highlands frontier, after defeating the servants of Eclipsa."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariah enfim conquista as fronteiras das Terras Altas, após derrotar os servos de Eclipsa."
+          }
+        }
+      }
+    },
+    "paragraph.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thus, reclaiming part of her people’s territory, who could now return to live at the foot of the mountain."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Assim, recuperando parte do território de seu povo, que agora poderia voltar a residir ao pé do monte."
+          }
+        }
+      }
+    },
+    "paragraph.2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "However... a long path still lies ahead, Ariah must still climb to the top and face Eclipsa."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Porém… há de faltar um longo caminho, Ariah ainda haveria de subir ao topo e enfrentar Eclipsa."
+          }
+        }
+      }
+    },
+    "paragraph.3" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thus to free the world from cold and darkness."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para assim libertar o mundo do frio e da escuridão."
+          }
+        }
+      }
+    },
+    "paragraph.4" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ariah’s journey will continue..."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A jornada de Ariah continuará…"
+          }
+        }
+      }
+    },
+    "restart" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "RESTART"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "REINICIAR"
+          }
+        }
+      }
+    },
+    "title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The Frontier"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A Fronteira"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}

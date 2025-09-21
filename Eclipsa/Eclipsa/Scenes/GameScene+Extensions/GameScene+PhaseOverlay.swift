@@ -38,7 +38,7 @@ extension GameScene {
         }
         
         // Título “A Fronteira” (subido um pouco)
-        let title = SKLabelNode(text: "A Fronteira")
+        let title = SKLabelNode(text: "A Fronteira") //TRADUZIR
         title.name = "PhaseTitle"
         title.fontName = "CCPixelArcade-Display"
         title.fontSize = 28

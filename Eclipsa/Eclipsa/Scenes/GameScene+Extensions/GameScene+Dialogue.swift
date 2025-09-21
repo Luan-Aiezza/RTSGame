@@ -34,25 +34,25 @@ extension GameScene {
         isDialogueRunning = true
         
         let lines: [DialogueLine] = [
-            
+            //TRADUZIR
             //FASE 1
-            .init(text: "Ariah... me escute, vou lhe ensinar o caminho para que você possa subir as terras altas, eu sou a voz de Heliar!", portraitImageName: nil),
+            .init(text: "Ariah... consegue me ouvir? quem vos fala é Heliar. Vou lhe ensinar o caminho para que você possa subir estas terras.", portraitImageName: nil),
             
-                .init(text: "Primeiramente tente se mover usando o análogico esquerdo e se acostume com o ambiente.", portraitImageName: nil),
+                .init(text: "Primeiramente tente se mover usando o ANÁLOGICO ESQUERDO e se acostume com o ambiente.", portraitImageName: nil),
             
-                .init(text: "Agora precisamos invocar algumas tropas para defender nossa base, experimente clicar no botão no canto inferior direito", portraitImageName: nil),
+                .init(text: "Agora precisamos invocar algumas tropas para defender sua base, experimente clicar no BOTÃO no canto INFERIOR DIREITO", portraitImageName: nil),
             
                 .init(text: "As tropas custam recursos, que são gerados a partir dos altares solares, defenda-os a todo custo.", portraitImageName: nil),
             
-                .init(text: "Posicione suas tropas com o análogico direito, e chame-as com o toque no botão abaixo.", portraitImageName: nil),
+                .init(text: "Posicione suas tropas com o ANÁLOGICO DIREITO, ou chame-as para perto o botão abaixo.", portraitImageName: nil),
             
                 .init(text: "Os cavaleiros da lua estão vindo! não deixe que destruam seus altares, ou ficará mais difil criar soldados.", portraitImageName: nil),
             
-                .init(text: "Eles sempre virão atrás do snatuário, se perde-lo é o fim!", portraitImageName: nil),
+                .init(text: "Eles sempre virão atrás do Santuário, se perde-lô é o fim!", portraitImageName: nil),
             
                 .init(text: "Você deve encontrar os portais inimigos e destruilos, é o unico jeito de vencer!", portraitImageName: nil),
             
-                .init(text: "Eu lhe ensinei tudo o que podia... agora é com você!", portraitImageName: nil),
+                .init(text: "Isso é tudo por enquanto... agora é com você!", portraitImageName: nil),
             
         ]
         

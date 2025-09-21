@@ -50,7 +50,7 @@ extension GameScene {
 
         // Continue button (SKLabelNode)
         let continueButton = SKLabelNode(fontNamed: "CCPixelArcade-Joystick")
-        continueButton.text = "Continue"
+        continueButton.text = "CONTINUAR" //TRADUZIR
         continueButton.name = "ContinueButton"
         continueButton.fontSize = 24
         continueButton.fontColor = .yellow
