@@ -5,18 +5,57 @@ import AVFoundation
 class AudioManager {
     private let supportedExtensions = ["mp3", "wav"]
     static let shared = AudioManager()
+    private static let defaults = UserDefaults.standard
+    private static let keyBGMVolume = "audio.bgmVolume"
+    private static let keySFXVolume = "audio.sfxVolume"
 
     private var audioPlayers: [String: [AVAudioPlayer]] = [:]
     private var backgroundMusicPlayer: AVAudioPlayer?
     private let maxSimultaneousPlays = 3
     private var sfxVolume: Float = 1.0 {
-        didSet { updateAllVolumes() }
+        didSet {
+            updateAllVolumes()
+            Self.defaults.set(sfxVolume, forKey: Self.keySFXVolume)
+        }
     }
     private var bgmVolume: Float = 1.0 {
-        didSet { updateAllVolumes() }
+        didSet {
+            updateAllVolumes()
+            Self.defaults.set(bgmVolume, forKey: Self.keyBGMVolume)
+        }
     }
 
-    private init() {}
+    // MARK: - Public step-based volume interface (1..10 -> 0.1..1.0)
+    var musicVolumeStep: Int {
+        get { Self.step(from: bgmVolume) }
+        set { setBackgroundMusicVolume(Self.volume(fromStep: newValue)) }
+    }
+
+    var effectsVolumeStep: Int {
+        get { Self.step(from: sfxVolume) }
+        set { setEffectsVolume(Self.volume(fromStep: newValue)) }
+    }
+
+    // Converts a step in 1...10 to a volume 0.1...1.0 (clamped)
+    static func volume(fromStep step: Int) -> Float {
+        let clamped = max(1, min(step, 10))
+        return Float(clamped) / 10.0
+    }
+
+    // Converts a volume 0.0...1.0 to nearest step 1...10 (0 treated as 1)
+    static func step(from volume: Float) -> Int {
+        let clamped = max(0.0, min(volume, 1.0))
+        let step = Int(round(clamped * 10.0))
+        return max(1, min(step, 10))
+    }
+
+    private init() {
+        // Load persisted volumes, defaulting to 1.0
+        let savedBGM = Self.defaults.object(forKey: Self.keyBGMVolume) as? Float
+        let savedSFX = Self.defaults.object(forKey: Self.keySFXVolume) as? Float
+        if let v = savedBGM { bgmVolume = max(0.0, min(v, 1.0)) }
+        if let v = savedSFX { sfxVolume = max(0.0, min(v, 1.0)) }
+    }
 
     // MARK: - Fades para Música de Background
     func fadeInBackgroundMusic(named name: String, duration: TimeInterval = 6.0) {
@@ -120,6 +159,8 @@ class AudioManager {
     }
 
     // MARK: - Controle de Volume
+
+    /// Sets the volume for background music only. Value range: 0.0 to 1.0.
     func setVolume(to value: Float) {
         let clamped = min(max(value, 0.0), 1.0)
         bgmVolume = clamped

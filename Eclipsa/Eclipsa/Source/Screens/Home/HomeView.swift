@@ -40,6 +40,16 @@ final class HomeView: UIView {
         return container
     }()
     
+    private let settingsButton: UIButton = {
+        let bt = UIButton(type: .system)
+        bt.translatesAutoresizingMaskIntoConstraints = false
+        let img = UIImage(named: "Config_Icon")?.withRenderingMode(.alwaysOriginal)
+        bt.setImage(img, for: .normal)
+        bt.widthAnchor.constraint(equalToConstant: 36).isActive = true
+        bt.heightAnchor.constraint(equalToConstant: 36).isActive = true
+        return bt
+    }()
+    
     // MARK: - Game title (single asset)
     private let gameTitleImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "Menu_Game_Name"))
@@ -97,6 +107,8 @@ final class HomeView: UIView {
         addSubview(backgroundImageView)
         addSubview(snowView)
         addSubview(container)
+        addSubview(settingsButton)
+        settingsButton.addTarget(self, action: #selector(handleSettingsTapped), for: .touchUpInside)
         
         // Adiciona o título e o botão ao container
         container.addSubview(gameTitleImageView)
@@ -105,7 +117,10 @@ final class HomeView: UIView {
         setupConstraints()
         
         startBlinkingPlayButton()
-        startPulsingGameTitle()
+        startPulsing(view: gameTitleImageView)              // título
+        if let settingsIcon = settingsButton.imageView {    // ícone de configurações
+            startPulsing(view: settingsIcon)
+        }
     }
     
     private func setupConstraints() {
@@ -139,7 +154,11 @@ final class HomeView: UIView {
             // Botão um pouco deslocado para a esquerda e 24pt abaixo do título
             playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 24),
             playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
-            playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor)
+            playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            
+            // Settings button at top-right
+            settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 8),
+            settingsButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
     }
     
@@ -153,16 +172,18 @@ final class HomeView: UIView {
         playButton.layer.add(animation, forKey: "blink")
     }
     
-    private func startPulsingGameTitle() {
-        // Animação de zoom in/out leve
+    private func startPulsing(view: UIView,
+                              from: CGFloat = 1.0,
+                              to: CGFloat = 1.08,
+                              duration: CFTimeInterval = 1.2) {
         let pulse = CABasicAnimation(keyPath: "transform.scale")
-        pulse.fromValue = 1.0
-        pulse.toValue = 1.08
-        pulse.duration = 1.2
+        pulse.fromValue = from
+        pulse.toValue = to
+        pulse.duration = duration
         pulse.autoreverses = true
         pulse.repeatCount = .infinity
         pulse.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        gameTitleImageView.layer.add(pulse, forKey: "pulse")
+        view.layer.add(pulse, forKey: "pulse")
     }
     
     private func setupSnow() {
@@ -188,4 +209,23 @@ final class HomeView: UIView {
     @objc private func handlePlayTapped() {
         delegate?.didTapPlayButton()
     }
+    
+    @objc private func handleSettingsTapped() {
+        AudioManager.shared.playSound(named: "Effect_Select_1")
+        guard let vc = findViewController() else { return }
+        let config = ConfigViewController()
+        config.modalPresentationStyle = .overFullScreen
+        config.modalTransitionStyle = .crossDissolve
+        vc.present(config, animated: true)
+    }
+    
+    private func findViewController() -> UIViewController? {
+        var responder: UIResponder? = self
+        while let r = responder {
+            if let vc = r as? UIViewController { return vc }
+            responder = r.next
+        }
+        return nil
+    }
 }
+
