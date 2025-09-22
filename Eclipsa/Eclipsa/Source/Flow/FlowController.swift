@@ -44,6 +44,16 @@ extension FlowController: TeamLogoFlowDelegate {
 
 // MARK: Home to Game
 extension FlowController: HomeFlowDelegate {
+    func goToConfiguration() {
+        let configurationViewController = factory.makeConfigurationViewController(flowDelegate: self)
+        
+        if let navigation = navigation?.view {
+            UIView.transition(with: navigation, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]){[weak self] in
+                self?.navigation?.setViewControllers([configurationViewController], animated: false)
+            }
+        }
+    }
+    
     func goToGame() {
         let gameViewController = factory.makeGameViewController(flowDelegate: self)
 
@@ -59,5 +69,22 @@ extension FlowController: HomeFlowDelegate {
             // Fallback: set without animation if nav/view not available
             navigation?.setViewControllers([gameViewController], animated: false)
         }
+    }
+}
+
+extension FlowController: ConfigFlowDelegate {
+    func goTutorial() {
+        let alert = UIAlertController(title: "Tutorial", message: "Abrir tutorial", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        navigation?.present(alert, animated: true)
+    }
+    
+    func presentCredits() {
+        let creditsViewController = factory.makeCreditsViewController()
+        navigation?.present(creditsViewController, animated: true)
+    }
+    
+    func backHome() {
+        self.goHome()
     }
 }

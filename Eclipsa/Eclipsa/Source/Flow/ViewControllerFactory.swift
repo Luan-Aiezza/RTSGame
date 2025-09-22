@@ -27,4 +27,23 @@ struct ViewControllerFactory {
         
         return gameViewController
     }
+    
+    func makeConfigurationViewController(flowDelegate: ConfigFlowDelegate) -> ConfigViewController {
+        let configViewController = ConfigViewController(flowDelegate: flowDelegate)
+        configViewController.modalPresentationStyle = .fullScreen
+        configViewController.modalTransitionStyle = .crossDissolve
+        
+        return configViewController
+        
+    }
+    
+    func makeCreditsViewController() -> CreditsViewController {
+        let creditsViewController = CreditsViewController()
+        creditsViewController.onFinished = {
+            DispatchQueue.main.async{
+                creditsViewController.dismiss(animated: true)
+            }
+        }
+        return creditsViewController
+    }
 }

@@ -39,6 +39,11 @@ class HomeViewController: UIViewController {
 
 // MARK: Bindando ViewController com View
 extension HomeViewController: HomeViewDelegate {
+    func didTapConfigurationButton() {
+        AudioManager.shared.playSound(named: "Effect_Select_1")
+        flowDelegate?.goToConfiguration()
+    }
+    
     func didTapPlayButton() {
         AudioManager.shared.playSound(named: "Effect_Confirm_1")
         flowDelegate?.goToGame()
@@ -47,8 +52,11 @@ extension HomeViewController: HomeViewDelegate {
 
 protocol HomeFlowDelegate: AnyObject {
     func goToGame()
+    
+    func goToConfiguration()
 }
 
 protocol HomeViewDelegate: AnyObject {
     func didTapPlayButton()
+    func didTapConfigurationButton()
 }
