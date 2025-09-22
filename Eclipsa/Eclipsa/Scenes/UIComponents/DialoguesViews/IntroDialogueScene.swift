@@ -80,22 +80,6 @@ final class IntroDialogueScene: SKScene {
     }
     
     private func setupParagraphs() {
-        //TRADUZIR
-        // Parágrafos fornecidos pelo usuário
-//        let texts: [String] = [
-//            "Há muito tempo, as Terras Altas eram o lar dos deuses. Onde a partir do cume, Heliar, deusa do sol, iluminava o mundo.",
-//            
-//            "Abaixo, os Zarat viviam em paz adorando a luz de sua deusa.",
-//            
-//            "Mas então, Heliar foi traída por sua irmã, Eclipsa. Que mergulhou o mundo em frio e sombras eternas.",
-//            
-//            "Porém, antes de sua queda, Heliar lançou um fragmento de sua alma ao longe— uma promessa para quem quer que o encontrasse trazer sua luz de volta.",
-//            
-//            "O fragmento foi econtrado por uma criança dos Zarat, agora exilados. A jovem Ariah.",
-//            
-//            "Anos depois, agora guiada pelo poder de sua deusa, Ariah inicia sua campanha na fronteira das Terras Altas… para guiar seu povo de volta ao lar, e cumprir a promessa de sua deusa."
-//        ]
-//        paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }
         let texts: [String] = (0...5).map {
             NSLocalizedString("intro.\($0)", comment: "")
         }

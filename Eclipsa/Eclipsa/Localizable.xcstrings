@@ -149,7 +149,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mini Fantasy - Pela disponibilidade dos efeitos sonoros de combate"
+            "value" : "Mini Fantasy - Efeitos sonoros de combate"
           }
         }
       }
@@ -217,7 +217,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Victor Maxwell - Pelas dicas em Game Design"
+            "value" : "Victor Maxwell - Pela orientação em Game Design"
           }
         }
       }
@@ -234,7 +234,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guto Kawakami - Pelas dicas em processos e objetivos"
+            "value" : "Guto Kawakami - Pela orientação em processos e objetivos"
           }
         }
       }
@@ -251,7 +251,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ariel Marcelo - Pelas dicas e feedback durante o desenvolvimento"
+            "value" : "Ariel Marcelo - Pelo feedback durante o desenvolvimento"
           }
         }
       }

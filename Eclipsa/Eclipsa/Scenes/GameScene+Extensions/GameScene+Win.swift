@@ -50,7 +50,6 @@ extension GameScene {
 
         // Continue button (SKLabelNode)
         let continueButton = SKLabelNode(fontNamed: "CCPixelArcade-Joystick")
-//        continueButton.text = "CONTINUAR" //TRADUZIR
         continueButton.text = NSLocalizedString("continue", comment: "")
         continueButton.name = "ContinueButton"
         continueButton.fontSize = 24
