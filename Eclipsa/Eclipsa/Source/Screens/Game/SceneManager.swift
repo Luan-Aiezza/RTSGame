@@ -47,6 +47,12 @@ struct SceneManager {
         return scene
     }
     
+    func tutorial() -> GameScene? {
+        let scene = makeScene(with: "GameScene_0")
+        scene?.configureScene(with: Tutorial())
+        return scene
+    }
+    
     private func makeScene(with name: String) -> GameScene? {
         guard let gkScene = GKScene(fileNamed: name),
               let sceneNode = gkScene.rootNode as? GameScene else { return nil}

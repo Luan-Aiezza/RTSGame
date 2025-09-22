@@ -46,4 +46,11 @@ struct ViewControllerFactory {
         }
         return creditsViewController
     }
+    
+    func makeTutorialViewController(flowDelegate: FlowController) -> TutorialViewController {
+        let tutorialViewController = TutorialViewController(flowDelegate: flowDelegate)
+        tutorialViewController.modalPresentationStyle = .fullScreen
+        tutorialViewController.modalTransitionStyle = .crossDissolve
+        return tutorialViewController
+    }
 }
