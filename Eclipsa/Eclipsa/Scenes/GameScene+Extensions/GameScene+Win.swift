@@ -117,11 +117,6 @@ extension GameScene {
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
                 let endScene = sceneManager.endScene(size: view.bounds.size)
-                endScene.onFinished = {
-                    let credits = sceneManager.creditsScene(size: view.bounds.size)
-                    credits.scaleMode = .aspectFill
-                    view.presentScene(credits)
-                }
                 
             default:
                 nextScene = sceneManager.phaseOne()

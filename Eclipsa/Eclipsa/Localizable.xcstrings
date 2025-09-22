@@ -149,7 +149,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Mini Fantasy - Pela disponibilidade dos pacotes dos efeitos de combate"
+            "value" : "Mini Fantasy - Pela disponibilidade dos efeitos sonoros de combate"
           }
         }
       }
@@ -217,7 +217,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Victor Maxwell - Pelas dicas sobre Game Design"
+            "value" : "Victor Maxwell - Pelas dicas em Game Design"
           }
         }
       }
@@ -234,7 +234,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Guto Kawakami - Pela ajuda com processos e objetivos"
+            "value" : "Guto Kawakami - Pelas dicas em processos e objetivos"
           }
         }
       }
@@ -268,7 +268,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Também agradecemos a toda equipe do Academy de Manaus, sem vocês isso não seria possível"
+            "value" : "Também agradecemos a todos os integrantes do Academy de Manaus, sem vocês nada disso seria possível!"
           }
         }
       }
@@ -285,7 +285,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Obrigado!"
+            "value" : "Muito Obrigado!!!"
           }
         }
       }

@@ -1,4 +1,5 @@
 import UIKit
+import SpriteKit
 
 final class ConfigViewController: UIViewController {
     // MARK: - UI
@@ -149,9 +150,22 @@ final class ConfigViewController: UIViewController {
     }
 
     @objc private func handleCredits() {
-        // Placeholder action
-        let alert = UIAlertController(title: "Créditos", message: "Abrir créditos", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
+        // Apresenta a tela de créditos em UIKit (substitui SpriteKit)
+        let creditsVC = CreditsViewController()
+
+        // Encapsula em um controller transparente em fullscreen
+        creditsVC.modalPresentationStyle = .overFullScreen
+        creditsVC.modalTransitionStyle = .crossDissolve
+
+        creditsVC.onFinished = { [weak self] in
+            DispatchQueue.main.async {
+                // Fecha a tela de créditos e volta para Home
+                creditsVC.dismiss(animated: true) {
+                    self?.dismiss(animated: true)
+                }
+            }
+        }
+
+        present(creditsVC, animated: true)
     }
 }
