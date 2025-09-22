@@ -7,6 +7,7 @@
 
 import GameplayKit
 import UIKit
+import BehindGameKit
 
 extension Notification.Name {
     static let stopBackgroundMusic = Notification.Name("StopBackgroundMusic")
@@ -49,9 +50,11 @@ struct SceneManager {
     private func makeScene(with name: String) -> GameScene? {
         guard let gkScene = GKScene(fileNamed: name),
               let sceneNode = gkScene.rootNode as? GameScene else { return nil}
+            resetAllGameElements()
             sceneNode.scaleMode = .aspectFill
             sceneNode.name = name
             sceneNode.sceneManager = self
+        
             return sceneNode
     }
     
@@ -103,6 +106,11 @@ struct SceneManager {
         }
 
         return ending
+    }
+    
+    private func resetAllGameElements(){
+        WaveManager.shared.resetWaveSystem()
+        SKEntityManager.shared.removeAll()
     }
 }
 
