@@ -106,7 +106,7 @@ final class CreditsViewController: UIViewController {
         guard !hasFinished else { return }
         hasFinished = true
         // Ao finalizar os créditos: parar música e aguardar 1s antes de voltar para Home
-        let preStopDelay: TimeInterval = 5.0
+        let preStopDelay: TimeInterval = 1.0
         AudioManager.shared.fadeOutBackgroundMusic(duration: preStopDelay, stopAfter: true)
         DispatchQueue.main.async { [weak self] in
             self?.onFinished?()
