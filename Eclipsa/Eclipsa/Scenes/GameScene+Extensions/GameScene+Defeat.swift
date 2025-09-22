@@ -125,9 +125,18 @@ extension GameScene {
 
     private func restartGame() {
         guard let view = self.view else { return }
-        if let newScene = GameScene(fileNamed: "GameScene_1") {
-            newScene.scaleMode = .aspectFill
-            view.presentScene(newScene, transition: .fade(withDuration: 1.0))
+
+        // --- Aqui fazemos a distinção ---
+        if self.name == "GameScene_0" {
+            // Tutorial: voltar para Home
+            sceneManager?.flowController.goHome()
+        } else {
+            // Fases normais: reinicia GameScene_1
+            if let newScene = GameScene(fileNamed: "GameScene_1") {
+                newScene.scaleMode = .aspectFill
+                newScene.sceneManager = sceneManager
+                view.presentScene(newScene, transition: .fade(withDuration: 1.0))
+            }
         }
     }
 }

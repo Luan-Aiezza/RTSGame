@@ -64,11 +64,11 @@ extension GameScene {
             hud.startTypewriter(charInterval: 0.03) { [weak self] in
                 guard let self = self else { return }
                 // 2) manter 3s após texto completo e desaparecer
-                self.run(.wait(forDuration: 5.0)) { [weak self] in
+                self.run(.wait(forDuration: 4.0)) { [weak self] in
                     guard let self = self else { return }
                     hud.dismiss(animated: true) {
                         // 3) aguardar 5s antes do próximo
-                        self.run(.wait(forDuration: 3.0)) {
+                        self.run(.wait(forDuration: 1.5)) {
                             index += 1
                             showNext()
                         }

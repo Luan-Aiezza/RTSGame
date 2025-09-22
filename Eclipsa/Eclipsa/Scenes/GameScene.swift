@@ -95,12 +95,21 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         let solarUI = UISolarGeneratorComponent()
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
-
-        showPhaseOverlayFromSceneName()
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-            self?.hidePhaseOverlay()
+        
+        // --- checagem por nome da cena ---
+        if self.name == "GameScene_0" {
+            // Tutorial
+            //removeWizardButton()
+            startDialogue()
+            
+        } else {
+            // Outras fases normais
+            showPhaseOverlayFromSceneName()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                self?.hidePhaseOverlay()
+            }
         }
+        
     }
     override func update(_ currentTime: TimeInterval) {
         // --- Protege contra primeira chamada ou retorno do background ---

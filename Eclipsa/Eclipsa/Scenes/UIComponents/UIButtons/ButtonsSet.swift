@@ -17,6 +17,7 @@ class ButtonsSet {
     
     init(scene: GameScene) {
         self.scene = scene
+        
         self.setupButtons()
     }
     
