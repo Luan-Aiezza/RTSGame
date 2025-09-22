@@ -55,7 +55,7 @@ extension GameScene {
                             node.zPosition = baseZ + 0.0 // fundo preto
                             return
                         case "PhaseSnow":
-                            node.zPosition = baseZ + 0.1 // neve à frente do fundo
+                            node.zPosition = baseZ + 0.31 // neve à frente do fundo
                             return
                         case "PhaseTitle", "PhaseCrown", "PhaseIcon", "PhaseGirl":
                             node.zPosition = baseZ + 0.3 // conteúdo à frente da neve
