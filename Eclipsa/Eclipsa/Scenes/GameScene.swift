@@ -96,9 +96,8 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
         
-        showPhaseOverlay(currentPhase: 2, previousPhase: 1)
+        showPhaseOverlayFromSceneName()
 
-        // Oculta a overlay automaticamente após um curto atraso para garantir que a fase iniciou
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
             self?.hidePhaseOverlay()
         }
