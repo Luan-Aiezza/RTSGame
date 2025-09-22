@@ -14,7 +14,7 @@ class GameViewController: UIViewController {
     let sceneManager: SceneManager
     let flowDelegate: FlowController
     
-    private var skView: SKView
+    var skView: SKView
     private var stopMusicObserver: NSObjectProtocol?
     
     init(flowDelegate: FlowController) {

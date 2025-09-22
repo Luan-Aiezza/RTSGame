@@ -212,21 +212,7 @@ final class HomeView: UIView {
     }
     
     @objc private func handleSettingsTapped() {
-        AudioManager.shared.playSound(named: "Effect_Select_1")
-        guard let vc = findViewController() else { return }
-        let config = ConfigViewController()
-        config.modalPresentationStyle = .overFullScreen
-        config.modalTransitionStyle = .crossDissolve
-        vc.present(config, animated: true)
-    }
-    
-    private func findViewController() -> UIViewController? {
-        var responder: UIResponder? = self
-        while let r = responder {
-            if let vc = r as? UIViewController { return vc }
-            responder = r.next
-        }
-        return nil
+        delegate?.didTapConfigurationButton()
     }
 }
 

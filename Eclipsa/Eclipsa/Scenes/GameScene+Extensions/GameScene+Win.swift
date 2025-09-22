@@ -103,6 +103,8 @@ extension GameScene {
         if let name = currentSceneName,
            let sceneManager = self.sceneManager{
             switch name {
+            case "GameScene_0":
+                sceneManager.flowController.goHome()
             case "GameScene_1":
                 nextScene = sceneManager.phaseTwo()
             case "GameScene_2":
@@ -115,7 +117,7 @@ extension GameScene {
                 // go to phase 5 if available; fallback to 4 or 3
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
-                let endScene = sceneManager.endScene(size: view.bounds.size)
+                let nextScene = sceneManager.endScene(size: view.bounds.size)
                 
             default:
                 nextScene = sceneManager.phaseOne()

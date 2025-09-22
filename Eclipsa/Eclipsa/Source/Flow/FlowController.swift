@@ -5,8 +5,6 @@
 //  Created by Joseph Pereira on 09/09/25.
 //
 import UIKit
-import SpriteKit
-
 class FlowController {
     
     var navigation: UINavigationController?
@@ -44,6 +42,16 @@ extension FlowController: TeamLogoFlowDelegate {
 
 // MARK: Home to Game
 extension FlowController: HomeFlowDelegate {
+    func goToConfiguration() {
+        let configurationViewController = factory.makeConfigurationViewController(flowDelegate: self)
+        
+        if let navigation = navigation?.view {
+            UIView.transition(with: navigation, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]){[weak self] in
+                self?.navigation?.setViewControllers([configurationViewController], animated: false)
+            }
+        }
+    }
+    
     func goToGame() {
         let gameViewController = factory.makeGameViewController(flowDelegate: self)
 
@@ -59,5 +67,25 @@ extension FlowController: HomeFlowDelegate {
             // Fallback: set without animation if nav/view not available
             navigation?.setViewControllers([gameViewController], animated: false)
         }
+    }
+}
+
+extension FlowController: ConfigFlowDelegate {
+    func goTutorial() {     
+        let tutorialViewController = factory.makeTutorialViewController(flowDelegate: self)
+        if let navView = navigation?.view {
+            UIView.transition(with: navView, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]) { [weak self] in
+                self?.navigation?.setViewControllers([tutorialViewController], animated: false)
+            }
+        }
+    }
+    
+    func presentCredits() {
+        let creditsViewController = factory.makeCreditsViewController()
+        navigation?.present(creditsViewController, animated: true)
+    }
+    
+    func backHome() {
+        self.goHome()
     }
 }
