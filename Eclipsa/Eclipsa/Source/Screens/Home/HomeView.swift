@@ -65,7 +65,8 @@ final class HomeView: UIView {
     private let playButton: UIButton = {
         let playButton = UIButton(type: .system)
         playButton.translatesAutoresizingMaskIntoConstraints = false
-        playButton.setTitle("Tap to start", for: .normal)
+//        playButton.setTitle("Tap to start", for: .normal)
+        playButton.setTitle(NSLocalizedString("start", comment: ""), for: .normal)
         playButton.setTitleColor(.white, for: .normal)
         if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 20) {
             playButton.titleLabel?.font = joystickFont
@@ -174,7 +175,7 @@ final class HomeView: UIView {
     
     private func startPulsing(view: UIView,
                               from: CGFloat = 1.0,
-                              to: CGFloat = 1.08,
+                              to: CGFloat = 1.20,
                               duration: CFTimeInterval = 1.2) {
         let pulse = CABasicAnimation(keyPath: "transform.scale")
         pulse.fromValue = from

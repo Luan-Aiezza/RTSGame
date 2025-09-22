@@ -29,7 +29,7 @@ final class ConfigViewController: UIViewController {
     private let backButton: UIButton = {
         let bt = UIButton(type: .system)
         bt.translatesAutoresizingMaskIntoConstraints = false
-        bt.setTitle("<<< Back", for: .normal)
+        bt.setTitle(NSLocalizedString("back", comment: ""), for: .normal)
         bt.setTitleColor(.white, for: .normal)
         if let joystickFont = UIFont(name: "CCPixelArcade-Display", size: 18) {
             bt.titleLabel?.font = joystickFont
@@ -127,8 +127,8 @@ final class ConfigViewController: UIViewController {
             overlayView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             overlayView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
 
-            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            backButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            backButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 48),
 
             contentStack.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             contentStack.centerYAnchor.constraint(equalTo: view.centerYAnchor),

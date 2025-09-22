@@ -15,20 +15,23 @@ final class CreditsScene: SKScene {
     private var hasFinished = false
 
     // Textos de créditos
-    var creditLines: [String] = [ //TRADUZIR
-        "Creditos e Agradecimentos",
-        "Victor Vasconcelos - Pela disponibilidade da biblioteca Behind GameKit",
-        "Mini Fantasy - Pela disponibilidade dos pacotes dos efeitos de combate",
-        "Pixelify_Sans - Fonte utilizada no projeto",
-        "ZUN - Inspiração musical para trilha sonora do jogo",
-        "Jon Keller - Inpiração para a estética do jogo",
-        "Victor Maxwell - Pela discas sobre Game Design",
-        "Guto Kawakami - Pela ajuda com processos e objetivos",
-        "Ariel Marcelo - Pelas dicas e feedback durante o desenvolvimento",
-        "Também agradecemos a toda equipe do Academy de Manaus, sem vocês isso não seria possivel",
-        "Obrigado!",
-        "Team Eclipsa"
-    ]
+//    var creditLines: [String] = [ //TRADUZIR
+//        "Creditos e Agradecimentos",
+//        "Victor Vasconcelos - Pela disponibilidade da biblioteca Behind GameKit",
+//        "Mini Fantasy - Pela disponibilidade dos pacotes dos efeitos de combate",
+//        "Pixelify_Sans - Fonte utilizada no projeto",
+//        "ZUN - Inspiração musical para trilha sonora do jogo",
+//        "Jon Keller - Inpiração para a estética do jogo",
+//        "Victor Maxwell - Pela discas sobre Game Design",
+//        "Guto Kawakami - Pela ajuda com processos e objetivos",
+//        "Ariel Marcelo - Pelas dicas e feedback durante o desenvolvimento",
+//        "Também agradecemos a toda equipe do Academy de Manaus, sem vocês isso não seria possivel",
+//        "Obrigado!",
+//        "Team Eclipsa"
+//    ]
+    var creditLines: [String] = (0...11).map {
+        NSLocalizedString("credits.\($0)", comment: "")
+    }
 
     // Callback quando a cena finaliza (após o último texto parar no centro por um tempo)
     var onFinished: (() -> Void)?
