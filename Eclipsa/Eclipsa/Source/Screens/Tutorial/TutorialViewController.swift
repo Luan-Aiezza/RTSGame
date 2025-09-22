@@ -4,8 +4,9 @@
 //
 //  Created by Joseph Pereira on 22/09/25.
 //
+import Foundation
+import SpriteKit
 
-internal import SpriteKit
 class TutorialViewController: GameViewController {
     
     override func viewDidLayoutSubviews() {
