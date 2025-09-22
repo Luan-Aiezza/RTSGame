@@ -78,9 +78,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
         
-        //        sceneEntity = SceneEntity(scene: self)
-        //        SKEntityManager.shared.add(sceneEntity)
-        
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
         
