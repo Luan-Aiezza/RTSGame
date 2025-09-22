@@ -26,6 +26,7 @@ extension GameScene {
             nexus.addComponent(IndicatorAttackComponent())
             
             nexus.onDestroyed = { [weak self] in
+                nexus.removeComponent(ofType: IndicatorAttackComponent.self)
                 self?.handleDefeat()
             }
             
@@ -44,6 +45,10 @@ extension GameScene {
                 let inhibitor = InhibitorEntity(node: node)
                 // Adiciona o indicador de ataque
                 inhibitor.addComponent(IndicatorAttackComponent())
+                
+                inhibitor.onDestroyed = { [weak inhibitor] in
+                    inhibitor?.removeComponent(ofType: IndicatorAttackComponent.self)
+                }
                 
                 SKEntityManager.shared.add(inhibitor)
             } else {
