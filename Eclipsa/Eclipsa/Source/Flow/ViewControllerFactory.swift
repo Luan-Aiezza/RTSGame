@@ -53,4 +53,8 @@ struct ViewControllerFactory {
         tutorialViewController.modalTransitionStyle = .crossDissolve
         return tutorialViewController
     }
+    
+    func makeFirstUserViewController(flowDelegate: FirstUserFlowDelegate) -> FirstUserViewController {
+        return FirstUserViewController(flowDelegate: flowDelegate)
+    }
 }

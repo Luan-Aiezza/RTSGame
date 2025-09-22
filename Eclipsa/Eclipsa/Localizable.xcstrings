@@ -313,35 +313,18 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Ariah... can you hear me? This is Heliar speaking. I’ll teach you the way to climb these lands."
-          }
-        },
-        "pt-BR" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ariah... consegue me ouvir? quem vos fala é Heliar. Vou lhe ensinar o caminho para que você possa subir estas terras."
-          }
-        }
-      }
-    },
-    "dialogue.2" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
             "value" : "First, try moving with the LEFT ANALOG STICK and get used to the environment."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Primeiramente tente se mover usando o ANÁLOGICO ESQUERDO e se acostume com o ambiente."
+            "value" : "Bem-vindo(a) a Suncrown. Primeiramente tente se mover usando o ANÁLOGICO ESQUERDO."
           }
         }
       }
     },
-    "dialogue.3" : {
+    "dialogue.2" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -353,12 +336,12 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora precisamos invocar algumas tropas para defender sua base, experimente clicar no BOTÃO no canto INFERIOR DIREITO."
+            "value" : "Agora precisamos invocar algumas tropas para defender sua base, experimente clicar em um BOTÃO do canto INFERIOR."
           }
         }
       }
     },
-    "dialogue.4" : {
+    "dialogue.3" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -375,7 +358,7 @@
         }
       }
     },
-    "dialogue.5" : {
+    "dialogue.4" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -387,12 +370,12 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Posicione suas tropas com o ANÁLOGICO DIREITO, ou chame-as para perto o botão abaixo."
+            "value" : "Posicione suas tropas com o ANÁLOGICO DIREITO, ou chame-as para perto clicando na seta."
           }
         }
       }
     },
-    "dialogue.6" : {
+    "dialogue.5" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -404,12 +387,12 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Os cavaleiros da lua estão vindo! não deixe que destruam seus altares, ou ficará mais difícil criar soldados."
+            "value" : "Os cavaleiros da lua estão vindo! não deixe que destruam os altares, ou ficará mais difícil criar soldados."
           }
         }
       }
     },
-    "dialogue.7" : {
+    "dialogue.6" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -426,7 +409,7 @@
         }
       }
     },
-    "dialogue.8" : {
+    "dialogue.7" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -443,7 +426,7 @@
         }
       }
     },
-    "dialogue.9" : {
+    "dialogue.8" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -456,6 +439,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso é tudo por enquanto... agora é com você."
+          }
+        }
+      }
+    },
+    "firstUserButtonNo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Não"
+          }
+        }
+      }
+    },
+    "firstUserButtonYes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sim"
+          }
+        }
+      }
+    },
+    "firstUserText" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tutorial will still be available in the game settings."
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "O tutorial ainda estará disponível nas configurações."
+          }
+        }
+      }
+    },
+    "firstUserTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play tutorial?"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jogar tutorial?"
           }
         }
       }
@@ -660,6 +711,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "REINICIAR"
+          }
+        }
+      }
+    },
+    "restartTutorial" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "GO TO MENU"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "VOLTAR AO MENU"
           }
         }
       }

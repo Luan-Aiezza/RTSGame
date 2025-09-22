@@ -87,7 +87,9 @@ extension GameScene {
         let starLoop = SKAction.repeatForever(starAnimate)
         starNode.run(starLoop, withKey: "starLoop")
 
-        let restartLabel = SKLabelNode(text: NSLocalizedString("restart", comment: ""))
+        // Texto do botão muda se for GameScene_0 (tutorial)
+        let restartKey = (self.name == "GameScene_0") ? "restartTutorial" : "restart"
+        let restartLabel = SKLabelNode(text: NSLocalizedString(restartKey, comment: ""))
         restartLabel.fontName = "CCPixelArcade-Joystick"
         restartLabel.fontSize = 24
         restartLabel.fontColor = .yellow

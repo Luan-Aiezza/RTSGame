@@ -27,14 +27,38 @@ class FlowController {
 // MARK: TeamLogo to Home
 extension FlowController: TeamLogoFlowDelegate {
     func goHome() {
+        let isFirstLaunch = !UserDefaults.standard.bool(forKey: "hasLaunchedBefore")
+        
+        if isFirstLaunch {
+            UserDefaults.standard.set(true, forKey: "hasLaunchedBefore")
+            showFirstUser()
+        } else {
+            showHome()
+        }
+    }
+    
+    private func showFirstUser() {
+        let firstUserVC = factory.makeFirstUserViewController(flowDelegate: self)
+        navigation?.navigationBar.isHidden = true
+        
+        let transition = CATransition()
+        transition.duration = 0.3
+        transition.type = .fade
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
+        navigation?.view.layer.add(transition, forKey: kCATransition)
+        navigation?.setViewControllers([firstUserVC], animated: false)
+    }
+    
+    private func showHome() {
         let homeViewController = factory.makeHomeViewController(flowDelegate: self)
         navigation?.navigationBar.isHidden = true
         
         let transition = CATransition()
-            transition.duration = 0.3
-            transition.type = .fade
-            transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
-        navigation?.dismiss(animated: false)
+        transition.duration = 0.3
+        transition.type = .fade
+        transition.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        
         navigation?.view.layer.add(transition, forKey: kCATransition)
         navigation?.setViewControllers([homeViewController], animated: false)
     }
@@ -89,5 +113,16 @@ extension FlowController: ConfigFlowDelegate {
     
     func backHome() {
         self.goHome()
+    }
+}
+
+extension FlowController: FirstUserFlowDelegate {
+    func firstUserGoTutorial() {
+        let tutorialVC = factory.makeTutorialViewController(flowDelegate: self)
+        navigation?.setViewControllers([tutorialVC], animated: false)
+    }
+    
+    func firstUserGoHome() {
+        showHome()
     }
 }

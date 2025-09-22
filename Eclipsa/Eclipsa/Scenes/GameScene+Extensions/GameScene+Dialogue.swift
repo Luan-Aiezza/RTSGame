@@ -33,7 +33,7 @@ extension GameScene {
         guard let hud = dialogueHUD, !isDialogueRunning else { return }
         isDialogueRunning = true
         
-        let lines: [DialogueLine] = (1...9).map {
+        let lines: [DialogueLine] = (1...8).map {
             DialogueLine(text: NSLocalizedString("dialogue.\($0)", comment: ""), portraitImageName: nil)
         }
         runDialogueSequence(lines: lines, hud: hud)
