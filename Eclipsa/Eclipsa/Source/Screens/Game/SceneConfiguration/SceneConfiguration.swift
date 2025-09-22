@@ -14,8 +14,6 @@ class SceneConfiguration {
     init(inhibitorsQuantity: Int, spawnersQuantity: Int) {
         self.inhibitors = SceneConfiguration.buildArrayWithNames(with: "Inhibitor_", howMany: inhibitorsQuantity)
         self.spawners = SceneConfiguration.buildArrayWithNames(with: "Spawn_", howMany: spawnersQuantity)
-        print(inhibitors)
-        print(spawners)
     }
     
     private static func buildArrayWithNames(with entityName: String, howMany quantity: Int) -> [String]{

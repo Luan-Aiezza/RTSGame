@@ -9,17 +9,17 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var cameraEntity: CameraEntity!
     public var troopNode: SKSpriteNode?
     public var enemyNode: SKSpriteNode?
-    
+
     var sceneManager: SceneManager?
     var commandController: AdaptedVirtualController?
     var commandInput = InputHandler()
     var gameController: AdaptedVirtualController?
     var aimingSystem: AimingSystem?
-    
+
     private var wallNode: SKSpriteNode?
-    
+
     var buttons: ButtonsSet!
-    
+
     var physicsSystem = PhysicsSystem()
     private var collisionSystem: CollisionSystem!
     var troopControlSystem: TroopControlSystem!
@@ -28,28 +28,28 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var troops: Set<TroopEntity> {
         SKEntityManager.shared.getAllGameTroops()
     }
-    
+
     public var cancelButton: CommandButton!
     public var releaseButton: CommandButton!
-    
+
     public var customLastUpdateTime: TimeInterval?
     //    var sceneEntity: SceneEntity!
-    
+
     // Flag para evitar múltiplos respawns concorrentes
     private var isRespawningPlayer = false
-    
+
     // Substituímos o label numérico por um componente de HUD com ícones
     private var resourceHUD: UIResourceComponent?
     private var cancellables = Set<AnyCancellable>()
-    
+
     // Novo: componente visual para geração de recurso nos Inhibitors
     private var solarGeneratorUI: UISolarGeneratorComponent?
-    
+
     var sceneConfiguration: SceneConfiguration?
-    
+
     override func sceneDidLoad() {
         super.sceneDidLoad()
-        
+
         NotificationCenter.default.addObserver(
             forName: UIApplication.willEnterForegroundNotification,
             object: nil,
@@ -57,42 +57,45 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         ) { [weak self] _ in
             self?.customLastUpdateTime = nil
         }
-        
+
         applyNearestFilterRecursively()
-        
+
         setupTreeCollisionsBorder(forTilemapNamed: "Tree_2")
         setupTreeCollisions(forTilemapNamed: "Tree_1")
-        
+
         setupVirtualController() // precisa vir ANTES do player
         commandController = .init(scene: self, analogRadius: 50, color: .systemRed)
         commandController?.setAnalogVisible(value: false)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
-        
+
         setupPlayer() //Instancia o player na cena
         // Observa a morte do player atual para respawn
         observePlayerDeath()
-        
+
         setupCamera() //Instancia a camera na cena
         setupUI()
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
+
+        //        sceneEntity = SceneEntity(scene: self)
+        //        SKEntityManager.shared.add(sceneEntity)
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
-        
+
         // HUD de recursos (ícones)
         if let camera = self.camera {
             let hud = UIResourceComponent(scene: self, camera: camera)
             camera.addChild(hud)
             resourceHUD = hud
         }
-        
+
         // Componente visual de geração dos Inhibitors
         let solarUI = UISolarGeneratorComponent()
         addChild(solarUI) // na cena (efeito é no mundo, não na câmera)
         solarGeneratorUI = solarUI
-        
+
         showPhaseOverlayFromSceneName()
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
@@ -105,50 +108,50 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             customLastUpdateTime = currentTime
             return
         }
-        
+
         var deltaTime = currentTime - lastTime
         customLastUpdateTime = currentTime
-        
+
         // --- Clampa o deltaTime para evitar saltos absurdos ---
         // ex: máximo 1/30 ≈ 0.033s (30 FPS)
         if deltaTime > 1.0 / 60.0 {
             deltaTime = 1.0 / 60.0
         }
-        
+
         // --- Atualiza sistemas normalmente ---
         SKEntityManager.shared.update(deltaTime)
-        
+
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }
         cameraEntity?.followPlayer(player: controlledEntity)
         cameraEntity?.update(deltaTime: deltaTime)
-        
+
         // Protege quando o player não existe (janela de respawn)
         controlledEntity?.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime)
         troops.forEach { $0.component(ofType: AgentComponent.self)?.agent.update(deltaTime: deltaTime) }
-        
+
         if let projectiles = self.userData?["projectiles"] as? [ProjectileEntity] {
             for projectile in projectiles {
                 projectile.update(deltaTime: deltaTime)
             }
         }
-        
+
         updateTroopTargets()
         updatePlayerState()
         depthSortNodes()
         aimingSystem?.updateDynamicAiming()
-        
+
         // Garante que o HUD se reposicione se a escala da câmera mudar (caso ocorra)
         resourceHUD?.handleCameraOrSceneChange()
     }
-    
+
 }
 
 extension GameScene {
     func setupRTSAiming() {
         let aimingSystem = AimingSystem(scene: self)
         aimingSystem.player = controlledEntity
-        
+
         if let player = controlledEntity{
             aimingSystem.addComponent(foundIn: player)
         }
@@ -178,7 +181,7 @@ extension GameScene {
             }
         }
     }
-    
+
     private func schedulePlayerRespawn() {
         guard !isRespawningPlayer else { return }
         isRespawningPlayer = true
@@ -187,7 +190,7 @@ extension GameScene {
             self?.respawnPlayer()
         }
     }
-    
+
     private func cleanupDeadPlayer() {
         collisionSystem?.clearControlledEntity()
         if let dead = controlledEntity {
@@ -199,7 +202,7 @@ extension GameScene {
         cameraEntity?.followPlayer(player: nil)
         controlledEntity = nil
     }
-    
+
     private func respawnPlayer() {
         setupPlayer()
         observePlayerDeath()
@@ -210,4 +213,3 @@ extension GameScene {
         isRespawningPlayer = false
     }
 }
-

@@ -47,7 +47,7 @@ class ButtonsSet {
     private func setupInvokeMeleeButtonUI(){
         invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .yellow)
         invokeMeleeButton?.changeLabelToImage(with: "Knight_Invoke_Icon")
-        invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: Colors.meleeButtonStrokeColor)
+        invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: .black)
         setupInvokeMeleeButton()
     }
     
@@ -75,7 +75,7 @@ class ButtonsSet {
     private func setupInvokeRangedButtonUI(){
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
         invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon")
-        invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: Colors.rangedButtonStrokeColor)
+        invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: .black)
         setupInvokeRangedButton()
     }
     
@@ -101,6 +101,7 @@ class ButtonsSet {
     
     private func setupFollowButtonUI(){
         followButton = CommandButton(position: Position.followButton(size: size), name: "", color: .green)
+        followButton?.changeLabelToImage(with: "Follow_Icon")
         followButton?.changeButtonColors(buttonColor: Colors.followButtonFillColor, strokeColor: Colors.followButtonStrokeColor)
         
         setupFollowButton()

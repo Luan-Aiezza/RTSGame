@@ -42,7 +42,7 @@ class CommandButton: SKNode {
     public func changeLabelToImage(with name: String){
         button.removeAllChildren()
         image = SKSpriteNode(imageNamed: name)
-        image!.size = CGSize(width: 36, height: 36)
+        image!.size = CGSize(width: 30, height: 30)
         image!.name = name
         image!.texture?.filteringMode = .nearest
         button.addChild(image!)

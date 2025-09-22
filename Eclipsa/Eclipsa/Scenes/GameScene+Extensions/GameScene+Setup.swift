@@ -59,19 +59,19 @@ extension GameScene {
     
     private func setupSpawners() {
         WaveManager.shared.scene = self
-
+        
         // Conta total de spawners e registra callbacks de destruição
         var totalSpawners = 0
         var destroyedSpawners = 0
-
+        
         for name in sceneConfiguration!.spawners {
             if let node = childNode(withName: name) as? SKSpriteNode {
                 let spawner = SpawnEntity(node: node)
                 print("Spawn Position \(node.position)")
                 SKEntityManager.shared.add(spawner)
-
+                
                 totalSpawners += 1
-
+                
                 // Callback de destruição do spawner (mesma ideia do nexus.onDestroyed)
                 spawner.onDestroyed = { [weak self] in
                     guard let self else { return }
@@ -85,7 +85,7 @@ extension GameScene {
                 print("Node '\(name)' não encontrado na cena!")
             }
         }
-
+        
         // Caso especial: sem spawners, já considera vitória da fase (ou mantém como está, conforme game design)
         if totalSpawners == 0 {
             self.handleWin()

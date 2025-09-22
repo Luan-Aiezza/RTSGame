@@ -222,14 +222,14 @@ public class TroopBehaviorComponent: GKComponent {
         self.currentTarget = newTarget
         configureBehavior()
     }
-
+    
     /// Define um ponto manual (ordem do jogador).
     public func setManualTargetPoint(_ point: CGPoint?) {
         self.manualTargetPoint = point
         // Reconfigure para aplicar imediatamente
         configureBehavior()
     }
-
+    
     /// Limpa apenas o ponto manual sem mexer no currentTarget.
     public func clearManualTargetPoint() {
         self.manualTargetPoint = nil

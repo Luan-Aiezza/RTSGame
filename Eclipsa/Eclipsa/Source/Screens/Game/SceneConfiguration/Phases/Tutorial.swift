@@ -12,7 +12,7 @@ class Tutorial: SceneConfiguration {
         waveConfig = [
             WaveConfiguration(
                 waveNumber: 1,
-                duration: 30.0,
+                duration: 60.0,
                 spawnInterval: 2.0,
                 maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.0

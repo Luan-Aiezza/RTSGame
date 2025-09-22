@@ -75,6 +75,7 @@ class GameViewController: UIViewController {
         view.addSubview(skView)
 //        view.addSubview(button)
         skView.isMultipleTouchEnabled = true
+        setupDebugOptions()
         setupConstraints()
     }
     
@@ -85,6 +86,13 @@ class GameViewController: UIViewController {
             skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
             skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
+    }
+    
+    func setupDebugOptions(){
+        skView.ignoresSiblingOrder = true
+        skView.showsFPS = true
+        skView.showsNodeCount = true
+        skView.showsDrawCount = true
     }
     
 
