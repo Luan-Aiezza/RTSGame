@@ -37,8 +37,6 @@ extension GameScene {
             #endif
         }
         
-        // Título “A Fronteira” (subido um pouco)
-//        let title = SKLabelNode(text: "A Fronteira") //TRADUZIR
         let title = SKLabelNode(text: NSLocalizedString("title", comment: ""))
         title.name = "PhaseTitle"
         title.fontName = "CCPixelArcade-Display"
@@ -141,5 +139,22 @@ extension GameScene {
         overlay.run(fadeOut, completion: {
             overlay.removeFromParent()
         })
+    }
+    
+    /// Extrai o número da fase a partir do nome da cena (ex: "GameScene_3" → 3).
+    private func extractPhaseNumber(from sceneName: String?) -> Int {
+        guard let name = sceneName else { return 1 }
+        let components = name.split(separator: "_")
+        if let last = components.last, let number = Int(last) {
+            return max(1, min(5, number)) // clamp entre 1 e 5
+        }
+        return 1
+    }
+
+    /// Mostra a overlay de fase baseada no nome da cena
+    func showPhaseOverlayFromSceneName() {
+        let current = extractPhaseNumber(from: self.name ?? self.scene?.name)
+        let previous = max(1, current - 1)
+        showPhaseOverlay(currentPhase: current, previousPhase: previous)
     }
 }

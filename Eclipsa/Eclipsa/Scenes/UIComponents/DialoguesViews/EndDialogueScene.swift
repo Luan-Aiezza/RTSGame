@@ -57,19 +57,6 @@ final class EndDialogueScene: SKScene {
     }
     
     private func setupParagraphs() {
-        //TRADUZIR
-//        let texts: [String] = [
-//            "Ariah enfim conquista as fronteiras das Terras Altas, após derrotar os servos de Eclipsa.",
-//            
-//            "Assim, recuperando parte do território de seu povo, que agora poderia voltar a residir ao pé do monte.",
-//            
-//            "Porém… há de faltar um longo caminho, Ariah ainda haveria de subir ao topo e enfrentar Eclipsa.",
-//            
-//            "Para assim libertar o mundo do frio e da escuridão.",
-//            
-//            "A jornada de Ariah continuará…"
-//        ]
-//        paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }
         let texts: [String] = (0...4).map {
             NSLocalizedString("paragraph.\($0)", comment: "")
         }
