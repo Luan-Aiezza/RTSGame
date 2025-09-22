@@ -10,7 +10,7 @@ import SpriteKit
 class TutorialViewController: GameViewController {
     
     override func viewDidLayoutSubviews() {
-        let scene = sceneManager.tutorial()
+        let scene = sceneManager.tutorial()//Mudar para tutorial
         DispatchQueue.main.async {
             self.skView.presentScene(scene)
         }
