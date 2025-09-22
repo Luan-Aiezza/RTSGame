@@ -75,8 +75,6 @@ struct SceneManager {
         // Quando a cena de ending terminar, apresenta a UI de créditos (UIKit)
         ending.onFinished = { [flowController] in
             DispatchQueue.main.async {
-                // Toca trilha de créditos (opcional)
-                AudioManager.shared.fadeInBackgroundMusic(named: "OST_Credits")
 
                 // Encontra o top-most UIViewController para apresentar a tela de créditos
                 guard let topVC = SceneManager.topViewController() else {
@@ -93,12 +91,9 @@ struct SceneManager {
                 creditsVC.onFinished = {
                     // Ao finalizar os créditos: parar música e aguardar 1s antes de voltar para Home
                     let preStopDelay: TimeInterval = 3.0
-                    AudioManager.shared.fadeOutBackgroundMusic(duration: preStopDelay, stopAfter: true)
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + preStopDelay) {
                         topVC.dismiss(animated: true) {
-                            // Garante que qualquer música anterior esteja parada antes de iniciar a da Home
-                            AudioManager.shared.stopBackgroundMusic()
                             flowController.goHome()
                         }
                     }

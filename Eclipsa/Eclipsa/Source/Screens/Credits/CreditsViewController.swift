@@ -24,6 +24,7 @@ final class CreditsViewController: UIViewController {
     
     override func loadView() {
         super.loadView()
+        AudioManager.shared.fadeInBackgroundMusic(named: "OST_Credits")
         view.backgroundColor = .black
         
         textLabel.translatesAutoresizingMaskIntoConstraints = false
@@ -104,6 +105,9 @@ final class CreditsViewController: UIViewController {
     private func finishSequence() {
         guard !hasFinished else { return }
         hasFinished = true
+        // Ao finalizar os créditos: parar música e aguardar 1s antes de voltar para Home
+        let preStopDelay: TimeInterval = 5.0
+        AudioManager.shared.fadeOutBackgroundMusic(duration: preStopDelay, stopAfter: true)
         DispatchQueue.main.async { [weak self] in
             self?.onFinished?()
         }

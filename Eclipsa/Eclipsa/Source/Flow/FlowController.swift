@@ -82,6 +82,8 @@ extension FlowController: ConfigFlowDelegate {
     
     func presentCredits() {
         let creditsViewController = factory.makeCreditsViewController()
+        creditsViewController.modalPresentationStyle = .overFullScreen
+        creditsViewController.modalTransitionStyle = .crossDissolve
         navigation?.present(creditsViewController, animated: true)
     }
     
