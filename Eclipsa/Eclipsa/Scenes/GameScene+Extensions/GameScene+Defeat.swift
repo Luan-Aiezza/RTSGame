@@ -126,15 +126,12 @@ extension GameScene {
     private func restartGame() {
         guard let view = self.view else { return }
 
-        // --- Aqui fazemos a distinção ---
         if self.name == "GameScene_0" {
-            // Tutorial: voltar para Home
+            // Tutorial: volta para Home
             sceneManager?.flowController.goHome()
         } else {
-            // Fases normais: reinicia GameScene_1
-            if let newScene = GameScene(fileNamed: "GameScene_1") {
-                newScene.scaleMode = .aspectFill
-                newScene.sceneManager = sceneManager
+            // Fases normais: sempre volta para a Fase 1
+            if let newScene = sceneManager?.phaseOne() {
                 view.presentScene(newScene, transition: .fade(withDuration: 1.0))
             }
         }
