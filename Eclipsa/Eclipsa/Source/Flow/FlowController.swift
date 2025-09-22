@@ -5,8 +5,6 @@
 //  Created by Joseph Pereira on 09/09/25.
 //
 import UIKit
-import SpriteKit
-
 class FlowController {
     
     var navigation: UINavigationController?
@@ -73,10 +71,13 @@ extension FlowController: HomeFlowDelegate {
 }
 
 extension FlowController: ConfigFlowDelegate {
-    func goTutorial() {
-        let alert = UIAlertController(title: "Tutorial", message: "Abrir tutorial", preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        navigation?.present(alert, animated: true)
+    func goTutorial() {     
+        let tutorialViewController = factory.makeTutorialViewController(flowDelegate: self)
+        if let navView = navigation?.view {
+            UIView.transition(with: navView, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]) { [weak self] in
+                self?.navigation?.setViewControllers([tutorialViewController], animated: false)
+            }
+        }
     }
     
     func presentCredits() {
