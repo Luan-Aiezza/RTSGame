@@ -76,7 +76,6 @@ class GameViewController: UIViewController {
 //        view.addSubview(button)
         skView.isMultipleTouchEnabled = true
         setupConstraints()
-        setupDebugOptions()
     }
     
     func setupConstraints(){
@@ -88,12 +87,6 @@ class GameViewController: UIViewController {
         ])
     }
     
-    func setupDebugOptions(){
-        skView.ignoresSiblingOrder = true
-        skView.showsFPS = true
-        skView.showsNodeCount = true
-        skView.showsDrawCount = true
-    }
 
     // MARK: - Orientation & Status Bar
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
