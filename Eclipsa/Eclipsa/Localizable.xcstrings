@@ -608,7 +608,18 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Anos depois, agora guiada pelo poder de sua deusa, Ariah inicia sua campanha na fronteira das Terras Altas… para guiar seu povo de volta ao lar, e cumprir a promessa de sua deusa."
+            "value" : "Anos depois, agora guiada pelo poder de sua deusa, Ariah inicia sua campanha na fronteira das Terras Altas…"
+          }
+        }
+      }
+    },
+    "intro.6" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Para guiar seu povo de volta ao lar, e cumprir a promessa de sua deusa."
           }
         }
       }

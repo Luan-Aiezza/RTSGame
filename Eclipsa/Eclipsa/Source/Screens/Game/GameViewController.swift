@@ -75,7 +75,7 @@ class GameViewController: UIViewController {
         view.addSubview(skView)
 //        view.addSubview(button)
         skView.isMultipleTouchEnabled = true
-        setupDebugOptions()
+//        setupDebugOptions()
         setupConstraints()
     }
     

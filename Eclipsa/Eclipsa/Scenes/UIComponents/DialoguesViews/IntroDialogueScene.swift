@@ -30,7 +30,7 @@ final class IntroDialogueScene: SKScene {
     }
     
     // Configurações
-    private let perParagraphVisibleDuration: TimeInterval = 8.0 // cada parágrafo permanece 10s na tela
+    private let perParagraphVisibleDuration: TimeInterval = 3.0 // cada parágrafo permanece 10s na tela
     private let typeCharInterval: TimeInterval = 0.05 // velocidade de digitação
     
     // Callback para quando terminar a introdução
@@ -80,7 +80,7 @@ final class IntroDialogueScene: SKScene {
     }
     
     private func setupParagraphs() {
-        let texts: [String] = (0...5).map {
+        let texts: [String] = (0...6).map {
             NSLocalizedString("intro.\($0)", comment: "")
         }
         paragraphs = texts.map { DialogueLine(text: $0, portraitImageName: nil) }

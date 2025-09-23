@@ -28,7 +28,7 @@ final class EndDialogueScene: SKScene {
     }
     
     // Configurações
-    private let perParagraphVisibleDuration: TimeInterval = 6.0
+    private let perParagraphVisibleDuration: TimeInterval = 3.0
     private let typeCharInterval: TimeInterval = 0.05
     
     // Callback para quando terminar o final

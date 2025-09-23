@@ -97,9 +97,16 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         solarGeneratorUI = solarUI
         
         // --- checagem por nome da cena ---
+        if self.name == "GameScene_1" {
+            // Tutorial
+            //removeWizardButton()
+            buttons.invokeRangedButton?.isHidden = true
+        }
+        
         if self.name == "GameScene_0" {
             // Tutorial
             //removeWizardButton()
+            buttons.invokeRangedButton?.isHidden = true
             startDialogue()
             
         } else {
