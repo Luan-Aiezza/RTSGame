@@ -105,6 +105,7 @@ extension GameScene {
             switch name {
             case "GameScene_0":
                 sceneManager.flowController.goHome()
+
             case "GameScene_1":
                 nextScene = sceneManager.phaseTwo()
             case "GameScene_2":

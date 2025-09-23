@@ -27,7 +27,12 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         // Inicia a trilha com fade in
-        AudioManager.shared.fadeInBackgroundMusic(named: "OST_HomeView", duration: 1.5)
+        AudioManager.shared.fadeOutBackgroundMusic()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now()){
+            AudioManager.shared.fadeInBackgroundMusic(named: "OST_HomeView")
+        }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {

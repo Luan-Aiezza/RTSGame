@@ -64,10 +64,24 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupTreeCollisions(forTilemapNamed: "Tree_1")
 
         setupVirtualController() // precisa vir ANTES do player
+        
         commandController = .init(scene: self, analogRadius: 50, color: .systemRed)
+        
         commandController?.setAnalogVisible(value: false)
+        
+        let analogPosition = CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180)
         commandController?.changePosition(CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180))
         commandInput.observeGameController()
+        
+        // --- Círculo vermelho de fundo ---
+        let haloNode = SKShapeNode(circleOfRadius: 50)
+        haloNode.fillColor = .red
+        haloNode.strokeColor = .clear
+        haloNode.alpha = 0.20
+        haloNode.zPosition = 998 // um a menos que o analogNode (que está em 999)
+        haloNode.position = analogPosition
+
+        camera?.addChild(haloNode) // adiciona atrás na câmera
 
         setupPlayer() //Instancia o player na cena
         // Observa a morte do player atual para respawn
@@ -102,10 +116,9 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             //removeWizardButton()
             buttons.invokeRangedButton?.isHidden = true
         }
-        
+        // Tutorial
         if self.name == "GameScene_0" {
-            // Tutorial
-            //removeWizardButton()
+            AudioManager.shared.fadeInBackgroundMusic(named: "OST_InTutorial")
             buttons.invokeRangedButton?.isHidden = true
             startDialogue()
             
