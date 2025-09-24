@@ -59,8 +59,7 @@ class GameViewController: UIViewController {
             stopMusicObserver = nil
         }
         // Fade out background music when leaving the game view
-        AudioManager.shared.stopBackgroundMusic()
-        AudioManager.shared.setBackgroundMusicVolume(1)
+        AudioManager.shared.fadeOutBackgroundMusic(stopAfter: false)
     }
     
     deinit {

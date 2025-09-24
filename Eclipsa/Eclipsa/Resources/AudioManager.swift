@@ -88,8 +88,14 @@ class AudioManager {
         }
     }
 
+    
+    private var fadeSessionID = UUID()
+    
     func fadeOutBackgroundMusic(duration: TimeInterval = 3.0, stopAfter: Bool = true) {
         guard let player = backgroundMusicPlayer else { return }
+        let sessionID = UUID()
+        fadeSessionID = sessionID
+        
         let startVolume = player.volume
         guard duration > 0 else {
             player.volume = 0
@@ -101,7 +107,9 @@ class AudioManager {
         for i in 1...steps {
             let delay = stepDuration * Double(i)
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-                guard let self = self, let p = self.backgroundMusicPlayer else { return }
+                guard let self = self,
+                      let p = self.backgroundMusicPlayer,
+                      self.fadeSessionID == sessionID else { return } // cancela fade antigo
                 let progress = Float(i) / Float(steps)
                 p.volume = max(0, startVolume * (1 - progress))
                 if i == steps, stopAfter {

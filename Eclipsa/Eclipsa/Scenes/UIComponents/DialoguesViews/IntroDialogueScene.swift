@@ -156,7 +156,7 @@ final class IntroDialogueScene: SKScene {
         hasEnded = true
         
         // Fade out da música ~3s
-        AudioManager.shared.stopBackgroundMusic()
+        AudioManager.shared.fadeOutBackgroundMusic(stopAfter: false)
         
         let fade = SKAction.fadeOut(withDuration: 0.75)
         skipLabel?.run(fade)
