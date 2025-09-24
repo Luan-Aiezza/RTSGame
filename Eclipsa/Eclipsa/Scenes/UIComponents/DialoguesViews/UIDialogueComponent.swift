@@ -161,4 +161,3 @@ final class DialogueHUD: SKNode {
         starNode.run(forever, withKey: "starLoop")
     }
 }
-

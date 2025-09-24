@@ -10,14 +10,14 @@ class Phase3: SceneConfiguration {
         super.init(inhibitorsQuantity: 3, spawnersQuantity: 4)
         waveConfig = [
             WaveConfiguration(
-                waveNumber: 1,
+                waveNumber: 2,
                 duration: 30.0,
                 spawnInterval: 2.0,
                 maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.0
             ),
             WaveConfiguration(
-                waveNumber: 2,
+                waveNumber: 3,
                 duration: 45.0,
                 spawnInterval: 1.8,
                 maxTroopsPerBuilding: 3,

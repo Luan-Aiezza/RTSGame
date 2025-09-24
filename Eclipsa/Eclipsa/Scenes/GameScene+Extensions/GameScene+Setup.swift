@@ -15,7 +15,11 @@ extension GameScene {
         setupNexus()
         setupInhibitors()
         setupSpawners()
-        WaveManager.shared.setupWaves()
+        if self.name == "GameScene_0"{
+            WaveManager.shared.setupWaves(after: 25)
+        } else {
+            WaveManager.shared.setupWaves()
+        }
     }
     
     private func setupNexus() {
