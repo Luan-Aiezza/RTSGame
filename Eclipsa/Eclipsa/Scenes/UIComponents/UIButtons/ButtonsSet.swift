@@ -46,7 +46,7 @@ class ButtonsSet {
     }
     
     private func setupInvokeMeleeButtonUI(){
-        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .yellow)
+        invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .orange)
         invokeMeleeButton?.changeLabelToImage(with: "Knight_Invoke_Icon")
         invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: .black)
         setupInvokeMeleeButton()
