@@ -79,15 +79,14 @@ enum TroopFactory{
         // Define prefixos por time
         let soldierPrefix: String = (team == .sun) ? "Sun_Soldier_" : "Moon_Soldier_"
         let risingPrefix: String = (team == .sun) ? "Soldier_Sun_" : "Soldier_Moon_"
-        
+
         let idleTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Idle_", quantity: 12)
-        print(idleTextures[0])
         let walkTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Walk_", quantity: 8)
         let attackTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Attack_", quantity: 3)
-        let deathTextures = TextureHandler.makeTexture(name: "\(soldierPrefix)Death_", quantity: 6)
+        let deathTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Dead_", quantity: 12)
         let risingTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
-        let maxHealth = 300
+        let maxHealth = 250
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         
@@ -111,7 +110,7 @@ enum TroopFactory{
         meleeTroop.addComponent(MeleeAttackComponent(unit: meleeTroop, damage: 25, cooldown: 1.0))
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self) {
-            let meleeRadius: CGFloat = 12   // ⚔️ alcance bem curto
+            let meleeRadius: CGFloat = 49   // ⚔️ alcance bem curto
             rangeComp.node.path = CGPath(ellipseIn: CGRect(x: -meleeRadius, y: -meleeRadius,
                                                            width: meleeRadius * 2, height: meleeRadius * 2),
                                          transform: nil)
@@ -151,12 +150,19 @@ enum TroopFactory{
 }
 
 
-enum TextureHandler{
-    static func makeTexture(name: String, quantity: Int) -> [SKTexture]{
-        let textures = (1...quantity).map{ SKTexture(imageNamed: "\(name)\($0)")}
-        
+enum TextureHandler {
+    static func makeTexture(name: String, quantity: Int) -> [SKTexture] {
+        var textures: [SKTexture] = []
+        for i in 1...quantity {
+            let filename = "\(name)\(i)"
+            let tex = SKTexture(imageNamed: filename)
+            // heurística: se o tamanho for zero, provavelmente não encontrou o asset
+            if tex.size() == .zero {
+                print("⚠️ Texture not found -> \(filename). Verifique nome/case no asset catalog.")
+            }
+            textures.append(tex)
+        }
         return textures
     }
-    
 }
 
