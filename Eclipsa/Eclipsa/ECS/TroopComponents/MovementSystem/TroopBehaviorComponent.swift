@@ -20,7 +20,7 @@ public class TroopBehaviorComponent: GKComponent {
     private var manualTargetAgent: GKAgent2D?
     
     // Defaults
-    private let defaultAgentRadius: Float = 32.0
+    private let defaultAgentRadius: Float = 16.0
     private let meleeApproachRadius: Float = 48.0
     private let meleeApproachWindow: CGFloat = 92.0
     

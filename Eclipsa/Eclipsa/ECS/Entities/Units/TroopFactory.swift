@@ -110,7 +110,7 @@ enum TroopFactory{
         meleeTroop.addComponent(MeleeAttackComponent(unit: meleeTroop, damage: 25, cooldown: 1.0))
         
         if let rangeComp = meleeTroop.component(ofType: RangeComponent.self) {
-            let meleeRadius: CGFloat = 49   // ⚔️ alcance bem curto
+            let meleeRadius: CGFloat = 48   // ⚔️ alcance bem curto
             rangeComp.node.path = CGPath(ellipseIn: CGRect(x: -meleeRadius, y: -meleeRadius,
                                                            width: meleeRadius * 2, height: meleeRadius * 2),
                                          transform: nil)

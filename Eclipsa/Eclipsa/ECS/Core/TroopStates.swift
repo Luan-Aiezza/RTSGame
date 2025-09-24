@@ -124,11 +124,11 @@ class TroopAttackState: GKState {
 
             var attackThreshold: CGFloat
             if troop.component(ofType: MeleeAttackComponent.self) != nil {
-                attackThreshold = 49
+                attackThreshold = 48
             } else if let range = troop.component(ofType: RangeComponent.self)?.radius {
                 attackThreshold = range
             } else {
-                attackThreshold = 49
+                attackThreshold = 48
             }
 
             if distanceSquared > attackThreshold * attackThreshold {
