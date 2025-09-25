@@ -6,20 +6,29 @@ import GameplayKit
 public class HealthBarComponent: GKComponent {
     private let barNode: SKShapeNode
     private let backgroundNode: SKShapeNode
-    private let barHeight: CGFloat = 7
-    private let barWidth: CGFloat = 42
-    private let offsetY: CGFloat
     
-    public init(nodeHeight: CGFloat) {
-        // 🔑 Barra sempre acima do sprite
+    private let barHeight: CGFloat
+    private let barWidth: CGFloat
+    private let offsetY: CGFloat
+    private let mainColor: SKColor
+    
+    public init(nodeHeight: CGFloat,
+                width: CGFloat = 42,
+                height: CGFloat = 7,
+                color: SKColor = .green) {
+        self.barWidth = width
+        self.barHeight = height
         self.offsetY = nodeHeight / 2 + 12
+        self.mainColor = color
         
-        backgroundNode = SKShapeNode(rectOf: CGSize(width: barWidth, height: barHeight), cornerRadius: barHeight/2)
+        backgroundNode = SKShapeNode(rectOf: CGSize(width: barWidth, height: barHeight),
+                                     cornerRadius: barHeight/2)
         backgroundNode.fillColor = .black
         backgroundNode.strokeColor = .clear
         backgroundNode.alpha = 0.6
 
-        barNode = SKShapeNode(rectOf: CGSize(width: barWidth, height: barHeight), cornerRadius: barHeight/2)
+        barNode = SKShapeNode(rectOf: CGSize(width: barWidth, height: barHeight),
+                              cornerRadius: barHeight/2)
         barNode.strokeColor = .clear
 
         backgroundNode.name = "healthbar_background"
@@ -34,14 +43,11 @@ public class HealthBarComponent: GKComponent {
     
     public override func didAddToEntity() {
         guard let node = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return }
-        
         backgroundNode.position = CGPoint(x: 0, y: offsetY)
         barNode.position = CGPoint(x: 0, y: offsetY)
-        
         if backgroundNode.parent == nil { node.addChild(backgroundNode) }
         if barNode.parent == nil { node.addChild(barNode) }
-        
-        updateBar(health: 1, max: 1) // começa cheia
+        updateBar(health: 1, max: 1)
     }
     
     public override func willRemoveFromEntity() {
@@ -57,21 +63,10 @@ public class HealthBarComponent: GKComponent {
         let path = CGPath(roundedRect: rect, cornerWidth: barHeight/2, cornerHeight: barHeight/2, transform: nil)
         barNode.path = path
         
-        // Ajusta a cor da barra conforme o time e o percentual de vida
-        if let team = entity?.component(ofType: TeamComponent.self)?.team {
-            switch team {
-            case .moon:
-                barNode.fillColor = .red
-            case .sun:
-                if percent < 0.2 {
-                    barNode.fillColor = .red
-                } else if percent < 0.5 {
-                    barNode.fillColor = .orange
-                } else {
-                    barNode.fillColor = .green
-                }
-            }
+        if let team = entity?.component(ofType: TeamComponent.self)?.team, team == .sun {
+            barNode.fillColor = mainColor // usa a cor passada no init
         } else {
+            // inimigos continuam com lógica antiga
             if percent < 0.2 {
                 barNode.fillColor = .red
             } else if percent < 0.5 {

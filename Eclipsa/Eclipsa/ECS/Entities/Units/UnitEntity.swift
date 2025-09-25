@@ -27,6 +27,22 @@ public class UnitEntity: BaseUnitEntity {
         self.addComponent(AdaptedControlableComponent(delegate: self))
         self.addComponent(MovementComponent(moveSpeed: 0.75))
         self.addComponent(TroopGeneratorComponent())
+        
+        let healthBar = HealthBarComponent(
+            nodeHeight: spriteNode.size.height,
+            width: 42 * 1.2, // 1.5x maior
+            height: 7,
+            color: .orange   // cor principal laranja
+        )
+        self.addComponent(healthBar)
+
+        // conecta com o HealthComponent
+        if let healthComponent = self.component(ofType: HealthComponent.self) {
+            healthComponent.onHealthChanged = { [weak healthBar] health, max in
+                healthBar?.updateBar(health: health, max: max)
+            }
+            healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
+        }
     }
     
     required init?(coder: NSCoder) {
