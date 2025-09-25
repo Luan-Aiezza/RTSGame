@@ -19,7 +19,7 @@ class WaveManager: NSObject {
     private var enemyBuildings: [GKEntity] = []
     
     // Intervalo fixo entre waves (40 segundos)
-    private let waveCooldownInterval: TimeInterval = 20.0
+    private let waveCooldownInterval: TimeInterval = 10.0
     
     var scene: GameScene?
     

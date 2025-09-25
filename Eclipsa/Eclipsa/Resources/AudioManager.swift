@@ -3,8 +3,13 @@ import SpriteKit
 import AVFoundation
 
 class AudioManager {
+    
+    private var fadeSessionID = UUID()
+    private var crossfadePlayers: [AVAudioPlayer] = [] // <- novo
     private let supportedExtensions = ["mp3", "wav"]
+    
     static let shared = AudioManager()
+    
     private static let defaults = UserDefaults.standard
     private static let keyBGMVolume = "audio.bgmVolume"
     private static let keySFXVolume = "audio.sfxVolume"
@@ -12,12 +17,14 @@ class AudioManager {
     private var audioPlayers: [String: [AVAudioPlayer]] = [:]
     private var backgroundMusicPlayer: AVAudioPlayer?
     private let maxSimultaneousPlays = 3
+    
     private var sfxVolume: Float = 1.0 {
         didSet {
             updateAllVolumes()
             Self.defaults.set(sfxVolume, forKey: Self.keySFXVolume)
         }
     }
+    
     private var bgmVolume: Float = 1.0 {
         didSet {
             updateAllVolumes()
@@ -58,7 +65,7 @@ class AudioManager {
     }
 
     // MARK: - Fades para Música de Background
-    func fadeInBackgroundMusic(named name: String, duration: TimeInterval = 6.0) {
+    func fadeInBackgroundMusic(named name: String, duration: TimeInterval = 3.0) {
         // Começa com volume 0 e aumenta até o volume global
         guard let url = supportedExtensions.compactMap({ Bundle.main.url(forResource: name, withExtension: $0) }).first else { return }
         do {
@@ -87,37 +94,37 @@ class AudioManager {
             print("")
         }
     }
-
     
-    private var fadeSessionID = UUID()
-    
-    func fadeOutBackgroundMusic(duration: TimeInterval = 3.0, stopAfter: Bool = true) {
-        guard let player = backgroundMusicPlayer else { return }
-        let sessionID = UUID()
-        fadeSessionID = sessionID
-        
-        let startVolume = player.volume
-        guard duration > 0 else {
-            player.volume = 0
-            if stopAfter { stopBackgroundMusic() }
-            return
-        }
-        let steps = 60
-        let stepDuration = duration / Double(steps)
-        for i in 1...steps {
-            let delay = stepDuration * Double(i)
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
-                guard let self = self,
-                      let p = self.backgroundMusicPlayer,
-                      self.fadeSessionID == sessionID else { return } // cancela fade antigo
-                let progress = Float(i) / Float(steps)
-                p.volume = max(0, startVolume * (1 - progress))
-                if i == steps, stopAfter {
-                    self.stopBackgroundMusic()
-                }
-            }
-        }
-    }
+    func fadeOutBackgroundMusic(duration: TimeInterval = 1.0, stopAfter: Bool = true) {
+           let sessionID = UUID()
+           fadeSessionID = sessionID
+           
+           // pega snapshot dos players ativos
+           let players = [backgroundMusicPlayer].compactMap { $0 } + crossfadePlayers
+           guard !players.isEmpty else { return }
+           
+           let startVolumes = players.map { $0.volume }
+           let steps = max(1, 60)
+           let stepDuration = duration / Double(steps)
+           
+           for i in 0...steps {
+               let delay = stepDuration * Double(i)
+               DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                   guard let self, self.fadeSessionID == sessionID else { return }
+                   let progress = Float(i) / Float(steps)
+                   for (idx, player) in players.enumerated() {
+                       player.volume = max(0, startVolumes[idx] * (1 - progress))
+                   }
+                   if i == steps, stopAfter {
+                       for player in players {
+                           player.stop()
+                       }
+                       self.backgroundMusicPlayer = nil
+                       self.crossfadePlayers.removeAll()
+                   }
+               }
+           }
+       }
 
     // MARK: - Efeitos Sonoros
     func playSound(named name: String) {
@@ -208,6 +215,7 @@ class AudioManager {
             return nil
         }
     }
+    
 }
 
 extension AudioManager {
@@ -218,6 +226,85 @@ extension AudioManager {
         playSound(named: name)
     }
 }
+
+extension AudioManager {
+    
+    /// Reproduz música de fundo em loop contínuo com crossfade entre cada repetição.
+    func playLoopingBackgroundMusic(named name: String, crossfadeDuration: TimeInterval = 2.0) {
+        startBackgroundMusic(named: name, crossfadeDuration: crossfadeDuration)
+    }
+    
+    private func startBackgroundMusic(named name: String, crossfadeDuration: TimeInterval) {
+        guard let url = supportedExtensions.compactMap({ Bundle.main.url(forResource: name, withExtension: $0) }).first else { return }
+        
+        do {
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.volume = bgmVolume
+            player.prepareToPlay()
+            player.play()
+            backgroundMusicPlayer = player
+            
+            // Agenda crossfade antes do fim
+            let delay = player.duration - crossfadeDuration
+            if delay > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                    self?.crossfadeBackgroundMusic(named: name, duration: crossfadeDuration)
+                }
+            }
+            
+        } catch {
+            print("Erro ao carregar música \(name): \(error)")
+        }
+    }
+    
+    private func crossfadeBackgroundMusic(named name: String, duration: TimeInterval) {
+        guard let oldPlayer = backgroundMusicPlayer else { return }
+        guard let url = supportedExtensions.compactMap({ Bundle.main.url(forResource: name, withExtension: $0) }).first else { return }
+        
+        do {
+            let newPlayer = try AVAudioPlayer(contentsOf: url)
+            newPlayer.volume = 0.0
+            newPlayer.prepareToPlay()
+            newPlayer.play()
+            
+            // registra os dois no array de ativos
+            crossfadePlayers = [oldPlayer, newPlayer]
+            
+            backgroundMusicPlayer = newPlayer
+            
+            let steps = 60
+            let stepDuration = duration / Double(steps)
+            for i in 0...steps {
+                let delay = stepDuration * Double(i)
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                    guard let self else { return }
+                    let progress = Float(i) / Float(steps)
+                    oldPlayer.volume = self.bgmVolume * (1 - progress)
+                    newPlayer.volume = self.bgmVolume * progress
+                    if i == steps {
+                        oldPlayer.stop()
+                        self.crossfadePlayers = [newPlayer] // só o novo fica ativo
+                    }
+                }
+            }
+            
+            // agenda próximo crossfade
+            let delay = newPlayer.duration - duration
+            if delay > 0 {
+                DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+                    self?.crossfadeBackgroundMusic(named: name, duration: duration)
+                }
+            }
+            
+        } catch {
+            print("Erro ao preparar crossfade: \(error)")
+        }
+    }
+
+}
+
+
+
 
 /////Como usar!
 //// Som de efeito
