@@ -71,6 +71,12 @@ extension GameScene {
         for name in sceneConfiguration!.spawners {
             if let node = childNode(withName: name) as? SKSpriteNode {
                 let spawner = SpawnEntity(node: node)
+                if let last = name.last,
+                   let number = Int(String(last)) {
+                    configureSpawner(offSetNumber: number, entity: spawner)
+                } else {
+                    configureSpawner(offSetNumber: 1, entity: spawner)
+                }
                 print("Spawn Position \(node.position)")
                 SKEntityManager.shared.add(spawner)
                 
@@ -87,6 +93,12 @@ extension GameScene {
                 }
             } else {
                 print("Node '\(name)' não encontrado na cena!")
+            }
+            func configureSpawner(offSetNumber: Int, entity: SpawnEntity){
+                let spawnerComponent = TroopSpawnerComponent(timeOffsetGeneration: offSetNumber)
+                spawnerComponent.setupWithScene(self)
+                entity.addComponent(spawnerComponent)
+                WaveManager.shared.registerEnemyBuilding(entity)
             }
         }
         
