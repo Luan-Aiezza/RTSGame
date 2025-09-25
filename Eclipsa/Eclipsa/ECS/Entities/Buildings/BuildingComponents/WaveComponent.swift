@@ -138,6 +138,8 @@ class TroopSpawnerComponent: GKComponent {
     private var currentWaveConfig: WaveConfiguration?
     private var troopsSpawned = 0
     private weak var scene: GameScene?
+    private var timeOffsetGeneration: TimeInterval
+    
     
     var spawnOffset: CGPoint {
         let angle = Double.random(in: 0..<2*Double.pi)
@@ -145,7 +147,11 @@ class TroopSpawnerComponent: GKComponent {
         return CGPoint(x: (cos(angle) * radius).magnitude, y: sin(angle) * radius)
     }
     
-    override init() {
+    init(timeOffsetGeneration: Double) {
+        let convertToTimeInterval = (timeOffsetGeneration / 5.0) - (timeOffsetGeneration / 10.5)
+        
+        self.timeOffsetGeneration = convertToTimeInterval
+    
         super.init()
     }
     
