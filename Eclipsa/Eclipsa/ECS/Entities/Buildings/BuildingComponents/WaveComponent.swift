@@ -173,6 +173,15 @@ class TroopSpawnerComponent: GKComponent {
         }
     }
     
+    private func verifyWaveTimer(configureTimer: TimeInterval, offsetTimer: TimeInterval) -> TimeInterval{
+        let convertedTimer = configureTimer - offsetTimer
+        
+        if convertedTimer < 1.2 {
+            return 1.2
+        }
+        return convertedTimer
+    }
+    
     func stopWave() {
         spawnTimer?.invalidate()
         spawnTimer = nil
