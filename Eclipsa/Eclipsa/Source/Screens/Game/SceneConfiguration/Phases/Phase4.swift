@@ -17,14 +17,14 @@ class Phase4: SceneConfiguration {
                 difficultyMultiplier: 1.0
             ),
             WaveConfiguration(
-                waveNumber: 3,
+                waveNumber: 2,
                 duration: 45.0,
                 spawnInterval: 1.8,
                 maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.2
             ),
             WaveConfiguration(
-                waveNumber: 3,
+                waveNumber: 2,
                 duration: 60.0,
                 spawnInterval: 1.5,
                 maxTroopsPerBuilding: 3,
