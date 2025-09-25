@@ -31,13 +31,6 @@ public class SpawnEntity: BuildingEntity {
                 }
             }
         }
-        
-        // ✅ Adiciona componente de spawn
-        let spawnerComponent = TroopSpawnerComponent()
-        spawnerComponent.setupWithScene(WaveManager.shared.scene!)
-        addComponent(spawnerComponent)
-        
-        WaveManager.shared.registerEnemyBuilding(self)
     }
     
     required init?(coder: NSCoder) {
