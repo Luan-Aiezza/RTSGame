@@ -94,7 +94,7 @@ enum TroopFactory{
         
         animationComponent.addAnimation(textures: idleTextures, for: .idle, timePerFrame: 0.12)
         animationComponent.addAnimation(textures: walkTextures, for: .walk, timePerFrame: 0.10)
-        animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.10, repeatForever: true)
+        animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.4, repeatForever: true)
         animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         // Nova animação de invocação
         animationComponent.addAnimation(textures: risingTextures, for: .custom("rising"), timePerFrame: 0.08, repeatForever: false)

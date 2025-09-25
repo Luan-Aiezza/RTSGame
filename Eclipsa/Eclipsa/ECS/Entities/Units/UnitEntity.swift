@@ -32,7 +32,7 @@ public class UnitEntity: BaseUnitEntity {
             nodeHeight: spriteNode.size.height,
             width: 42 * 1.2, // 1.5x maior
             height: 7,
-            color: .orange   // cor principal laranja
+            color: .systemYellow   // cor principal laranja
         )
         self.addComponent(healthBar)
 
