@@ -107,14 +107,14 @@ extension GameScene {
         }
         
         // Animação da garota caminhando (mais abaixo)
-        let girlTextures: [SKTexture] = (1...4).map { SKTexture(imageNamed: "Transition_Walk_Girl_\($0)") }
+        let girlTextures: [SKTexture] = (1...12).map { SKTexture(imageNamed: "Transition_Walk_Girl_\($0)") }
         girlTextures.forEach { $0.filteringMode = .nearest }
         if let first = girlTextures.first {
             let girl = SKSpriteNode(texture: first)
             girl.name = "PhaseGirl"
             girl.position = CGPoint(x: 0, y: -80)
             girl.zPosition = 1.0
-            girl.setScale(0.1)
+            girl.setScale(0.2)
             overlay.addChild(girl)
             
             if girlTextures.count >= 2 {

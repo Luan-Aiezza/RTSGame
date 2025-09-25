@@ -103,10 +103,12 @@ extension GameScene {
         setupRTSAiming()
         
         controlledEntity.addComponent(AimControlComponent(delegate: aimingSystem!))
-        controlledEntity.component(ofType: AimControlComponent.self)?.setupController(inputHandler: commandInput, virtualController: commandController)
+        controlledEntity.component(ofType: AimControlComponent.self)?
+            .setupController(inputHandler: commandInput, virtualController: commandController)
         
         setupAdatpedVirtualController()
         physicsSystem.setupHeroPhysics(for: controlledEntity)
+        
         if let rangeComp = controlledEntity.component(ofType: RangeComponent.self),
            let nodeComp = controlledEntity.component(ofType: GKSKNodeComponent.self) {
             let scene = nodeComp.node.scene ?? self
@@ -118,7 +120,12 @@ extension GameScene {
         }
         // Garante que o novo player tenha o observer de morte
         observePlayerDeath()
+        // 🔹 Inicializa o footprintManager só agora
+        if let node = controlledEntity.component(ofType: GKSKNodeComponent.self)?.node {
+            footprintManager = FootprintManager(scene: self, player: node)
+        }
     }
+
     
     func setupCamera() {
         if let camera = self.camera {

@@ -41,6 +41,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     // Substituímos o label numérico por um componente de HUD com ícones
     private var resourceHUD: UIResourceComponent?
     private var cancellables = Set<AnyCancellable>()
+    public var footprintManager: FootprintManager?
 
     // Novo: componente visual para geração de recurso nos Inhibitors
     private var solarGeneratorUI: UISolarGeneratorComponent?
@@ -150,6 +151,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         // --- Atualiza sistemas normalmente ---
         SKEntityManager.shared.update(deltaTime)
 
+        footprintManager?.update(deltaTime: deltaTime, currentTime: currentTime)
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }
         cameraEntity?.followPlayer(player: controlledEntity)
