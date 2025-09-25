@@ -167,8 +167,8 @@ class TroopSpawnerComponent: GKComponent {
         currentWaveConfig = waveConfig
         troopsSpawned = 0
         
-        // Inicia o timer de spawn
-        spawnTimer = Timer.scheduledTimer(withTimeInterval: waveConfig.spawnInterval, repeats: true) { [weak self] _ in
+        let useTimer = verifyWaveTimer(configureTimer: waveConfig.spawnInterval, offsetTimer: timeOffsetGeneration)
+        spawnTimer = Timer.scheduledTimer(withTimeInterval: useTimer, repeats: true) { [weak self] _ in
             self?.spawnTroop()
         }
     }
