@@ -192,11 +192,23 @@ class TroopSpawnerComponent: GKComponent {
     }
     
     private func createTroop(at position: CGPoint) -> TroopEntity? {
-        let troop = TroopFactory.makeRanged(team: .moon) {
-            return []
+        // 50% de chance de ser ranged, 50% melee
+        let troop: TroopEntity
+        if Bool.random() {
+            troop = TroopFactory.makeRanged(team: .moon) {
+                return []
+            }
+        } else {
+            troop = TroopFactory.makeMelee(team: .moon) {
+                return []
+            }
         }
+        
+        // Define posição com offset
         troop.component(ofType: GKSKNodeComponent.self)?.node.position = position + spawnOffset
-        guard let nexusTarget = scene?.userData?["Nexus"] as? NexusEntity else { return nil}
+        
+        // Configura comportamento e alvo
+        guard let nexusTarget = scene?.userData?["Nexus"] as? NexusEntity else { return nil }
         let behavior = TroopBehaviorComponent(
             troop: troop,
             target: nexusTarget,
@@ -208,4 +220,5 @@ class TroopSpawnerComponent: GKComponent {
         
         return troop
     }
+
 }
