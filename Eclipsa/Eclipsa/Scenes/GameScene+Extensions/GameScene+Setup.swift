@@ -95,7 +95,7 @@ extension GameScene {
                 print("Node '\(name)' não encontrado na cena!")
             }
             func configureSpawner(offSetNumber: Int, entity: SpawnEntity){
-                let spawnerComponent = TroopSpawnerComponent(timeOffsetGeneration: offSetNumber)
+                let spawnerComponent = TroopSpawnerComponent(timeOffsetGeneration: Double(offSetNumber))
                 spawnerComponent.setupWithScene(self)
                 entity.addComponent(spawnerComponent)
                 WaveManager.shared.registerEnemyBuilding(entity)
