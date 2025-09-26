@@ -32,7 +32,7 @@ class ButtonsSet {
         scene.camera
     }
     
-    var entity: UnitEntity {
+    var entity: UnitEntity? {
         scene.controlledEntity
     }
     
@@ -58,7 +58,7 @@ class ButtonsSet {
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
             if ResourceHandler.shared.getStoredResources() >= TroopCost.meleeCost{
-                self.entity.generator?.generateMelee(troops: self.troops) { troop in
+                self.entity?.generator?.generateMelee(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
                        let troop = troop{
                         self.scene.addChild(node)
@@ -85,7 +85,7 @@ class ButtonsSet {
         invokeRangedButton.onTouch = { [weak self] in
             guard let self = self else { return }
             if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
-                self.entity.generator?.generateRanged(troops: self.troops) { troop in
+                self.entity?.generator?.generateRanged(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
                        let troop = troop{
                         self.scene.addChild(node)
