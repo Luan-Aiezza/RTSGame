@@ -5,6 +5,9 @@ import BehindGameKit
 import GameplayKit
 
 class GameScene: SKGameScene, SKPhysicsContactDelegate {
+    
+    public weak var pauseButtonDelegate: GameScenePauseDelegate?
+    
     public var controlledEntity: UnitEntity!
     public var cameraEntity: CameraEntity!
     public var troopNode: SKSpriteNode?
@@ -128,6 +131,7 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             showPhaseOverlayFromSceneName()
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
                 self?.hidePhaseOverlay()
+                self?.pauseButtonDelegate?.showPauseButton()
             }
         }
         
