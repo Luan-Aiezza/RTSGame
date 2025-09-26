@@ -20,28 +20,28 @@ class Phase3: SceneConfiguration {
                 waveNumber: 2,
                 duration: 45.0,
                 spawnInterval: 1.8,
-                maxTroopsPerBuilding: 3,
+                maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.2
             ),
             WaveConfiguration(
                 waveNumber: 2,
                 duration: 60.0,
                 spawnInterval: 1.5,
-                maxTroopsPerBuilding: 3,
+                maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.5
             ),
             WaveConfiguration(
                 waveNumber: 3,
                 duration: 75.0,
                 spawnInterval: 1.2,
-                maxTroopsPerBuilding: 3,
+                maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 1.8
             ),
             WaveConfiguration(
                 waveNumber: 4,
                 duration: 90.0,
                 spawnInterval: 1.0,
-                maxTroopsPerBuilding: 4,
+                maxTroopsPerBuilding: 2,
                 difficultyMultiplier: 2.0
             )
         ]
