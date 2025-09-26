@@ -32,7 +32,7 @@ class GameViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    let pauseButton: UIButton = {
+    private let pauseButton: UIButton = {
         let button = UIButton(type: .custom)
         button.setImage(UIImage(systemName: "pause.fill"), for: .normal)
         button.tintColor = .lightGray
@@ -41,6 +41,15 @@ class GameViewController: UIViewController {
         button.isHidden = true
         return button
     }()
+    
+    private let pauseView: PauseView = {
+        let view = PauseView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        view.isUserInteractionEnabled = false
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -88,6 +97,7 @@ class GameViewController: UIViewController {
         skView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(skView)
         skView.addSubview(pauseButton)
+        skView.addSubview(pauseView)
         skView.isMultipleTouchEnabled = true
 //        setupDebugOptions()
         setupConstraints()
@@ -103,7 +113,13 @@ class GameViewController: UIViewController {
             pauseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
             pauseButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             pauseButton.heightAnchor.constraint(equalToConstant: 36),
-            pauseButton.widthAnchor.constraint(equalToConstant: 36)
+            pauseButton.widthAnchor.constraint(equalToConstant: 36),
+            
+            pauseView.topAnchor.constraint(equalTo: view.topAnchor),
+            pauseView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            pauseView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            pauseView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            
         ])
     }
     
@@ -132,7 +148,8 @@ class GameViewController: UIViewController {
     private func handlePause(){
         guard var scene = skView.scene else { return }
         scene.isPaused.toggle()
-        scene.isPaused ? WaveManager.shared.pauseWaveSystem() : WaveManager.shared.startNextWave()
+        pauseView.handleHidePauseView()
+        scene.isPaused ? WaveManager.shared.pauseWaveSystem() : WaveManager.shared.resumeWaveSystem()
     }
     
     @objc
