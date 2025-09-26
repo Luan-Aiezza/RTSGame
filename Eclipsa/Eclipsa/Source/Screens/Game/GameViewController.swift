@@ -34,7 +34,7 @@ class GameViewController: UIViewController {
     
     private let pauseButton: UIButton = {
         let button = UIButton(type: .custom)
-        button.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        button.setImage(UIImage(named: "Pause_Button"), for: .normal)
         button.tintColor = .lightGray
         button.addTarget(self, action: #selector(handlePause), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false

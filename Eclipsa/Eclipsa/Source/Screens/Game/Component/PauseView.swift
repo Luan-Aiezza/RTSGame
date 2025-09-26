@@ -9,10 +9,18 @@ import UIKit
 
 class PauseView: UIView {
     
+    private let titleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "PAUSE"
+        label.font = UIFont(name: "CCPixelArcade-Display", size: 50)
+        label.textColor = .systemYellow
+        return label
+    }()
+    
     private let continueLabel: UILabel = {
         let label = UILabel()
         label.text = "Continue"
-        label.font = UIFont(name: "CCPixelArcade-Joystick", size: 50)
+        label.font = UIFont(name: "CCPixelArcade-Joystick", size: 24)
         label.textColor = .white
         return label
     }()
@@ -20,6 +28,7 @@ class PauseView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
+        startPulseAnimation()
     }
     
     required init?(coder: NSCoder) {
@@ -27,23 +36,45 @@ class PauseView: UIView {
     }
     
     private func setupView() {
+        backgroundColor = .black.withAlphaComponent(0.6)
+        
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         continueLabel.translatesAutoresizingMaskIntoConstraints = false
-        backgroundColor = .black.withAlphaComponent(0.4)
+        
+        addSubview(titleLabel)
         addSubview(continueLabel)
+        
         setupConstraints()
     }
     
     private func setupConstraints() {
         NSLayoutConstraint.activate([
+            // Centraliza o título no topo
+            titleLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
+            titleLabel.bottomAnchor.constraint(equalTo: continueLabel.topAnchor, constant: -40),
+            
+            // Centraliza o botão Continue
             continueLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             continueLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
         ])
     }
     
     func handleHidePauseView() {
-        DispatchQueue.main.async{
+        DispatchQueue.main.async {
             self.isHidden.toggle()
         }
     }
     
+    private func startPulseAnimation() {
+        UIView.animate(withDuration: 0.8,
+                       delay: 0,
+                       options: [.repeat, .autoreverse, .allowUserInteraction],
+                       animations: {
+            self.continueLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            self.continueLabel.alpha = 0.6
+        }, completion: { _ in
+            self.continueLabel.transform = .identity
+            self.continueLabel.alpha = 1.0
+        })
+    }
 }
