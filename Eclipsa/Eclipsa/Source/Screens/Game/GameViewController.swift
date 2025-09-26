@@ -27,6 +27,16 @@ class GameViewController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    let pauseButton: UIButton = {
+        let button = UIButton(type: .custom)
+        button.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        button.tintColor = .lightGray
+        button.addTarget(self, action: #selector(handlePause), for: .touchUpInside)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isHidden = true
+        return button
+    }()
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
@@ -72,7 +82,7 @@ class GameViewController: UIViewController {
     func setupUI() {
         skView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(skView)
-//        view.addSubview(button)
+        skView.addSubview(pauseButton)
         skView.isMultipleTouchEnabled = true
 //        setupDebugOptions()
         setupConstraints()
@@ -83,7 +93,12 @@ class GameViewController: UIViewController {
             skView.topAnchor.constraint(equalTo: view.topAnchor),
             skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
             skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            skView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            skView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            
+            pauseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
+            pauseButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            pauseButton.heightAnchor.constraint(equalToConstant: 36),
+            pauseButton.widthAnchor.constraint(equalToConstant: 36)
         ])
     }
     
