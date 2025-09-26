@@ -11,7 +11,7 @@ import BehindGameKit
 
 class WaveManager: NSObject {
     static let shared = WaveManager()
-    
+    private var remainingWaveTime: TimeInterval?
     private var currentWave = 0
     private var waveConfigurations: [WaveConfiguration] = []
     private var isWaveActive = false
@@ -107,13 +107,37 @@ class WaveManager: NSObject {
     
     // Método para pausar o sistema de waves
     func pauseWaveSystem() {
-        waveTimer?.invalidate()
+        if let waveTimer = waveTimer {
+            remainingWaveTime = waveTimer.fireDate.timeIntervalSinceNow
+            waveTimer.invalidate()
+        }
+        
         for building in enemyBuildings {
             if let spawner = building.component(ofType: TroopSpawnerComponent.self) {
                 spawner.stopWave()
             }
         }
         isWaveActive = false
+    }
+    
+    func resumeWaveSystem() {
+        guard !isWaveActive,
+              let remaining = remainingWaveTime else { return }
+
+        isWaveActive = true
+        
+        // recomeça o spawn em cada building
+        for building in enemyBuildings {
+            building.component(ofType: TroopSpawnerComponent.self)!.resumeWave(waveConfig: waveConfigurations[currentWave - 1])
+            print("chamado resumeWave em \(building)")
+        }
+        
+        // recria o timer de término da wave com o tempo restante
+        waveTimer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { [weak self] _ in
+            self?.endCurrentWave()
+        }
+        
+        print("Wave \(currentWave) retomada. Restando \(remaining) segundos.")
     }
     
     // Método para resetar o sistema de waves
@@ -187,6 +211,17 @@ class TroopSpawnerComponent: GKComponent {
         spawnTimer = nil
         currentWaveConfig = nil
         troopsSpawned = 0 // Reset do contador para a próxima wave
+    }
+    
+    func resumeWave(waveConfig: WaveConfiguration) {
+        currentWaveConfig = waveConfig
+        dump(waveConfig)
+        
+        let useTimer = verifyWaveTimer(configureTimer: currentWaveConfig!.spawnInterval, offsetTimer: timeOffsetGeneration)
+        print(useTimer)
+        spawnTimer = Timer.scheduledTimer(withTimeInterval: useTimer, repeats: true) { [weak self] _ in
+            self?.spawnTroop()
+        }
     }
     
     private func spawnTroop() {
