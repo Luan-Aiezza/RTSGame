@@ -7,7 +7,7 @@ public class AttackComponent: GKComponent {
     private var lastAttackTime: TimeInterval = 0
     private var damage: Int
     
-    public init(unit: BaseUnitEntity, damage: Int = 10, cooldown: TimeInterval = 2.0) {
+    public init(unit: BaseUnitEntity, damage: Int = 5, cooldown: TimeInterval = 2.0) {
         self.unit = unit
         self.damage = damage
         self.cooldown = cooldown

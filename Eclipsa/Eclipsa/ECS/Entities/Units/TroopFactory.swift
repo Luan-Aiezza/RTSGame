@@ -86,7 +86,7 @@ enum TroopFactory{
         let deathTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Dead_", quantity: 12)
         let risingTextures = TextureHandler.makeTexture(name: "\(risingPrefix)Rising_", quantity: 12)
         let spriteSize = CGSize(width: 48, height: 48)
-        let maxHealth = 250
+        let maxHealth = 900
         
         let meleeTroop = TroopEntity(team: team, maxHealth: maxHealth, spriteSize: spriteSize, allTroops: allTroops)
         

@@ -74,31 +74,30 @@ public class MeleeAttackComponent: GKComponent {
 
         health.takeDamage(damage)
 
-        // 3) Ensure death handling happens immediately for melee (no projectile to finalize the kill)
+        // dentro de performAttack, no trecho de morte do inimigo:
         if health.currentHealth <= 0 {
-            // Try to call a `die()` helper if the entity provides it
             if let troop = target as? TroopEntity {
                 troop.die()
             } else if let knight = target as? KnightTroopEntity {
                 knight.die()
             } else {
-                // Fallback: remove/destroy target entity when no typed die() exists
                 if let node = target.component(ofType: GKSKNodeComponent.self)?.node {
                     node.removeAllActions()
                     node.removeFromParent()
                 }
                 target.destroy()
-
-                // Força o behavior a reavaliar alvo
-                if let behavior = unit.component(ofType: TroopBehaviorComponent.self) {
-                    behavior.setTarget(nil) // limpa o congelado
-                    behavior.configureBehavior()
-                }
-
-                // E força a stateMachine a voltar pro Idle, que já checa novo alvo
-                unit.stateMachineComponent.stateMachine.enter(TroopIdleState.self)
             }
+
+            // 🔑 Apenas invalida o currentTarget (sem perder defaultTarget/manualTarget)
+            if let behavior = unit.component(ofType: TroopBehaviorComponent.self) {
+                behavior.clearManualTargetPoint() // se quiser limpar clique manual
+                behavior.configureBehavior()
+            }
+
+            // Volta pro Idle (vai puxar novo alvo automaticamente)
+            unit.stateMachineComponent.stateMachine.enter(TroopIdleState.self)
         }
+
     }
 
     public required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }

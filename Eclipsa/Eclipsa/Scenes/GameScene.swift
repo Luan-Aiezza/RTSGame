@@ -118,12 +118,12 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         if self.name == "GameScene_1" {
             // Tutorial
             //removeWizardButton()
-            buttons.invokeRangedButton?.isHidden = true
+            buttons.invokeMeleeButton?.isHidden = true
         }
         // Tutorial
         if self.name == "GameScene_0" {
             AudioManager.shared.fadeInBackgroundMusic(named: "OST_InTutorial")
-            buttons.invokeRangedButton?.isHidden = true
+            buttons.invokeMeleeButton?.isHidden = true
             startDialogue()
             
         } else {
