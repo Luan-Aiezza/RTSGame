@@ -158,7 +158,7 @@ final class HomeView: UIView {
             playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             
             // Settings button at top-right
-            settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 8),
+            settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             settingsButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),
         ])
     }
