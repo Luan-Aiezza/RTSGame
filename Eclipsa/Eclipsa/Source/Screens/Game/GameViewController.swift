@@ -9,6 +9,10 @@ import UIKit
 import SpriteKit
 import GameplayKit
 
+protocol GameScenePauseDelegate: AnyObject {
+    func showPauseButton()
+}
+
 class GameViewController: UIViewController {
     
     let sceneManager: SceneManager
@@ -51,6 +55,7 @@ class GameViewController: UIViewController {
         scene.onFinished = { [weak self] in
             if let phaseOne = self?.sceneManager.phaseOne(){
                 DispatchQueue.main.async {
+                    phaseOne.pauseButtonDelegate = self
                     self?.skView.presentScene(phaseOne)
                     // Start in-game background music with lower volume, looping, and fade in
                     AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
@@ -121,5 +126,23 @@ class GameViewController: UIViewController {
 
     override var prefersStatusBarHidden: Bool {
         return true
+    }
+    
+    @objc
+    private func handlePause(){
+        guard var scene = skView.scene else { return }
+        scene.isPaused.toggle()
+        scene.isPaused ? WaveManager.shared.pauseWaveSystem() : WaveManager.shared.startNextWave()
+    }
+    
+    @objc
+    private func printDebug(){
+        print("pressionei")
+    }
+}
+
+extension GameViewController: GameScenePauseDelegate {
+    func showPauseButton() {
+        pauseButton.isHidden.toggle()
     }
 }
