@@ -21,7 +21,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     private func setupAimingVisuals() {
         // Círculo verde translúcido para indicar o ponto final
         aimingMarker = SKShapeNode(circleOfRadius: 48)
-        aimingMarker?.fillColor = .green
+        aimingMarker?.fillColor = .orange
         aimingMarker?.strokeColor = .clear
         aimingMarker?.alpha = 0.3
         aimingMarker?.isHidden = true
@@ -30,7 +30,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         
         // Indicador de alcance
         rangeIndicator = SKShapeNode()
-        rangeIndicator?.strokeColor = .green
+        rangeIndicator?.strokeColor = .orange
         rangeIndicator?.fillColor = .clear
         rangeIndicator?.lineWidth = 2.0
         rangeIndicator?.alpha = 0.3
@@ -59,7 +59,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     private func setupDragAiming() {
         let path = CGMutablePath()
         path.addArc(center: centerPosition,
-                    radius: CGFloat(aimingComponent?.maxRange ?? 0),
+                    radius: CGFloat(aimingComponent?.maxRange ?? 0) * 0.9,
                     startAngle: 0,
                     endAngle: .pi * 2,
                     clockwise: true)
@@ -90,7 +90,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         let path = CGMutablePath()
         path.addArc(
             center: centerPosition,
-            radius: CGFloat(aimingComponent?.maxRange ?? 0),
+            radius: CGFloat(aimingComponent?.maxRange ?? 0) * 0.9,
             startAngle: 0,
             endAngle: .pi * 2,
             clockwise: true

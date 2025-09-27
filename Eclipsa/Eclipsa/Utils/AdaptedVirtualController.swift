@@ -6,6 +6,12 @@ import BehindGameKit
 public class AdaptedVirtualController: ObservableObject, AimAdapter{
     
     private var analogNode: AdaptedAnalogNode
+
+    // Tap detection state
+    private var touchBeganTimestamp: TimeInterval?
+    private var didMoveDuringTouch: Bool = false
+    public var onTap: (() -> Void)?
+    public var onTouchBegan: (() -> Void)?
     
     public init(scene: SKScene, analogRadius: CGFloat = 20, color: UIColor = .white) {
         analogNode = AdaptedAnalogNode(radius: analogRadius)
@@ -47,20 +53,59 @@ public class AdaptedVirtualController: ObservableObject, AimAdapter{
     }
     
     public func touchBegan(_ touches: SetTouches, with event: UIEventAlias?) {
+        // Prepare for tap detection
+        didMoveDuringTouch = false
+        #if os(iOS) || os(tvOS)
+        if let first = touches.first {
+            touchBeganTimestamp = first.timestamp
+        } else {
+            touchBeganTimestamp = nil
+        }
+        #elseif os(macOS)
+        touchBeganTimestamp = event?.timestamp
+        #else
+        touchBeganTimestamp = nil
+        #endif
+
+        onTouchBegan?()
         analogNode.touchesBeganAlias(touches, with: event)
     }
     
     public func touchMoved(_ touches: SetTouches, with event: UIEventAlias?) {
+        didMoveDuringTouch = true
+
         if analogNode.isVisible {
             analogNode.touchesMovedAlias(touches, with: event)
         }
     }
     
     public func touchesEnded(_ touches: SetTouches, with event: UIEventAlias?) {
+        // Detect tap (no movement and short press)
+        var isShortPress = true
+        #if os(iOS) || os(tvOS)
+        if let start = touchBeganTimestamp, let end = touches.first?.timestamp {
+            isShortPress = (end - start) < 0.25
+        }
+        #elseif os(macOS)
+        if let start = touchBeganTimestamp, let end = event?.timestamp {
+            isShortPress = (end - start) < 0.25
+        }
+        #endif
+        if !didMoveDuringTouch && isShortPress {
+            onTap?()
+        }
+        // reset state
+        touchBeganTimestamp = nil
+        didMoveDuringTouch = false
+
         analogNode.touchesEndedAlias(touches, with: event)
     }
     
     public func touchesCancelled(_ touches: SetTouches, with event: UIEventAlias?) {
+        // reset state
+        touchBeganTimestamp = nil
+        didMoveDuringTouch = false
+
         analogNode.touchesCancelledAlias(touches, with: event)
     }
 }
@@ -77,3 +122,4 @@ extension AdaptedVirtualController {
         }
     }
 }
+

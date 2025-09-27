@@ -242,13 +242,16 @@ class TroopSpawnerComponent: GKComponent {
     }
     
     private func createTroop(at position: CGPoint) -> TroopEntity? {
-        // 50% de chance de ser ranged, 50% melee
         let troop: TroopEntity
-        if Bool.random() {
+        
+        // Gera um número de 0.0 até 1.0
+        let chance = Double.random(in: 0...1)
+        
+        if chance < 0.8 { // 70% ranged
             troop = TroopFactory.makeRanged(team: .moon) {
                 return []
             }
-        } else {
+        } else { // 30% melee
             troop = TroopFactory.makeMelee(team: .moon) {
                 return []
             }
@@ -270,5 +273,6 @@ class TroopSpawnerComponent: GKComponent {
         
         return troop
     }
+
 
 }

@@ -21,30 +21,31 @@ extension GameScene {
     }
     
     // MARK: - Visual FX
-    func playFollowEffectAtPlayer(timePerFrame: TimeInterval = 0.04) {
-        guard let playerNode = controlledEntity?.component(ofType: AnimationComponent.self)?.node else { return }
-        
-        let textures: [SKTexture] = (1...13).map { SKTexture(imageNamed: "Follow_Effect_\($0)") }
-        guard !textures.isEmpty else { return }
-        
-        let effectNode = SKSpriteNode(texture: textures.first)
-        effectNode.name = "FollowEffect" // nome para o depth sort reconhecer
-        effectNode.alpha = 0.6
-        effectNode.position = CGPoint(
-            x: playerNode.position.x,
-            y: playerNode.position.y - 12
-        )
-        // zPosition inicial será ajustado pelo depth sort; aqui não importa mais
-        effectNode.isUserInteractionEnabled = false
-        effectNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        addChild(effectNode)
-        
-        let animate = SKAction.animate(with: textures, timePerFrame: timePerFrame, resize: false, restore: false)
-        let sequence = SKAction.sequence([
-            animate,
-            .removeFromParent()
-        ])
-        effectNode.run(sequence)
-    }
+//    func playFollowEffectAtPlayer(timePerFrame: TimeInterval = 0.04) {
+//        guard let playerNode = controlledEntity?.component(ofType: AnimationComponent.self)?.node else { return }
+//        
+//        let textures: [SKTexture] = (1...20).map { SKTexture(imageNamed: "Follow_Effect_\($0)") }
+//        guard !textures.isEmpty else { return }
+//        
+//        let effectNode = SKSpriteNode(texture: textures.first)
+//        effectNode.name = "FollowEffect" // nome para o depth sort reconhecer
+//        effectNode.alpha = 0.6
+//        effectNode.setScale(0.8)
+//        effectNode.position = CGPoint(
+//            x: playerNode.position.x,
+//            y: playerNode.position.y - 12
+//        )
+//        // zPosition inicial será ajustado pelo depth sort; aqui não importa mais
+//        effectNode.isUserInteractionEnabled = false
+//        effectNode.anchorPoint = CGPoint(x: 0.5, y: 0.5)
+//        
+//        addChild(effectNode)
+//        
+//        let animate = SKAction.animate(with: textures, timePerFrame: timePerFrame, resize: false, restore: false)
+//        let sequence = SKAction.sequence([
+//            animate,
+//            .removeFromParent()
+//        ])
+//        effectNode.run(sequence)
+//    }
 }

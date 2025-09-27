@@ -35,6 +35,17 @@ extension GameScene {
         buttons.followButton?.handleTouch(location)
         buttons.invokeRangedButton?.handleTouch(location)
         buttons.invokeMeleeButton?.handleTouch(location)
+        
+        // Wire commandController began-touch to follow behavior (only once)
+        if let commandController = commandController, commandController.onTouchBegan == nil {
+            commandController.onTouchBegan = { [weak self] in
+                guard let self = self else { return }
+                // Dispara follow somente quando o toque começa no analógico direito
+                self.troopControlSystem?.commandTroopsToFollow()
+                //self.playFollowEffectAtPlayer()
+            }
+        }
+        
         if location.x <= 0 {
 //            gameController?.setAnalogVisible(value: true)
 //            gameController?.changePosition(location)

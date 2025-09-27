@@ -40,7 +40,7 @@ class ButtonsSet {
         scene.troops
     }
     private func setupButtons(){
-        setupFollowButtonUI()
+        //setupFollowButtonUI()
         setupInvokeRangedButtonUI()
         setupInvokeMeleeButtonUI()
     }
@@ -113,7 +113,7 @@ class ButtonsSet {
         followButton.onTouch = { [weak self] in
             guard let self = self else { return }
             self.scene.troopControlSystem.commandTroopsToFollow()
-            self.scene.playFollowEffectAtPlayer()
+            //self.scene.playFollowEffectAtPlayer()
 
         }
         followButton.toggleCommand(value: false)
