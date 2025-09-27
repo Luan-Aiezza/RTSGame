@@ -364,13 +364,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use the RED ANALOG to place troops, or call them closer with the GREEN BUTTON."
+            "value" : "Use the RED ANALOG to command nearby troops."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use o ANÁLOGICO VERMELHO para posicionar tropas, ou chame-as para perto clicando no BOTÃO VERDE."
+            "value" : "Use o ANÁLOGICO VERMELHO para comandar tropas próximas."
           }
         }
       }
