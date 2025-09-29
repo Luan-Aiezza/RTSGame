@@ -330,13 +330,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Now we need to summon some knights to defend your base, press the ORANGE BUTTON."
+            "value" : "Now we need to summon some troops to defend your base, press the YELLOW BUTTON."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Agora precisamos invocar alguns cavaleiros para defender sua base, clique no BOTÃO LARANJA."
+            "value" : "Agora precisamos invocar tropas para defender sua base, clique no BOTÃO AMARELO."
           }
         }
       }
@@ -364,13 +364,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use the RED ANALOG to command nearby troops."
+            "value" : "Hold the RED ANALOG STICK to call in nearby troops, and release it to release them."
           }
         },
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Use o ANÁLOGICO VERMELHO para comandar tropas próximas."
+            "value" : "Segure o ANÁLOGICO VERMELHO para chamar tropas próximas, e solte-o para liberá-las."
           }
         }
       }
@@ -439,6 +439,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Isso é tudo por enquanto... agora é com você!"
+          }
+        }
+      }
+    },
+    "dialogue2.1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Knights cost 3 crowns, summon them with the ORANGE BUTTON!"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Os cavaleiros custam 3 coroas, invoque-os clicando no BOTÃO LARANJA!"
           }
         }
       }

@@ -15,11 +15,11 @@ enum Position {
         return CGPoint(x: size.width/2 - 80, y: -size.height/2 + 180)
     }
     
-    static func followButton(size: CGSize) -> CGPoint {
+    static func invokeMeleeButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/3 - 40, y: -size.height/2 + 120)
     }
     
-    static func invokeMeleeButton(size: CGSize) -> CGPoint {
+    static func followButton(size: CGSize) -> CGPoint {
         return CGPoint(x: size.width/3 - 90, y: -size.height/2 + 60)
     }
     

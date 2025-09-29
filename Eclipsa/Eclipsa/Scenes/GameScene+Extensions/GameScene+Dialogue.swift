@@ -44,6 +44,25 @@ extension GameScene {
         runDialogueSequence(lines: lines, hud: hud)
     }
     
+    // Chamada no sceneDidLoad
+    func startDialogue2() {
+        setupDialogueHUDIfNeeded()
+        guard let hud = dialogueHUD, !isDialogueRunning else { return }
+        isDialogueRunning = true
+        
+        // usa DialogueLineColor
+        let lines: [DialogueLineColor] = (1...1).map {
+            DialogueLineColor(
+                text: NSLocalizedString("dialogue2.\($0)", comment: ""),
+                portraitImageName: nil
+            )
+        }
+        
+        runDialogueSequence(lines: lines, hud: hud)
+    }
+
+
+    
     private func runDialogueSequence(lines: [DialogueLineColor], hud: DialogueHUDColor) {
         guard !lines.isEmpty else {
             isDialogueRunning = false

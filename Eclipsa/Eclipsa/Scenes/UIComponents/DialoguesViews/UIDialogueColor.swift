@@ -9,23 +9,25 @@ struct DialogueHighlighter {
     static let colorMap: [String: SKColor] = [
         // 🇬🇧 English
         "BLUE ANALOG.": .systemBlue,
-        "ORANGE BUTTON.": .orange,
+        "YELLOW BUTTON.": .yellow,
         "CROWNS,": .yellow,
         "ALTARS,": .yellow,
         "RED ANALOG": .red,
         "GREEN BUTTON.": .green,
         "SANCTUARY,": .yellow,
         "PORTALS": .purple,
+        "BOTÃO LARANJA!": .orange,
         
         // 🇧🇷 Português
         "ANÁLOGICO AZUL.": .systemBlue,
-        "BOTÃO LARANJA.": .orange,
+        "BOTÃO AMARELO.": .yellow,
         "COROAS,": .yellow,
         "ALTARES,": .yellow,
         "ANÁLOGICO VERMELHO": .red,
         "BOTÃO VERDE.": .green,
         "SANTUÁRIO,": .yellow,
-        "PORTAIS": .systemPurple
+        "PORTAIS": .systemPurple,
+        "ORANGE BUTTON!": .orange
     ]
     
     static func highlightSegments(from text: String) -> [DialogueSegment] {

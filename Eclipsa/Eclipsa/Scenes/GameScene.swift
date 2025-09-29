@@ -120,6 +120,13 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             //removeWizardButton()
             buttons.invokeMeleeButton?.isHidden = true
         }
+        // --- checagem por nome da cena ---
+        if self.name == "GameScene_2" {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
+                self.startDialogue2()
+            }
+        }
+        
         // Tutorial
         if self.name == "GameScene_0" {
             AudioManager.shared.fadeInBackgroundMusic(named: "OST_InTutorial")
