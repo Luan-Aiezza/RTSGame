@@ -14,7 +14,7 @@ class Tutorial: SceneConfiguration {
                 waveNumber: 1,
                 duration: 30.0,
                 spawnInterval: 2.0,
-                maxTroopsPerBuilding: 2,
+                maxTroopsPerBuilding: 1,
                 difficultyMultiplier: 1.0
             )
         ]
