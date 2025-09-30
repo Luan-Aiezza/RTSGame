@@ -8,7 +8,7 @@
 
 class Tutorial: SceneConfiguration {
     init(){
-        super.init(inhibitorsQuantity: 1, spawnersQuantity: 1)
+        super.init(inhibitorsQuantity: 2, spawnersQuantity: 1)
         waveConfig = [
             WaveConfiguration(
                 waveNumber: 1,
