@@ -12,10 +12,17 @@ public class HealthBarComponent: GKComponent {
     private let offsetY: CGFloat
     private let mainColor: SKColor
     
+    private func applyAntiFlip() {
+        guard let parentNode = entity?.component(ofType: GKSKNodeComponent.self)?.node else { return }
+        let sign: CGFloat = parentNode.xScale < 0 ? -1 : 1
+        backgroundNode.xScale = sign
+        barNode.xScale = sign
+    }
+    
     public init(nodeHeight: CGFloat,
                 width: CGFloat = 42,
                 height: CGFloat = 7,
-                color: SKColor = .green) {
+                color: SKColor = .systemGreen) {
         self.barWidth = width
         self.barHeight = height
         self.offsetY = nodeHeight / 2 + 12
@@ -48,6 +55,12 @@ public class HealthBarComponent: GKComponent {
         if backgroundNode.parent == nil { node.addChild(backgroundNode) }
         if barNode.parent == nil { node.addChild(barNode) }
         updateBar(health: 1, max: 1)
+        applyAntiFlip()
+    }
+    
+    public override func update(deltaTime seconds: TimeInterval) {
+        super.update(deltaTime: seconds)
+        applyAntiFlip()
     }
     
     public override func willRemoveFromEntity() {
@@ -68,12 +81,13 @@ public class HealthBarComponent: GKComponent {
         } else {
             // inimigos continuam com lógica antiga
             if percent < 0.2 {
-                barNode.fillColor = .red
+                barNode.fillColor = .systemRed
             } else if percent < 0.5 {
-                barNode.fillColor = .orange
+                barNode.fillColor = .systemOrange
             } else {
-                barNode.fillColor = .red
+                barNode.fillColor = .systemRed
             }
         }
     }
 }
+
