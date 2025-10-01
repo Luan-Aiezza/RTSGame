@@ -10,7 +10,7 @@ struct DialogueHighlighter {
         // 🇬🇧 English
         "BLUE ANALOG.": .systemBlue,
         "YELLOW BUTTON.": .yellow,
-        "CROWNS,": .yellow,
+        "CROWNS": .yellow,
         "ALTARS,": .yellow,
         "RED ANALOG": .red,
         "GREEN BUTTON.": .green,
@@ -21,7 +21,7 @@ struct DialogueHighlighter {
         // 🇧🇷 Português
         "ANÁLOGICO AZUL.": .systemBlue,
         "BOTÃO AMARELO.": .yellow,
-        "COROAS,": .yellow,
+        "COROAS": .yellow,
         "ALTARES,": .yellow,
         "ANÁLOGICO VERMELHO": .red,
         "BOTÃO VERDE.": .green,
@@ -104,7 +104,7 @@ final class DialogueHUDColor: SKNode {
         super.init()
         
         let topY = sceneSize.height / 3
-        textContainer.position = CGPoint(x: 0, y: topY - 10) // centralizado
+        textContainer.position = CGPoint(x: 30, y: topY - 10) // centralizado
         backgroundBox.position = CGPoint(x: 0, y: topY - 5)
         starNode.position = CGPoint(x: 0, y: topY + 25)
         
@@ -132,13 +132,12 @@ final class DialogueHUDColor: SKNode {
     private func updateBoxSize() {
         let bounds = textContainer.calculateAccumulatedFrame()
         let padding: CGFloat = 20
-        let width = bounds.width + padding
         let height = bounds.height + padding
         
         let rect = CGRect(
-            x: -width/2,
+            x: -maxWidth/2,
             y: -height,
-            width: width,
+            width: maxWidth,
             height: height
         )
         backgroundBox.path = CGPath(roundedRect: rect, cornerWidth: 8, cornerHeight: 8, transform: nil)
@@ -205,7 +204,6 @@ final class DialogueHUDColor: SKNode {
         var remaining = displayedText
         var xOffset: CGFloat = 0
         var yOffset: CGFloat = 0
-        var currentLineNodes: [SKLabelNode] = []
         
         for segment in segments {
             guard !remaining.isEmpty else { break }
@@ -215,7 +213,7 @@ final class DialogueHUDColor: SKNode {
             
             guard !visible.isEmpty else { continue }
             
-            // Criar label do segmento visível
+            // Label do segmento visível
             let label = SKLabelNode(text: visible)
             label.fontName = fontName
             label.fontSize = fontSize
@@ -223,33 +221,22 @@ final class DialogueHUDColor: SKNode {
             label.verticalAlignmentMode = .top
             label.horizontalAlignmentMode = .left
             
-            // --- 🔥 VERIFICA SE CABE NA LINHA ---
+            // 🔥 Verifica quebra de linha pela largura máxima
             let futureWidth = xOffset + label.frame.width
             if futureWidth > maxWidth, xOffset > 0 {
-                // Centraliza linha anterior antes de quebrar
-                centerLine(lineNodes: currentLineNodes, totalWidth: xOffset)
-                currentLineNodes.removeAll()
-                
-                // Quebra de linha
+                // quebra de linha
                 xOffset = 0
                 yOffset += lineHeight
             }
             
-            // Posiciona label na linha atual
-            label.position = CGPoint(x: xOffset, y: -yOffset)
+            // Posição do label (sempre começando na esquerda)
+            label.position = CGPoint(x: -maxWidth/2 + xOffset, y: -yOffset)
             textContainer.addChild(label)
-            currentLineNodes.append(label)
             
             xOffset += label.frame.width
         }
-        
-        // Centraliza última linha
-        if !currentLineNodes.isEmpty {
-            centerLine(lineNodes: currentLineNodes, totalWidth: xOffset)
-        }
     }
 
-    
     private func centerLine(lineNodes: [SKLabelNode], totalWidth: CGFloat) {
         let offset = -totalWidth / 2
         for node in lineNodes {
