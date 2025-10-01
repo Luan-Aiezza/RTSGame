@@ -21,6 +21,7 @@ extension GameScene {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isPaused { return }
         if overlayIsActive() {
             if let touch = touches.first, let camera {
                 let locationInCamera = touch.location(in: camera)
@@ -65,6 +66,7 @@ extension GameScene {
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
         if overlayIsActive() { return }
+        if isPaused { return }
         
         guard let camera, let location = touches.first?.location(in: camera) else { return }
         if location.x <= 0 {
@@ -75,6 +77,7 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if isPaused { return }
         if overlayIsActive() {
             if let touch = touches.first, let camera {
                 let locationInCamera = touch.location(in: camera)
