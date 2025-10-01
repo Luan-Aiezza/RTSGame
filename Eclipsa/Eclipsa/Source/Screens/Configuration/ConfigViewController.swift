@@ -23,7 +23,7 @@ final class ConfigViewController: UIViewController {
         let st = UIStackView()
         st.translatesAutoresizingMaskIntoConstraints = false
         st.axis = .vertical
-        st.alignment = .center
+        st.alignment = .fill
         st.spacing = 16
         return st
     }()
@@ -44,7 +44,7 @@ final class ConfigViewController: UIViewController {
     private let titleLabel: UILabel = {
         let lb = UILabel()
         lb.translatesAutoresizingMaskIntoConstraints = false
-        lb.text = "Configurações"
+        lb.text = NSLocalizedString("configTitle", comment: "")
         lb.textColor = .yellow
         lb.textAlignment = .center
         if let joystickFont = UIFont(name: "CCPixelArcade-Display", size: 28) {
@@ -69,11 +69,11 @@ final class ConfigViewController: UIViewController {
     }
     
     private lazy var tutorialButton: UIButton = { makeSubtitleButton(title: "Tutorial") }()
-    private lazy var creditsButton: UIButton = { makeSubtitleButton(title: "Créditos") }()
+    private lazy var creditsButton: UIButton = { makeSubtitleButton(title: NSLocalizedString("configCredits", comment: "")) }()
     
     // Custom discrete slider (10 steps) with yellow knob and value label
-    private let musicControl = DiscreteSliderRow(title: "Música:")
-    private let effectsControl = DiscreteSliderRow(title: "Efeitos:")
+    private let musicControl = DiscreteSliderRow(title: NSLocalizedString("configMusic", comment: ""))
+    private let effectsControl = DiscreteSliderRow(title: NSLocalizedString("configEffects", comment: ""))
     
     // MARK: - Init
     init(flowDelegate: ConfigFlowDelegate) {
@@ -138,6 +138,14 @@ final class ConfigViewController: UIViewController {
             contentStack.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 24),
             contentStack.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -24)
         ])
+        
+        // Ensure rows expand to full width and align the start of the tracks
+        musicControl.leadingAnchor.constraint(equalTo: contentStack.leadingAnchor).isActive = true
+        musicControl.trailingAnchor.constraint(equalTo: contentStack.trailingAnchor).isActive = true
+        effectsControl.leadingAnchor.constraint(equalTo: contentStack.leadingAnchor).isActive = true
+        effectsControl.trailingAnchor.constraint(equalTo: contentStack.trailingAnchor).isActive = true
+        // Align the track leading anchors so the sliders start at the same X regardless of label length
+        musicControl.alignmentTrackLeadingAnchor.constraint(equalTo: effectsControl.alignmentTrackLeadingAnchor).isActive = true
     }
     
     @objc private func handleBack() {
