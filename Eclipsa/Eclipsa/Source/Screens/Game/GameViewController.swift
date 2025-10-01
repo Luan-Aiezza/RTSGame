@@ -46,7 +46,7 @@ class GameViewController: UIViewController {
         let view = PauseView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
-        view.isUserInteractionEnabled = false
+//        view.isUserInteractionEnabled = false
         return view
     }()
     
@@ -101,6 +101,8 @@ class GameViewController: UIViewController {
         skView.isMultipleTouchEnabled = true
 //        setupDebugOptions()
         setupConstraints()
+        
+        pauseView.delegate = self
     }
     
     func setupConstraints(){
@@ -146,10 +148,17 @@ class GameViewController: UIViewController {
     
     @objc
     private func handlePause(){
-        guard var scene = skView.scene else { return }
+        guard let scene = skView.scene else { return }
         scene.isPaused.toggle()
         pauseView.handleHidePauseView()
         scene.isPaused ? WaveManager.shared.pauseWaveSystem() : WaveManager.shared.resumeWaveSystem()
+        if (scene.isPaused) {
+            pauseView.becomeFirstResponder()
+            print("PAUSE BECOME FIRST")
+        } else {
+            skView.becomeFirstResponder()
+            print("SKVIEW BECOME FIRST")
+        }
     }
     
     @objc
@@ -161,5 +170,11 @@ class GameViewController: UIViewController {
 extension GameViewController: GameScenePauseDelegate {
     func showPauseButton() {
         pauseButton.isHidden.toggle()
+    }
+}
+
+extension GameViewController: PauseViewDelegate {
+    func pauseViewDidTapContinue() {
+        handlePause()
     }
 }

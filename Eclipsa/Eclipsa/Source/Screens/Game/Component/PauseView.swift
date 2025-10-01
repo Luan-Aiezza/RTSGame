@@ -7,7 +7,13 @@
 
 import UIKit
 
+protocol PauseViewDelegate: AnyObject {
+    func pauseViewDidTapContinue()
+}
+
 class PauseView: UIView {
+    
+    weak var delegate: PauseViewDelegate?
     
     private let titleLabel: UILabel = {
         let label = UILabel()
@@ -22,6 +28,8 @@ class PauseView: UIView {
         label.text = "Continue"
         label.font = UIFont(name: "CCPixelArcade-Joystick", size: 24)
         label.textColor = .white
+        label.isUserInteractionEnabled = true
+        
         return label
     }()
     
@@ -43,6 +51,9 @@ class PauseView: UIView {
         
         addSubview(titleLabel)
         addSubview(continueLabel)
+
+        let gesture = UITapGestureRecognizer(target: self, action: #selector(tapPause))
+        continueLabel.addGestureRecognizer(gesture)
         
         setupConstraints()
     }
@@ -76,5 +87,10 @@ class PauseView: UIView {
             self.continueLabel.transform = .identity
             self.continueLabel.alpha = 1.0
         })
+    }
+    
+    @objc
+    private func tapPause(){
+        delegate?.pauseViewDidTapContinue()
     }
 }
