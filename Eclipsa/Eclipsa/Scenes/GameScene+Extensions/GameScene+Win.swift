@@ -131,6 +131,9 @@ extension GameScene {
         }
 
         if let next = nextScene {
+            if let scene = next as? GameScene {
+                scene.pauseButtonDelegate = self.pauseButtonDelegate
+            }
             next.scaleMode = .aspectFill
             view.presentScene(next, transition: .fade(withDuration: 1.0))
         }
