@@ -60,20 +60,46 @@ class GameViewController: UIViewController {
     }
     
     override func viewDidLayoutSubviews() {
-        let scene = sceneManager.introScene(size: skView.bounds.size)
-        scene.onFinished = { [weak self] in
-            if let phaseOne = self?.sceneManager.phaseOne(){
-                DispatchQueue.main.async {
-                    phaseOne.pauseButtonDelegate = self
-                    self?.skView.presentScene(phaseOne)
-                    // Start in-game background music with lower volume, looping, and fade in
-                    AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+        super.viewDidLayoutSubviews()
+        
+        // Evita recriar cenas ao voltar do background
+        guard skView.scene == nil else { return }
+        
+        if let savedState = UserDefaults.standard.loadGameState() {
+            // Se já jogou alguma fase antes
+            if let scene = loadPhase(for: savedState.currentPhase) {
+                scene.pauseButtonDelegate = self
+                skView.presentScene(scene)
+                AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+            }
+        } else {
+            // Primeira vez → intro + fase 1
+            let scene = sceneManager.introScene(size: skView.bounds.size)
+            scene.onFinished = { [weak self] in
+                if let phaseOne = self?.sceneManager.phaseOne() {
+                    DispatchQueue.main.async {
+                        phaseOne.pauseButtonDelegate = self
+                        self?.skView.presentScene(phaseOne)
+                        AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+                    }
                 }
             }
+            
+            let transition = SKTransition.fade(withDuration: 0.4)
+            skView.presentScene(scene, transition: transition)
         }
-        
-        let transition = SKTransition.fade(withDuration: 0.4)
-        skView.presentScene(scene, transition: transition)
+    }
+
+    
+    private func loadPhase(for number: Int) -> GameScene? {
+        switch number {
+        case 1: return sceneManager.phaseOne()
+        case 2: return sceneManager.phaseTwo()
+        case 3: return sceneManager.phaseThree()
+        case 4: return sceneManager.phaseFour()
+        case 5: return sceneManager.phaseFive()
+        default: return sceneManager.phaseOne()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -178,3 +204,4 @@ extension GameViewController: PauseViewDelegate {
         handlePause()
     }
 }
+

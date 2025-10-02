@@ -92,6 +92,10 @@ final class EndDialogueScene: SKScene {
     }
     
     private func endDialogue() {
+        
+        // 🔑 Reset do progresso salvo
+        UserDefaults.standard.clearGameState()
+        
         guard !hasEnded else { return }
         hasEnded = true
         let fade = SKAction.fadeOut(withDuration: 0.75)

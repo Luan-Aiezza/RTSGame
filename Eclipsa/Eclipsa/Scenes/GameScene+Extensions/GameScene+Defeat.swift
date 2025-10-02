@@ -3,6 +3,7 @@ import BehindGameKit
 
 extension GameScene {
     func handleDefeat() {
+        UserDefaults.standard.clearGameState()
         guard camera?.childNode(withName: "DefeatOverlay") == nil else { return }
         // Removido o pause global da cena para permitir animações do overlay
         // isPaused = true

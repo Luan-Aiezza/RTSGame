@@ -5,7 +5,9 @@
 //  Created by Joseph Pereira on 09/09/25.
 //
 import UIKit
+
 class FlowController {
+    private var didStart: Bool = false
     
     var navigation: UINavigationController?
     var window: UIWindow
@@ -17,6 +19,9 @@ class FlowController {
     }
     
     func start() -> UINavigationController? {
+        guard !didStart else { return navigation } // não reinicia se já começou
+        didStart = true
+        
         let teamLogoView = factory.makeTeamLogoViewController(flowDelegate: self)
         self.navigation = UINavigationController(rootViewController: teamLogoView)
         return navigation

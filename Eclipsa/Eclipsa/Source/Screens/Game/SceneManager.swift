@@ -20,30 +20,35 @@ struct SceneManager {
     func phaseOne() -> GameScene? {
         let scene = makeScene(with: "GameScene_1")
         scene?.configureScene(with: Phase1())
+        UserDefaults.standard.saveGameState(GameSaveState(currentPhase: 1))
         return scene
     }
     
     func phaseTwo() -> GameScene? {
         let scene = makeScene(with: "GameScene_2")
         scene?.configureScene(with: Phase2())
+        UserDefaults.standard.saveGameState(GameSaveState(currentPhase: 2))
         return scene
     }
     
     func phaseThree() -> GameScene? {
         let scene = makeScene(with: "GameScene_3")
         scene?.configureScene(with: Phase3())
+        UserDefaults.standard.saveGameState(GameSaveState(currentPhase: 3))
         return scene
     }
     
     func phaseFour() -> GameScene? {
         let scene = makeScene(with: "GameScene_4")
         scene?.configureScene(with: Phase4())
+        UserDefaults.standard.saveGameState(GameSaveState(currentPhase: 4))
         return scene
     }
     
     func phaseFive() -> GameScene? {
         let scene = makeScene(with: "GameScene_5")
         scene?.configureScene(with: Phase5())
+        UserDefaults.standard.saveGameState(GameSaveState(currentPhase: 5))
         return scene
     }
     
