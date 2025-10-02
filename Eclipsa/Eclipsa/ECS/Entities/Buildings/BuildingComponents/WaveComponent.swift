@@ -46,7 +46,7 @@ class WaveManager: NSObject {
     
     func startWaveSystem() {
         guard case .idle = state else {
-            print("⚠️ WaveManager: Sistema já está ativo")
+            print("WaveManager: Sistema já está ativo")
             return
         }
         startNextWave()
@@ -62,7 +62,7 @@ class WaveManager: NSObject {
         case .cooldown(let nextIndex):
             currentWaveIndex = nextIndex
         default:
-            print("⚠️ WaveManager: Tentativa de iniciar wave em estado inválido: \(state)")
+            print("WaveManager: Tentativa de iniciar wave em estado inválido: \(state)")
             return
         }
         
@@ -74,7 +74,7 @@ class WaveManager: NSObject {
         let waveConfig = waveConfigurations[currentWaveIndex]
         state = .spawning(waveIndex: currentWaveIndex)
         
-        print("🌊 Wave \(currentWaveIndex + 1) INICIADA - Duração: \(waveConfig.duration)s")
+        print("Wave \(currentWaveIndex + 1) INICIADA - Duração: \(waveConfig.duration)s")
         
         // Notifica buildings para começar spawn
         notifyBuildings(action: .start(waveConfig))
@@ -87,11 +87,11 @@ class WaveManager: NSObject {
     
     private func endCurrentWave(waveIndex: Int) {
         guard case .spawning(let currentIndex) = state, currentIndex == waveIndex else {
-            print("⚠️ WaveManager: Wave \(waveIndex) já foi encerrada ou estado inconsistente")
+            print("WaveManager: Wave \(waveIndex) já foi encerrada ou estado inconsistente")
             return
         }
         
-        print("🛑 Wave \(waveIndex + 1) FINALIZADA - Cooldown: \(waveCooldownInterval)s")
+        print("Wave \(waveIndex + 1) FINALIZADA - Cooldown: \(waveCooldownInterval)s")
         
         // Para spawn em todos os buildings
         notifyBuildings(action: .stop)
@@ -111,7 +111,7 @@ class WaveManager: NSObject {
         activeTimer?.invalidate()
         activeTimer = nil
         notifyBuildings(action: .stop)
-        print("✅ Todas as waves foram completadas!")
+        print("Todas as waves foram completadas!")
     }
     
     // MARK: - Building Management
@@ -149,7 +149,7 @@ class WaveManager: NSObject {
     // MARK: - Pause/Resume
     func pauseWaveSystem() {
         guard let timer = activeTimer else {
-            print("⏸️ WaveManager: Nenhum timer ativo para pausar")
+            print("WaveManager: Nenhum timer ativo para pausar")
             return
         }
         
@@ -159,16 +159,16 @@ class WaveManager: NSObject {
         
         notifyBuildings(action: .stop)
         
-        print("⏸️ Sistema pausado. Tempo restante: \(remainingTime ?? 0)s - Estado: \(state)")
+        print("Sistema pausado. Tempo restante: \(remainingTime ?? 0)s - Estado: \(state)")
     }
     
     func resumeWaveSystem() {
         guard let remaining = remainingTime, remaining > 0 else {
-            print("⚠️ WaveManager: Nenhum tempo restante para resumir")
+            print("WaveManager: Nenhum tempo restante para resumir")
             return
         }
         
-        print("▶️ Sistema retomado. Restante: \(remaining)s - Estado: \(state)")
+        print("Sistema retomado. Restante: \(remaining)s - Estado: \(state)")
         
         switch state {
         case .spawning(let waveIndex):
@@ -185,7 +185,7 @@ class WaveManager: NSObject {
             }
             
         default:
-            print("⚠️ WaveManager: Estado inválido para resumir: \(state)")
+            print("WaveManager: Estado inválido para resumir: \(state)")
         }
         
         remainingTime = nil
@@ -196,7 +196,7 @@ class WaveManager: NSObject {
         pauseWaveSystem()
         state = .idle
         remainingTime = nil
-        print("🔄 Sistema resetado")
+        print("Sistema resetado")
     }
     
     // MARK: - Public Getters

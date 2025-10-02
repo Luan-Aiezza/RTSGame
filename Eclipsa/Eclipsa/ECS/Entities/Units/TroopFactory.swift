@@ -158,7 +158,7 @@ enum TextureHandler {
             let tex = SKTexture(imageNamed: filename)
             // heurística: se o tamanho for zero, provavelmente não encontrou o asset
             if tex.size() == .zero {
-                print("⚠️ Texture not found -> \(filename). Verifique nome/case no asset catalog.")
+                print("Texture not found -> \(filename). Verifique nome/case no asset catalog.")
             }
             textures.append(tex)
         }

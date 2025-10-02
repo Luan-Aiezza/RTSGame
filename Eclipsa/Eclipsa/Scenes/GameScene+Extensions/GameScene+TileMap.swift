@@ -51,7 +51,7 @@ extension GameScene {
             childNode(withName: "//\(name.lowercased())")
         ]
         guard let tileMap = candidates.compactMap({ $0 as? SKTileMapNode }).first else {
-            print("⚠️ TileMap '\(name)' não encontrado na cena.")
+            print("TileMap '\(name)' não encontrado na cena.")
             return
         }
         
@@ -149,7 +149,7 @@ extension GameScene {
             childNode(withName: "//\(name.lowercased())")
         ]
         guard let tileMap = candidates.compactMap({ $0 as? SKTileMapNode }).first else {
-            print("⚠️ TileMap '\(name)' não encontrado na cena.")
+            print("TileMap '\(name)' não encontrado na cena.")
             return
         }
         

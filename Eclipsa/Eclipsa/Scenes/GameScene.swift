@@ -36,7 +36,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
     public var releaseButton: CommandButton!
 
     public var customLastUpdateTime: TimeInterval?
-    //    var sceneEntity: SceneEntity!
 
     // Flag para evitar múltiplos respawns concorrentes
     private var isRespawningPlayer = false
@@ -95,9 +94,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         setupUI()
         setupSnow() // Intancia as particulas de neve
         buttons = .init(scene: self)
-
-        //        sceneEntity = SceneEntity(scene: self)
-        //        SKEntityManager.shared.add(sceneEntity)
         
         collisionSystem = CollisionSystem(controlledEntity: controlledEntity, testBlockNode: nil)
         physicsWorld.contactDelegate = self
