@@ -41,7 +41,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Effects"
+            "value" : "Audio"
           }
         },
         "pt-BR" : {
@@ -64,7 +64,7 @@
         "pt-BR" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Música"
+            "value" : "Músicas"
           }
         }
       }

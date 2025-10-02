@@ -33,7 +33,7 @@ final class DialogueHUD: SKNode {
         textLabel.numberOfLines = 0
         textLabel.preferredMaxLayoutWidth = sceneSize.width * 0.85
         textLabel.verticalAlignmentMode = .top
-        textLabel.horizontalAlignmentMode = .center
+        textLabel.horizontalAlignmentMode = .left
         textLabel.zPosition = 10_510
         
         // Caixa preta com borda dourada
@@ -52,9 +52,12 @@ final class DialogueHUD: SKNode {
         
         super.init()
         
-        // Posições relativas
+        // Ajusta posição inicial para começar da esquerda
         let topY = sceneSize.height / 3
-        textLabel.position = CGPoint(x: 0, y: topY - 10)
+        textLabel.position = CGPoint(
+            x: -(sceneSize.width * 0.82) / 2, // borda esquerda da caixa
+            y: topY - 10
+        )
         backgroundBox.position = CGPoint(x: 0, y: topY - 5)
         starNode.position = CGPoint(x: 0, y: topY + 25)
         

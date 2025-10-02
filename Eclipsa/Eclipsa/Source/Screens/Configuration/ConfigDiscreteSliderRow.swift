@@ -178,5 +178,7 @@ final class DiscreteSliderRow: UIView {
             currentStep = clampedStep
         }
     }
-}
 
+    // Expose an anchor to align the track across multiple rows
+    var alignmentTrackLeadingAnchor: NSLayoutXAxisAnchor { trackView.leadingAnchor }
+}
