@@ -11,22 +11,29 @@ import BehindGameKit
 
 class WaveManager: NSObject {
     static let shared = WaveManager()
-    private var remainingWaveTime: TimeInterval?
-    private var currentWave = 0
+    
+    private enum WaveState {
+        case idle
+        case spawning(waveIndex: Int)
+        case cooldown(nextWaveIndex: Int)
+        case completed
+    }
+    
+    private var state: WaveState = .idle
+    private var activeTimer: Timer?
+    private var remainingTime: TimeInterval?
     private var waveConfigurations: [WaveConfiguration] = []
-    private var isWaveActive = false
-    private var waveTimer: Timer?
     private var enemyBuildings: [GKEntity] = []
     
-    // Intervalo fixo entre waves (40 segundos)
+    // MARK: - Configuration
     private let waveCooldownInterval: TimeInterval = 10.0
-    
     var scene: GameScene?
     
     private override init() {
         super.init()
     }
     
+    // MARK: - Setup
     func setupWaves(after interval: TimeInterval = 10.0) {
         scene?.run(.wait(forDuration: interval)) { [weak self] in
             self?.scene?.hidePhaseOverlay()
@@ -38,121 +45,186 @@ class WaveManager: NSObject {
     }
     
     func startWaveSystem() {
-        // Inicia a primeira wave imediatamente
+        guard case .idle = state else {
+            print("⚠️ WaveManager: Sistema já está ativo")
+            return
+        }
         startNextWave()
     }
     
-    func startNextWave() {
-        guard currentWave < waveConfigurations.count else {
-            // Todas as waves foram completadas
+    // MARK: - Wave Control
+    private func startNextWave() {
+        let currentWaveIndex: Int
+        
+        switch state {
+        case .idle:
+            currentWaveIndex = 0
+        case .cooldown(let nextIndex):
+            currentWaveIndex = nextIndex
+        default:
+            print("⚠️ WaveManager: Tentativa de iniciar wave em estado inválido: \(state)")
+            return
+        }
+        
+        guard currentWaveIndex < waveConfigurations.count else {
             completeAllWaves()
             return
         }
         
-        let waveConfig = waveConfigurations[currentWave]
-        isWaveActive = true
-        currentWave += 1
+        let waveConfig = waveConfigurations[currentWaveIndex]
+        state = .spawning(waveIndex: currentWaveIndex)
         
-        print("Iniciando Wave \(currentWave)")
+        print("🌊 Wave \(currentWaveIndex + 1) INICIADA - Duração: \(waveConfig.duration)s")
         
-        // Notifica todas as construções inimigas sobre a nova wave
-        for building in enemyBuildings {
-            if let spawner = building.component(ofType: TroopSpawnerComponent.self) {
-                spawner.startWave(waveConfig)
-            }
-        }
+        // Notifica buildings para começar spawn
+        notifyBuildings(action: .start(waveConfig))
         
-        // Timer para encerrar a wave (baseado na duração da wave)
-        waveTimer = Timer.scheduledTimer(withTimeInterval: waveConfig.duration, repeats: false) { [weak self] _ in
-            self?.endCurrentWave()
+        // Agenda fim da wave
+        scheduleTimer(duration: waveConfig.duration) { [weak self] in
+            self?.endCurrentWave(waveIndex: currentWaveIndex)
         }
     }
     
-    private func endCurrentWave() {
-        isWaveActive = false
-        waveTimer?.invalidate()
-        
-        // Para o spawn de tropas em todas as construções
-        for building in enemyBuildings {
-            if let spawner = building.component(ofType: TroopSpawnerComponent.self) {
-                spawner.stopWave()
-            }
+    private func endCurrentWave(waveIndex: Int) {
+        guard case .spawning(let currentIndex) = state, currentIndex == waveIndex else {
+            print("⚠️ WaveManager: Wave \(waveIndex) já foi encerrada ou estado inconsistente")
+            return
         }
         
-        print("Wave \(currentWave) finalizada. Próxima wave em \(waveCooldownInterval) segundos.")
+        print("🛑 Wave \(waveIndex + 1) FINALIZADA - Cooldown: \(waveCooldownInterval)s")
         
-        // Timer fixo de 40 segundos para a próxima wave
-        Timer.scheduledTimer(withTimeInterval: waveCooldownInterval, repeats: false) { [weak self] _ in
+        // Para spawn em todos os buildings
+        notifyBuildings(action: .stop)
+        
+        // Muda para cooldown
+        let nextWaveIndex = waveIndex + 1
+        state = .cooldown(nextWaveIndex: nextWaveIndex)
+        
+        // Agenda próxima wave
+        scheduleTimer(duration: waveCooldownInterval) { [weak self] in
             self?.startNextWave()
         }
     }
     
     private func completeAllWaves() {
-        print("Todas as waves foram completadas!")
-        // Implementar lógica de fim de jogo
-        // Você pode decidir se quer reiniciar as waves ou finalizar o jogo
+        state = .completed
+        activeTimer?.invalidate()
+        activeTimer = nil
+        notifyBuildings(action: .stop)
+        print("✅ Todas as waves foram completadas!")
     }
     
+    // MARK: - Building Management
+    private enum BuildingAction {
+        case start(WaveConfiguration)
+        case stop
+        case resume(WaveConfiguration)
+    }
+    
+    private func notifyBuildings(action: BuildingAction) {
+        for building in enemyBuildings {
+            guard let spawner = building.component(ofType: TroopSpawnerComponent.self) else {
+                continue
+            }
+            
+            switch action {
+            case .start(let config):
+                spawner.startWave(config)
+            case .stop:
+                spawner.stopWave()
+            case .resume(let config):
+                spawner.resumeWave(waveConfig: config)
+            }
+        }
+    }
+    
+    // MARK: - Timer Management
+    private func scheduleTimer(duration: TimeInterval, completion: @escaping () -> Void) {
+        activeTimer?.invalidate()
+        activeTimer = Timer.scheduledTimer(withTimeInterval: duration, repeats: false) { _ in
+            completion()
+        }
+    }
+    
+    // MARK: - Pause/Resume
+    func pauseWaveSystem() {
+        guard let timer = activeTimer else {
+            print("⏸️ WaveManager: Nenhum timer ativo para pausar")
+            return
+        }
+        
+        remainingTime = timer.fireDate.timeIntervalSinceNow
+        timer.invalidate()
+        activeTimer = nil
+        
+        notifyBuildings(action: .stop)
+        
+        print("⏸️ Sistema pausado. Tempo restante: \(remainingTime ?? 0)s - Estado: \(state)")
+    }
+    
+    func resumeWaveSystem() {
+        guard let remaining = remainingTime, remaining > 0 else {
+            print("⚠️ WaveManager: Nenhum tempo restante para resumir")
+            return
+        }
+        
+        print("▶️ Sistema retomado. Restante: \(remaining)s - Estado: \(state)")
+        
+        switch state {
+        case .spawning(let waveIndex):
+            let waveConfig = waveConfigurations[waveIndex]
+            notifyBuildings(action: .resume(waveConfig))
+            
+            scheduleTimer(duration: remaining) { [weak self] in
+                self?.endCurrentWave(waveIndex: waveIndex)
+            }
+            
+        case .cooldown:
+            scheduleTimer(duration: remaining) { [weak self] in
+                self?.startNextWave()
+            }
+            
+        default:
+            print("⚠️ WaveManager: Estado inválido para resumir: \(state)")
+        }
+        
+        remainingTime = nil
+    }
+    
+    // MARK: - Reset
+    func resetWaveSystem() {
+        pauseWaveSystem()
+        state = .idle
+        remainingTime = nil
+        print("🔄 Sistema resetado")
+    }
+    
+    // MARK: - Public Getters
     func registerEnemyBuilding(_ building: GKEntity) {
         enemyBuildings.append(building)
     }
     
     func getCurrentWave() -> Int {
-        return currentWave
+        switch state {
+        case .spawning(let index), .cooldown(let index):
+            return index + 1
+        default:
+            return 0
+        }
     }
     
     func isCurrentlyInWave() -> Bool {
-        return isWaveActive
-    }
-    
-    // Método para pausar o sistema de waves
-    func pauseWaveSystem() {
-        if let waveTimer = waveTimer {
-            remainingWaveTime = waveTimer.fireDate.timeIntervalSinceNow
-            waveTimer.invalidate()
+        if case .spawning = state {
+            return true
         }
-        
-        for building in enemyBuildings {
-            if let spawner = building.component(ofType: TroopSpawnerComponent.self) {
-                spawner.stopWave()
-            }
-        }
-        isWaveActive = false
-    }
-    
-    func resumeWaveSystem() {
-        guard !isWaveActive,
-              let remaining = remainingWaveTime else { return }
-
-        isWaveActive = true
-        
-        // recomeça o spawn em cada building
-        for building in enemyBuildings {
-            building.component(ofType: TroopSpawnerComponent.self)!.resumeWave(waveConfig: waveConfigurations[currentWave - 1])
-            print("chamado resumeWave em \(building)")
-        }
-        
-        // recria o timer de término da wave com o tempo restante
-        waveTimer = Timer.scheduledTimer(withTimeInterval: remaining, repeats: false) { [weak self] _ in
-            self?.endCurrentWave()
-        }
-        
-        print("Wave \(currentWave) retomada. Restando \(remaining) segundos.")
-    }
-    
-    // Método para resetar o sistema de waves
-    func resetWaveSystem() {
-        pauseWaveSystem()
-        currentWave = 0
-        isWaveActive = false
+        return false
     }
 }
 
-// MARK: - Wave Configuration
 struct WaveConfiguration {
     let waveNumber: Int
-    let duration: TimeInterval // Duração de quanto tempo a wave fica ativa gerando tropas
-    let spawnInterval: TimeInterval // Intervalo entre spawns de tropas
+    let duration: TimeInterval
+    let spawnInterval: TimeInterval
     let maxTroopsPerBuilding: Int
     let difficultyMultiplier: Float
 }
