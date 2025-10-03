@@ -11,6 +11,7 @@ class TutorialViewController: GameViewController {
     
     override func viewDidLayoutSubviews() {
         let scene = sceneManager.tutorial()//Mudar para tutorial
+        scene?.pauseButtonDelegate = self
         DispatchQueue.main.async {
             self.skView.presentScene(scene)
         }
