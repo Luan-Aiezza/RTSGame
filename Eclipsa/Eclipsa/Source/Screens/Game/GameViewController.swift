@@ -200,6 +200,10 @@ extension GameViewController: GameScenePauseDelegate {
 }
 
 extension GameViewController: PauseViewDelegate {
+    func didTapExit() {
+        flowDelegate.goHome()
+    }
+    
     func pauseViewDidTapContinue() {
         handlePause()
     }

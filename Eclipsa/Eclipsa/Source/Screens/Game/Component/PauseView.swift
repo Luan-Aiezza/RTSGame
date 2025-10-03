@@ -9,6 +9,7 @@ import UIKit
 
 protocol PauseViewDelegate: AnyObject {
     func pauseViewDidTapContinue()
+    func didTapExit()
 }
 
 class PauseView: UIView {
@@ -109,5 +110,10 @@ class PauseView: UIView {
     @objc
     private func tapPause(){
         delegate?.pauseViewDidTapContinue()
+    }
+    
+    @objc
+    private func tapExit(){
+        delegate?.didTapExit()
     }
 }
