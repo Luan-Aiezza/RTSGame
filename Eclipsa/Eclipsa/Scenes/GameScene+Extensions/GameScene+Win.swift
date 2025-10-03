@@ -8,7 +8,7 @@ extension Notification.Name {
 extension GameScene {
     func handleWin() {
         
-        self.pauseButtonDelegate?.showPauseButton()
+        self.pauseButtonDelegate?.showPauseButton(nil)
         guard let camera = camera else { return }
         guard camera.childNode(withName: "WinOverlay") == nil else { return }
 

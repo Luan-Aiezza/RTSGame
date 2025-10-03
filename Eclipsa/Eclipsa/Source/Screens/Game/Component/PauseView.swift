@@ -9,6 +9,7 @@ import UIKit
 
 protocol PauseViewDelegate: AnyObject {
     func pauseViewDidTapContinue()
+    func didTapExit()
 }
 
 class PauseView: UIView {
@@ -33,6 +34,16 @@ class PauseView: UIView {
         return label
     }()
     
+    private let exitButton: UIButton = {
+       let button = UIButton(type: .system)
+        button.setTitle("Exit", for: .normal)
+        button.titleLabel?.font = UIFont(name: "CCPixelArcade-Display", size: 30)
+        button.setTitleColor(.white, for: .normal)
+        button.tintColor = .white
+        
+        return button
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
@@ -48,12 +59,16 @@ class PauseView: UIView {
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         continueLabel.translatesAutoresizingMaskIntoConstraints = false
+        exitButton.translatesAutoresizingMaskIntoConstraints = false
         
         addSubview(titleLabel)
         addSubview(continueLabel)
+        addSubview(exitButton)
 
         let gesture = UITapGestureRecognizer(target: self, action: #selector(tapPause))
         continueLabel.addGestureRecognizer(gesture)
+        
+        exitButton.addTarget(self, action: #selector(tapExit), for: .touchUpInside)
         
         setupConstraints()
     }
@@ -67,6 +82,9 @@ class PauseView: UIView {
             // Centraliza o botão Continue
             continueLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             continueLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+            
+            exitButton.centerXAnchor.constraint(equalTo: continueLabel.centerXAnchor),
+            exitButton.topAnchor.constraint(equalTo: continueLabel.bottomAnchor, constant: 20)
         ])
     }
     
@@ -92,5 +110,10 @@ class PauseView: UIView {
     @objc
     private func tapPause(){
         delegate?.pauseViewDidTapContinue()
+    }
+    
+    @objc
+    private func tapExit(){
+        delegate?.didTapExit()
     }
 }
