@@ -12,15 +12,20 @@ extension GameScene {
     
     func configureScene(with sceneConfiguration: SceneConfiguration) {
         self.sceneConfiguration = sceneConfiguration
+        
         setupNexus()
         setupInhibitors()
         setupSpawners()
-        if self.name == "GameScene_0"{
-            WaveManager.shared.setupWaves(after: 25)
+        
+        // Inicia o loop infinito de spawn
+        if self.name == "GameScene_0" {
+            // caso queira atraso especial só na primeira fase
+            WaveManager.shared.startInfiniteLoop(after: 25, scene: self)
         } else {
-            WaveManager.shared.setupWaves()
+            WaveManager.shared.startInfiniteLoop(scene: self)
         }
     }
+
     
     private func setupNexus() {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {

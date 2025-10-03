@@ -7,16 +7,10 @@
 
 
 class Tutorial: SceneConfiguration {
-    init(){
-        super.init(inhibitorsQuantity: 2, spawnersQuantity: 1)
-        waveConfig = [
-            WaveConfiguration(
-                waveNumber: 1,
-                duration: 30.0,
-                spawnInterval: 2.0,
-                maxTroopsPerBuilding: 1,
-                difficultyMultiplier: 1.0
-            )
-        ]
+    init() {
+        super.init(inhibitorsQuantity: 2,
+                   spawnersQuantity: 1,
+                   spawnInterval: 20.0,   // fila anda a cada 12s
+                   troopsPerGroup: 2)     // 3 tropas por vez
     }
 }
