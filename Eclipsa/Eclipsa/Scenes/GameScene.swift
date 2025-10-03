@@ -128,13 +128,16 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
             AudioManager.shared.fadeInBackgroundMusic(named: "OST_InTutorial")
             buttons.invokeMeleeButton?.isHidden = true
             startDialogue()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
+                self?.pauseButtonDelegate?.showPauseButton(true)
+            }
             
         } else {
             // Outras fases normais
             showPhaseOverlayFromSceneName()
             DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
                 self?.hidePhaseOverlay()
-                self?.pauseButtonDelegate?.showPauseButton()
+                self?.pauseButtonDelegate?.showPauseButton(nil)
             }
         }
         

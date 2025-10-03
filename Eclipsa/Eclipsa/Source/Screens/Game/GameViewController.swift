@@ -10,7 +10,7 @@ import SpriteKit
 import GameplayKit
 
 protocol GameScenePauseDelegate: AnyObject {
-    func showPauseButton()
+    func showPauseButton(_ state: Bool?)
 }
 
 class GameViewController: UIViewController {
@@ -194,8 +194,12 @@ class GameViewController: UIViewController {
 }
 
 extension GameViewController: GameScenePauseDelegate {
-    func showPauseButton() {
-        pauseButton.isHidden.toggle()
+    func showPauseButton(_ state: Bool? = nil) {
+        if let state = state {
+            pauseButton.isHidden = !state
+        }else {
+            pauseButton.isHidden.toggle()
+        }
     }
 }
 

@@ -32,7 +32,7 @@ extension GameScene {
             nexus.onDestroyed = { [weak self] in
                 nexus.removeComponent(ofType: IndicatorAttackComponent.self)
                 self?.handleDefeat()
-                self?.pauseButtonDelegate?.showPauseButton()
+                self?.pauseButtonDelegate?.showPauseButton(nil)
             }
             
             SKEntityManager.shared.add(nexus)
