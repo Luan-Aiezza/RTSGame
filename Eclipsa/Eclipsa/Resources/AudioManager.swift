@@ -302,19 +302,3 @@ extension AudioManager {
     }
 
 }
-
-
-
-
-/////Como usar!
-//// Som de efeito
-//AudioManager.shared.playSound(named: "swipe")
-//
-//// Música de fundo
-//AudioManager.shared.playBackgroundMusic(named: "main_theme")
-//
-//// Parar música de fundo
-//AudioManager.shared.stopBackgroundMusic()
-//
-//// Alterar volume global (0.0 a 1.0)
-//AudioManager.shared.setVolume(to: 0.3)

@@ -164,7 +164,14 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         footprintManager?.update(deltaTime: deltaTime, currentTime: currentTime)
         controlledEntity?.update(deltaTime: deltaTime)
         troops.forEach { $0.update(deltaTime: deltaTime) }
-        cameraEntity?.followPlayer(player: controlledEntity)
+        if let aimingActive = aimingSystem?.aimingComponent?.isAiming, aimingActive {
+            // Segue a mira
+            cameraEntity?.followComponent?.target = nil
+            cameraEntity?.followComponent?.targetNode = aimingSystem?.aimFocusNode
+        } else {
+            // Segue o player
+            cameraEntity?.followPlayer(player: controlledEntity)
+        }
         cameraEntity?.update(deltaTime: deltaTime)
 
         // Protege quando o player não existe (janela de respawn)

@@ -11,6 +11,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     
     private var lastAimDirection: CGPoint = .zero
     private var lastAimDistance: CGFloat = 0.0
+    public var aimFocusNode: SKNode?
     
     init(scene: SKScene) {
         self.scene = scene
@@ -21,7 +22,7 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
     private func setupAimingVisuals() {
         // Círculo verde translúcido para indicar o ponto final
         aimingMarker = SKShapeNode(circleOfRadius: 48)
-        aimingMarker?.fillColor = .orange
+        aimingMarker?.fillColor = .systemBlue
         aimingMarker?.strokeColor = .clear
         aimingMarker?.alpha = 0.3
         aimingMarker?.isHidden = true
@@ -30,13 +31,21 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         
         // Indicador de alcance
         rangeIndicator = SKShapeNode()
-        rangeIndicator?.strokeColor = .orange
+        rangeIndicator?.strokeColor = .systemBlue
         rangeIndicator?.fillColor = .clear
         rangeIndicator?.lineWidth = 2.0
         rangeIndicator?.alpha = 0.3
         rangeIndicator?.isHidden = true
         rangeIndicator?.zPosition = 99
         scene?.addChild(rangeIndicator!)
+        
+        aimFocusNode = SKNode()
+        aimFocusNode?.position = .zero
+        aimFocusNode?.isHidden = true
+        aimFocusNode?.zPosition = 50
+        if let aimFocusNode = aimFocusNode {
+            scene?.addChild(aimFocusNode)
+        }
     }
     
     var aimingComponent: AimingComponent? {
@@ -54,6 +63,14 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         guard let component = aimingComponent else { return }
         component.isAiming = true
         setupDragAiming()
+        
+        aimFocusNode?.isHidden = false
+        
+        if let cameraEntity = (scene as? GameScene)?.cameraEntity {
+            // Faz a câmera seguir o nó de mira
+            cameraEntity.followComponent?.target = nil
+            cameraEntity.followComponent?.targetNode = aimFocusNode
+        }
     }
     
     private func setupDragAiming() {
@@ -76,6 +93,13 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         aimingMarker?.isHidden = true
         rangeIndicator?.isHidden = true
         completion(result)
+        
+        aimFocusNode?.isHidden = true
+        if let cameraEntity = (scene as? GameScene)?.cameraEntity,
+           let player = (scene as? GameScene)?.controlledEntity {
+            cameraEntity.followComponent?.targetNode = nil
+            cameraEntity.followPlayer(player: player)
+        }
     }
     
     func cancelAiming() {
@@ -83,6 +107,13 @@ class AimingSystem: GKComponentSystem<AimingComponent> {
         aimingComp.isAiming = false
         aimingMarker?.isHidden = true
         rangeIndicator?.isHidden = true
+        
+        aimFocusNode?.isHidden = true
+        if let cameraEntity = (scene as? GameScene)?.cameraEntity,
+           let player = (scene as? GameScene)?.controlledEntity {
+            cameraEntity.followComponent?.targetNode = nil
+            cameraEntity.followPlayer(player: player)
+        }
     }
     
     func updateRangeIndicatorPosition() {
@@ -119,7 +150,17 @@ extension AimingSystem: AimingDelegate {
         lastAimDistance = clampedDistance
         
         aimingComp.endPoint = endPoint
+        // Atualiza círculo azul
         updateAimingMarker(to: endPoint)
+
+        // 🔹 Atualiza nó de mira para câmera
+        aimFocusNode?.position = endPoint
+
+        // Faz a câmera seguir o nó de mira
+        if let cameraEntity = (scene as? GameScene)?.cameraEntity {
+            cameraEntity.followComponent?.targetNode = aimFocusNode
+            cameraEntity.followComponent?.target = nil  // remove entidade para não conflitar
+        }
     }
     
     private func updateAimingMarker(to end: CGPoint) {
