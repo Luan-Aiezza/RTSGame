@@ -77,6 +77,7 @@ extension GameScene {
     }
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
         if isPaused { return }
         if overlayIsActive() {
             if let touch = touches.first, let camera {
@@ -105,6 +106,13 @@ extension GameScene {
             if didMove {
                 // 👉 Só dispara comando manual se foi arrasto real
                 aimingSystem?.finishAiming { [weak self] result in
+                    
+                    // ✅ Som aleatório
+                    AudioManager.shared.playSound(named: "Voice_\(Int.random(in: 1...5))")
+
+                    // ✅ Efeito visual
+                    self!.showFollowEffect(at: result.endPoint)
+                    
                     for troop in self?.troops ?? [] {
                         guard
                             let troopTeam = troop.component(ofType: TeamComponent.self)?.team,
@@ -118,6 +126,7 @@ extension GameScene {
                             behavior.setTarget(nil)
                         }
                     }
+                    
                     self?.cancelButton.toggleCommand(value: true)
                 }
             } else {
@@ -141,6 +150,33 @@ extension GameScene {
         commandController?.setAnalogVisible(value: false, withDuration: 0.3)
         touchStartLocation = nil
     }
+    
+    private func showFollowEffect(at position: CGPoint) {
+        // Carrega a sequência fixa de frames Follow_Effect_1 ... Follow_Effect_10
+        let textures = (1...10).compactMap { SKTexture(imageNamed: "Follow_Effect_\($0)") }
+        guard !textures.isEmpty else { return }
+
+        // Cria o sprite inicial com o primeiro frame
+        let sprite = SKSpriteNode(texture: textures.first)
+        sprite.position = position
+        sprite.zPosition = 1000
+        sprite.texture?.filteringMode = .nearest
+        sprite.alpha = 0.8
+        sprite.setScale(0.5)
+        
+        addChild(sprite)
+
+        // Cria a animação
+        let animation = SKAction.animate(with: textures, timePerFrame: 0.05)
+        let fadeOut = SKAction.fadeOut(withDuration: 0.2)
+        let remove = SKAction.removeFromParent()
+
+        // Executa tudo em sequência
+        sprite.run(.sequence([animation, fadeOut, remove]))
+    }
+
+    
+    
 }
 
 // Utilitário

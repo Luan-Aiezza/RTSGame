@@ -37,7 +37,7 @@ class PauseView: UIView {
     private let exitButton: UIButton = {
        let button = UIButton(type: .system)
         button.setTitle("Exit", for: .normal)
-        button.titleLabel?.font = UIFont(name: "CCPixelArcade-Display", size: 30)
+        button.titleLabel?.font = UIFont(name: "CCPixelArcade-Joystick", size: 24)
         button.setTitleColor(.white, for: .normal)
         button.tintColor = .white
         

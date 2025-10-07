@@ -262,6 +262,23 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Luana - Ariah's Voice"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luana - Voz de Ariah"
+          }
+        }
+      }
+    },
+    "credits.10" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "We also thank the whole Manaus Academy team, without you this would not be possible"
           }
         },
@@ -273,7 +290,7 @@
         }
       }
     },
-    "credits.10" : {
+    "credits.11" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -290,7 +307,7 @@
         }
       }
     },
-    "credits.11" : {
+    "credits.12" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

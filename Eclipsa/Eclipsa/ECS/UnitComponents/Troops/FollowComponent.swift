@@ -12,7 +12,7 @@ import BehindGameKit
 class FollowComponent: GKComponent {
     
     var target: GKEntity?
-    
+    var targetNode: SKNode?
     var speed: CGFloat
     
     private var spriteNode: GKSKNodeComponent? {
@@ -31,16 +31,24 @@ class FollowComponent: GKComponent {
     override func update(deltaTime seconds: TimeInterval) {
         super.update(deltaTime: seconds)
         
-        guard let followerComponent = self.spriteNode,
-              let targetComponent = self.target?.component(ofType: GKSKNodeComponent.self) else {
+        guard let followerComponent = self.spriteNode else { return }
+        
+        // Determina a posição do alvo
+        let targetPosition: CGPoint?
+        if let entityTarget = target?.component(ofType: GKSKNodeComponent.self)?.node {
+            targetPosition = entityTarget.position
+        } else if let nodeTarget = targetNode {
+            targetPosition = nodeTarget.position
+        } else {
             return
         }
         
-        let distance = calcDistance(from: targetComponent.node.position, to: followerComponent.node.position)
-        let calcDuration = calcDuration(from: distance)
-        let duration = calcDuration > 0.3 ? 0.3 : calcDuration
+        // Calcula distância
+        let distance = CGPoint(x: targetPosition!.x - followerComponent.node.position.x,
+                               y: targetPosition!.y - followerComponent.node.position.y)
+        let duration = min(sqrt(distance.x * distance.x + distance.y * distance.y) / speed, 0.3)
         
-        followerComponent.node.run(.move(to: targetComponent.node.position, duration: duration))
+        followerComponent.node.run(.move(to: targetPosition!, duration: duration))
     }
     
     private func calcDistance(from follower: CGPoint, to target: CGPoint) -> CGPoint {
