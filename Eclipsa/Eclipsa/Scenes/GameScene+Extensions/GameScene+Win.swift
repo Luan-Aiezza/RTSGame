@@ -7,7 +7,8 @@ extension Notification.Name {
 
 extension GameScene {
     func handleWin() {
-        
+        SKEntityManager.shared.removeAll()
+        WaveManager.shared.pauseWaveSystem()
         self.pauseButtonDelegate?.showPauseButton(nil)
         guard let camera = camera else { return }
         guard camera.childNode(withName: "WinOverlay") == nil else { return }
