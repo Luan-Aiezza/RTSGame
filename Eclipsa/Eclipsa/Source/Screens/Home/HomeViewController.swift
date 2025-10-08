@@ -16,10 +16,12 @@ class HomeViewController: UIViewController {
         self.flowDelegate = flowDelegate
         super.init(nibName: nil, bundle: nil)
     }
+    
     override func loadView() {
         homeView.delegate = self
         view = homeView
     }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -50,15 +52,21 @@ extension HomeViewController: HomeViewDelegate {
         AudioManager.shared.playSound(named: "Effect_Confirm_1")
         flowDelegate?.goToGame()
     }
+    
+    func didTapMultiplayerButton() {
+        AudioManager.shared.playSound(named: "Effect_Confirm_1")
+        flowDelegate?.goToMultiplayer()
+    }
 }
 
 protocol HomeFlowDelegate: AnyObject {
     func goToGame()
-    
+    func goToMultiplayer()
     func goToConfiguration()
 }
 
 protocol HomeViewDelegate: AnyObject {
     func didTapPlayButton()
     func didTapConfigurationButton()
+    func didTapMultiplayerButton()
 }

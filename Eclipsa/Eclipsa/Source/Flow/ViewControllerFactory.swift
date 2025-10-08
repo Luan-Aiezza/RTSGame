@@ -57,4 +57,13 @@ struct ViewControllerFactory {
     func makeFirstUserViewController(flowDelegate: FirstUserFlowDelegate) -> FirstUserViewController {
         return FirstUserViewController(flowDelegate: flowDelegate)
     }
+    
+    func makeMultiplayerGameViewController(flowDelegate: FlowController) -> GameViewController {
+        let gameVC = GameViewController(flowDelegate: flowDelegate)
+        
+        // Configura para carregar a cena multiplayer quando abrir
+        gameVC.loadMultiplayerSceneOnAppear = true
+        
+        return gameVC
+    }
 }

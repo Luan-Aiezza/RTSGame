@@ -97,6 +97,19 @@ extension FlowController: HomeFlowDelegate {
             navigation?.setViewControllers([gameViewController], animated: false)
         }
     }
+    
+    func goToMultiplayer() {
+        let gameViewController = factory.makeMultiplayerGameViewController(flowDelegate: self)
+        navigation?.navigationBar.isHidden = true
+        
+        if let navView = navigation?.view {
+            UIView.transition(with: navView, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]) { [weak self] in
+                self?.navigation?.setViewControllers([gameViewController], animated: false)
+            }
+        } else {
+            navigation?.setViewControllers([gameViewController], animated: false)
+        }
+    }
 }
 
 extension FlowController: ConfigFlowDelegate {

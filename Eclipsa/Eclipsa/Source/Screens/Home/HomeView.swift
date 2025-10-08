@@ -80,6 +80,21 @@ final class HomeView: UIView {
         return playButton
     }()
     
+    private let multiplayerButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Multiplayer", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 20) {
+            button.titleLabel?.font = joystickFont
+        } else {
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        }
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(handleMultiplayerTapped), for: .touchUpInside)
+        return button
+    }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupUI()
@@ -114,6 +129,7 @@ final class HomeView: UIView {
         // Adiciona o título e o botão ao container
         container.addSubview(gameTitleImageView)
         container.addSubview(playButton)
+        container.addSubview(multiplayerButton)
         
         setupConstraints()
         
@@ -153,9 +169,13 @@ final class HomeView: UIView {
             gameTitleImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 240),
             
             // Botão um pouco deslocado para a esquerda e 24pt abaixo do título
-            playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 24),
+            playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 8),
             playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
-            playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            //playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+            
+            multiplayerButton.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 16),
+            multiplayerButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
+            multiplayerButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             
             // Settings button at top-right
             settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
@@ -213,6 +233,11 @@ final class HomeView: UIView {
     
     @objc private func handleSettingsTapped() {
         delegate?.didTapConfigurationButton()
+    }
+    
+    @objc private func handleMultiplayerTapped() {
+        delegate?.didTapMultiplayerButton()
+        print("cliquei no multiplayer")
     }
 }
 

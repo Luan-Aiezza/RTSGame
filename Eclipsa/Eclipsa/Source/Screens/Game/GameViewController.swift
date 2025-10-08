@@ -18,6 +18,8 @@ class GameViewController: UIViewController {
     let sceneManager: SceneManager
     let flowDelegate: FlowController
     
+    var loadMultiplayerSceneOnAppear: Bool = false
+    
     var skView: SKView
     private var stopMusicObserver: NSObjectProtocol?
     
@@ -64,6 +66,17 @@ class GameViewController: UIViewController {
         
         // Evita recriar cenas ao voltar do background
         guard skView.scene == nil else { return }
+        
+        if loadMultiplayerSceneOnAppear {
+            if let multiplayerScene = sceneManager.multiplayerScene() {
+                multiplayerScene.pauseButtonDelegate = self
+                skView.presentScene(multiplayerScene)
+                AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+            } else {
+                print("❌ Falha ao carregar MultiplayerGameScene")
+            }
+            return
+        }
         
         if let savedState = UserDefaults.standard.loadGameState() {
             // Se já jogou alguma fase antes

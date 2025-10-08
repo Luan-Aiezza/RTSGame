@@ -58,6 +58,17 @@ struct SceneManager {
         return scene
     }
     
+    func multiplayerScene() -> MultiplayerGameScene? {
+        guard let gkScene = GKScene(fileNamed: "MultiplayerGameScene"),
+              let sceneNode = gkScene.rootNode as? MultiplayerGameScene else {
+            print("❌ Falha ao carregar MultiplayerGameScene.sks")
+            return nil
+        }
+        sceneNode.scaleMode = .aspectFill
+        sceneNode.name = "MultiplayerGameScene"
+        return sceneNode
+    }
+    
     private func makeScene(with name: String) -> GameScene? {
         resetAllGameElements()
         guard let gkScene = GKScene(fileNamed: name),
