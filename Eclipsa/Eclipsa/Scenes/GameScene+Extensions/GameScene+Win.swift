@@ -110,6 +110,7 @@ extension GameScene {
                 sceneManager.flowController.goHome()
 
             case "GameScene_1":
+                GameCenterManager.shared.reportAchievement(identifier: "history001")
                 nextScene = sceneManager.phaseTwo()
             case "GameScene_2":
                 // go to phase 3 if available; fallback to phase 2 or 1
