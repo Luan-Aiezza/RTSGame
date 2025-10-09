@@ -50,15 +50,21 @@ extension HomeViewController: HomeViewDelegate {
         AudioManager.shared.playSound(named: "Effect_Confirm_1")
         flowDelegate?.goToGame()
     }
+    
+    func didTapMultiplayerButton() {
+        AudioManager.shared.playSound(named: "Effect_Confirm_1")
+        flowDelegate?.goToMultiplayer()
+    }
 }
 
 protocol HomeFlowDelegate: AnyObject {
     func goToGame()
-    
+    func goToMultiplayer()
     func goToConfiguration()
 }
 
 protocol HomeViewDelegate: AnyObject {
     func didTapPlayButton()
     func didTapConfigurationButton()
+    func didTapMultiplayerButton()
 }

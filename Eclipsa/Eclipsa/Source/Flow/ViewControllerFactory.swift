@@ -28,6 +28,8 @@ struct ViewControllerFactory {
         return gameViewController
     }
     
+    
+    
     func makeConfigurationViewController(flowDelegate: ConfigFlowDelegate) -> ConfigViewController {
         let configViewController = ConfigViewController(flowDelegate: flowDelegate)
         configViewController.modalPresentationStyle = .fullScreen
@@ -56,5 +58,9 @@ struct ViewControllerFactory {
     
     func makeFirstUserViewController(flowDelegate: FirstUserFlowDelegate) -> FirstUserViewController {
         return FirstUserViewController(flowDelegate: flowDelegate)
+    }
+    
+    func makeMultiplayerMatchViewController(flowDelegate: MultiplayerFlowDelegate) -> MultiplayerMatchViewController {
+        return MultiplayerMatchViewController(flowDelegate: flowDelegate)
     }
 }

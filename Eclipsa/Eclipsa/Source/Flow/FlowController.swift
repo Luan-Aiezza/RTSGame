@@ -5,6 +5,7 @@
 //  Created by Joseph Pereira on 09/09/25.
 //
 import UIKit
+import GameKit
 
 class FlowController {
     private var didStart: Bool = false
@@ -67,6 +68,8 @@ extension FlowController: TeamLogoFlowDelegate {
         navigation?.view.layer.add(transition, forKey: kCATransition)
         navigation?.setViewControllers([homeViewController], animated: false)
     }
+    
+    
 }
 
 // MARK: Home to Game
@@ -95,6 +98,17 @@ extension FlowController: HomeFlowDelegate {
         } else {
             // Fallback: set without animation if nav/view not available
             navigation?.setViewControllers([gameViewController], animated: false)
+        }
+    }
+    
+    func goToMultiplayer() {
+        let multiplayerVC = factory.makeMultiplayerMatchViewController(flowDelegate: self)
+        navigation?.navigationBar.isHidden = true
+
+        if let navView = navigation?.view {
+            UIView.transition(with: navView, duration: 0.5, options: [.transitionCrossDissolve, .allowAnimatedContent, .curveEaseInOut]) {
+                self.navigation?.setViewControllers([multiplayerVC], animated: false)
+            }
         }
     }
 }
@@ -129,5 +143,16 @@ extension FlowController: FirstUserFlowDelegate {
     
     func firstUserGoHome() {
         showHome()
+    }
+}
+
+extension FlowController: MultiplayerFlowDelegate {
+    func didFindMultiplayerMatch(_ match: GKMatch) {
+        let multiplayerGameVC = MultiplayerGameViewController(match: match, flowDelegate: self)
+        navigation?.setViewControllers([multiplayerGameVC], animated: false)
+    }
+    
+    func cancelMultiplayer() {
+        goHome()
     }
 }
