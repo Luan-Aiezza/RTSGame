@@ -65,7 +65,6 @@ final class HomeView: UIView {
     private let playButton: UIButton = {
         let playButton = UIButton(type: .system)
         playButton.translatesAutoresizingMaskIntoConstraints = false
-//        playButton.setTitle("Tap to start", for: .normal)
         playButton.setTitle(NSLocalizedString("start", comment: ""), for: .normal)
         playButton.setTitleColor(.white, for: .normal)
         if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 20) {
@@ -133,11 +132,13 @@ final class HomeView: UIView {
         
         setupConstraints()
         
-        startBlinkingPlayButton()
+        startBlinkingButton()
+        
         startPulsing(view: gameTitleImageView)              // título
         if let settingsIcon = settingsButton.imageView {    // ícone de configurações
             startPulsing(view: settingsIcon)
         }
+        
     }
     
     private func setupConstraints() {
@@ -181,7 +182,7 @@ final class HomeView: UIView {
         ])
     }
     
-    private func startBlinkingPlayButton() {
+    private func startBlinkingButton() {
         let animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0          // totalmente visível
         animation.toValue = 0.2            // quase transparente
@@ -189,6 +190,7 @@ final class HomeView: UIView {
         animation.autoreverses = true      // volta ao valor inicial
         animation.repeatCount = .infinity  // loop infinito
         playButton.layer.add(animation, forKey: "blink")
+        multiplayerButton.layer.add(animation, forKey: "blink")
     }
     
     private func startPulsing(view: UIView,
