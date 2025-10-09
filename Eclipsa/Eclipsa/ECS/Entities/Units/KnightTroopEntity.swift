@@ -27,10 +27,10 @@ public class KnightTroopEntity: BaseUnitEntity {
         
         // Ajusta animações adicionais: ataque corpo a corpo e morte
         if let animationComponent = self.component(ofType: AnimationComponent.self) {
-            let attackTextures = (1...3).map { SKTexture(imageNamed: "Sun_Soldier_Attack_\($0)") }
+            let attackTextures = (1...12).map { SKTexture(imageNamed: "Sun_Soldier_Attack_\($0)") }
             let deathTextures = (1...12).map { SKTexture(imageNamed: "Soldier_Sun_Dead_\($0)") }
             
-            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.4, repeatForever: true)
+            animationComponent.addAnimation(textures: attackTextures, for: .attack, timePerFrame: 0.05, repeatForever: true)
             animationComponent.addAnimation(textures: deathTextures, for: .die, timePerFrame: 0.12, repeatForever: false)
         }
         
