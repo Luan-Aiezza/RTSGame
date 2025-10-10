@@ -108,6 +108,7 @@ extension GameScene {
             switch name {
             case "GameScene_0":
                 sceneManager.flowController.goHome()
+                GameCenterManager.shared.reportAchievement(identifier: "gameplay004")
 
             case "GameScene_1":
                 GameCenterManager.shared.reportAchievement(identifier: "history001")
