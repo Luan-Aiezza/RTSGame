@@ -29,7 +29,7 @@ extension GameScene {
     
     private func setupNexus() {
         if let node = childNode(withName: "Nexus") as? SKSpriteNode {
-            let nexus = NexusEntity(node: node)
+            let nexus = NexusEntity(node: node, team: .sun)
             
             // Adiciona o indicador de ataque
             nexus.addComponent(IndicatorAttackComponent())
@@ -52,7 +52,7 @@ extension GameScene {
     private func setupInhibitors() {
         for name in sceneConfiguration!.inhibitors {
             if let node = childNode(withName: name) as? SKSpriteNode {
-                let inhibitor = InhibitorEntity(node: node)
+                let inhibitor = InhibitorEntity(node: node, team: .sun)
                 // Adiciona o indicador de ataque
                 inhibitor.addComponent(IndicatorAttackComponent())
                 

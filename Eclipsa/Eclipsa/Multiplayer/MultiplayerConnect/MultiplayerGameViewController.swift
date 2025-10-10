@@ -26,8 +26,10 @@ final class MultiplayerGameViewController: UIViewController {
         let skView = SKView(frame: view.bounds)
         view.addSubview(skView)
         
-        let scene = MultiplayerGameScene(size: view.bounds.size, match: match)
-        scene.scaleMode = .resizeFill
-        skView.presentScene(scene)
+        if let scene = SKScene(fileNamed: "MultiplayerGameScene") as? MultiplayerGameScene {
+            scene.configure(with: match)
+            scene.scaleMode = .resizeFill
+            skView.presentScene(scene)
+        }
     }
 }

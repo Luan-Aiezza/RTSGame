@@ -4,8 +4,10 @@ import GameplayKit
 import BehindGameKit
 
 public class BaseUnitEntity: GKEntity {
+    
     public var stateMachineComponent: StateMachineComponent!
     public var spriteNode: SKSpriteNode
+    
     public init(team: Team = .sun,
                 maxHealth: Int,
                 spriteSize: CGSize,
