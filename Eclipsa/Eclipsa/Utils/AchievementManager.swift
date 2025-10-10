@@ -29,23 +29,9 @@ final class AchievementManager {
     
     private func registerAchievements() {
         achievements = [
-//            RangedCreationAchievement(
-//                identifier: "ranged_10_created",
-//                title: "Sniper Novice",
-//                requiredCount: 10
-//            ),
-//            RangedCreationAchievement(
-//                identifier: "ranged_50_created",
-//                title: "Archer Master",
-//                requiredCount: 50
-//            ),
-//            RangedCreationAchievement(
-//                identifier: "ranged_100_created",
-//                title: "Legendary Marksman",
-//                requiredCount: 100
-//            )
-            TroopCreationAchievement(identifier: <#T##String#>, title: <#T##String#>, requiredQuantity: <#T##Int#>)
-            // Adicione novos achievements aqui sem modificar a lógica!
+            TroopCreationAchievement(identifier: "gameplay001", title: "Summoned 50 troops", requiredQuantity: 50),
+            TroopCreationAchievement(identifier: "gameplay002", title: "Summoned 100 troops", requiredQuantity: 100),
+            TroopCreationAchievement(identifier: "gameplay003", title: "Summoned 150 troops", requiredQuantity: 150),
         ]
     }
     
@@ -55,6 +41,7 @@ final class AchievementManager {
         gameStats.totalRangedCreated += 1
         saveProgress()
         checkAchievements()
+        
     }
     
     func recordMeleeCreation() {
@@ -180,14 +167,15 @@ struct TroopCreationAchievement: Achievement {
     let requiredQuantity: Int
     
     func checkCondition(with stats: GameStats) -> Bool {
-        var quantity = stats.totalMeleeCreated + stats.totalRangedCreated
+        print("Melee: \(stats.totalMeleeCreated)")
+        print("Ranged: \(stats.totalRangedCreated)")
+        let quantity = stats.totalMeleeCreated + stats.totalRangedCreated
         return quantity >= requiredQuantity
     }
     
     func progressPercentage(with stats: GameStats) -> Double {
-        var quantity = stats.totalMeleeCreated + stats.totalRangedCreated
+        let quantity = stats.totalMeleeCreated + stats.totalRangedCreated
         return min(Double(quantity) / Double(requiredQuantity), 1.0)
     }
-    
     
 }
