@@ -20,6 +20,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let window = UIWindow(frame: UIScreen.main.bounds)
         flowController = FlowController(window: window)
+        // Autentica Game Center o mais cedo possível
+        GameCenterManager.shared.authenticateIfNeeded(presentingViewController: window.rootViewController)
         self.window = window
         window.rootViewController = flowController?.start()
         window.makeKeyAndVisible()

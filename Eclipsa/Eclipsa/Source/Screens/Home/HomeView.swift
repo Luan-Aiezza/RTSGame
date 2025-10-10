@@ -65,7 +65,6 @@ final class HomeView: UIView {
     private let playButton: UIButton = {
         let playButton = UIButton(type: .system)
         playButton.translatesAutoresizingMaskIntoConstraints = false
-//        playButton.setTitle("Tap to start", for: .normal)
         playButton.setTitle(NSLocalizedString("start", comment: ""), for: .normal)
         playButton.setTitleColor(.white, for: .normal)
         if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 20) {
@@ -78,6 +77,21 @@ final class HomeView: UIView {
         playButton.contentEdgeInsets = .zero
         playButton.addTarget(self, action: #selector(handlePlayTapped), for: .touchUpInside)
         return playButton
+    }()
+    
+    private let multiplayerButton: UIButton = {
+        let button = UIButton(type: .system)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle(NSLocalizedString("multiplayer", comment: ""), for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        if let joystickFont = UIFont(name: "CCPixelArcade-Joystick", size: 20) {
+            button.titleLabel?.font = joystickFont
+        } else {
+            button.titleLabel?.font = UIFont.systemFont(ofSize: 20, weight: .bold)
+        }
+        button.backgroundColor = .clear
+        button.addTarget(self, action: #selector(handleMultiplayerTapped), for: .touchUpInside)
+        return button
     }()
     
     override init(frame: CGRect) {
@@ -114,14 +128,17 @@ final class HomeView: UIView {
         // Adiciona o título e o botão ao container
         container.addSubview(gameTitleImageView)
         container.addSubview(playButton)
+        container.addSubview(multiplayerButton)
         
         setupConstraints()
         
-        startBlinkingPlayButton()
+        startBlinkingButton()
+        
         startPulsing(view: gameTitleImageView)              // título
         if let settingsIcon = settingsButton.imageView {    // ícone de configurações
             startPulsing(view: settingsIcon)
         }
+        
     }
     
     private func setupConstraints() {
@@ -152,10 +169,12 @@ final class HomeView: UIView {
             // Limite de altura para não extrapolar em telas menores (ajustável)
             gameTitleImageView.heightAnchor.constraint(lessThanOrEqualToConstant: 240),
             
-            // Botão um pouco deslocado para a esquerda e 24pt abaixo do título
             playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 24),
             playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
-            playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+
+            multiplayerButton.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 12),
+            multiplayerButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
+            multiplayerButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
             
             // Settings button at top-right
             settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
@@ -163,7 +182,7 @@ final class HomeView: UIView {
         ])
     }
     
-    private func startBlinkingPlayButton() {
+    private func startBlinkingButton() {
         let animation = CABasicAnimation(keyPath: "opacity")
         animation.fromValue = 1.0          // totalmente visível
         animation.toValue = 0.2            // quase transparente
@@ -171,6 +190,7 @@ final class HomeView: UIView {
         animation.autoreverses = true      // volta ao valor inicial
         animation.repeatCount = .infinity  // loop infinito
         playButton.layer.add(animation, forKey: "blink")
+        multiplayerButton.layer.add(animation, forKey: "blink")
     }
     
     private func startPulsing(view: UIView,
@@ -213,6 +233,10 @@ final class HomeView: UIView {
     
     @objc private func handleSettingsTapped() {
         delegate?.didTapConfigurationButton()
+    }
+    
+    @objc private func handleMultiplayerTapped() {
+        delegate?.didTapMultiplayerButton()
     }
 }
 
