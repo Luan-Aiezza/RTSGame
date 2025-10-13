@@ -64,6 +64,7 @@ class ButtonsSet {
                         self.scene.addChild(node)
                         SKEntityManager.shared.add(troop)
                         ResourceHandler.shared.spendResources(TroopCost.meleeCost)
+                        AchievementManager.shared.recordMeleeCreation()
                     }
                     
                 }
@@ -91,6 +92,7 @@ class ButtonsSet {
                         self.scene.addChild(node)
                         SKEntityManager.shared.add(troop)
                         ResourceHandler.shared.spendResources(TroopCost.rangedCost)
+                        AchievementManager.shared.recordRangedCreation()
                     }
                 }
                 AudioManager.shared.playSound(named: "Invoke_Effect")

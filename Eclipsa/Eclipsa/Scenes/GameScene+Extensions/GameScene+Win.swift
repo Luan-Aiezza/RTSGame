@@ -108,20 +108,25 @@ extension GameScene {
             switch name {
             case "GameScene_0":
                 sceneManager.flowController.goHome()
+                GameCenterManager.shared.reportAchievement(identifier: "gameplay004")
 
             case "GameScene_1":
                 GameCenterManager.shared.reportAchievement(identifier: "history001")
                 nextScene = sceneManager.phaseTwo()
             case "GameScene_2":
+                GameCenterManager.shared.reportAchievement(identifier: "history002")
                 // go to phase 3 if available; fallback to phase 2 or 1
                 nextScene = sceneManager.phaseThree() ?? sceneManager.phaseTwo() ?? sceneManager.phaseOne()
             case "GameScene_3":
+                GameCenterManager.shared.reportAchievement(identifier: "history003")
                 // go to phase 4 if available; fallback to 3 or 2
                 nextScene = sceneManager.phaseFour() ?? sceneManager.phaseThree() ?? sceneManager.phaseTwo()
             case "GameScene_4":
+                GameCenterManager.shared.reportAchievement(identifier: "history004")
                 // go to phase 5 if available; fallback to 4 or 3
                 nextScene = sceneManager.phaseFive() ?? sceneManager.phaseFour() ?? sceneManager.phaseThree()
             case "GameScene_5":
+                GameCenterManager.shared.reportAchievement(identifier: "history005")
                 nextScene = sceneManager.endScene(size: view.bounds.size)
                 
             default:
