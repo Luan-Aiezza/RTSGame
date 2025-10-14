@@ -251,7 +251,7 @@ class TroopSpawnerComponent: GKComponent {
         // Gera um número de 0.0 até 1.0
         let chance = Double.random(in: 0...1)
         
-        if chance < 0.8 { // 70% ranged
+        if chance <= 0.7 { // 70% ranged
             troop = TroopFactory.makeRanged(team: .moon) {
                 return []
             }
