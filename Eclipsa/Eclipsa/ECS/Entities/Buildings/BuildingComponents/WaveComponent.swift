@@ -166,8 +166,8 @@ class TroopSpawnerComponent: GKComponent {
     
     var spawnOffset: CGPoint {
         let angle = Double.random(in: 0..<2*Double.pi)
-        let radius = Double.random(in: 80...100)
-        return CGPoint(x: (cos(angle) * radius).magnitude, y: sin(angle) * radius)
+        let radius = Double.random(in: 20...40)
+        return CGPoint(x: cos(angle) * radius, y: sin(angle) * radius)
     }
     
     init(timeOffsetGeneration: Double) {
