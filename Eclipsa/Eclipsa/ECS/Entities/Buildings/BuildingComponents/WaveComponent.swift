@@ -166,8 +166,8 @@ class TroopSpawnerComponent: GKComponent {
     
     var spawnOffset: CGPoint {
         let angle = Double.random(in: 0..<2*Double.pi)
-        let radius = Double.random(in: 80...100)
-        return CGPoint(x: (cos(angle) * radius).magnitude, y: sin(angle) * radius)
+        let radius = Double.random(in: 20...40)
+        return CGPoint(x: cos(angle) * radius, y: sin(angle) * radius)
     }
     
     init(timeOffsetGeneration: Double) {
@@ -251,7 +251,7 @@ class TroopSpawnerComponent: GKComponent {
         // Gera um número de 0.0 até 1.0
         let chance = Double.random(in: 0...1)
         
-        if chance < 0.8 { // 70% ranged
+        if chance <= 0.8 { // 70% ranged
             troop = TroopFactory.makeRanged(team: .moon) {
                 return []
             }
