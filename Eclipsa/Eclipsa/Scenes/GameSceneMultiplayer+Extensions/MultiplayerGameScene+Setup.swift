@@ -18,7 +18,7 @@ extension MultiplayerGameScene {
         }
         for i in 1...3 {
             if let node = childNode(withName: "Sun_Inhibitor_\(i)") as? SKSpriteNode {
-                let inhibitor = InhibitorEntity(node: node, team: .sun)
+                let inhibitor = InhibitorEntity(node: node, team: .sun, respawnDelay: 30, scene: self)
                 SKEntityManager.shared.add(inhibitor)
             }
         }
@@ -31,7 +31,7 @@ extension MultiplayerGameScene {
         }
         for i in 1...3 {
             if let node = childNode(withName: "Moon_Inhibitor_\(i)") as? SKSpriteNode {
-                let inhibitor = InhibitorEntity(node: node, team: .moon)
+                let inhibitor = InhibitorEntity(node: node, team: .moon, respawnDelay: 30, scene: self)
                 SKEntityManager.shared.add(inhibitor)
             }
         }
