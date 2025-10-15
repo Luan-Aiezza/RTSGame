@@ -103,41 +103,101 @@ extension MultiplayerGameScene {
 
 // MARK: - Sync System
 extension MultiplayerGameScene {
+    // Simple binary protocol
+    // [UInt8 type][Float32 x][Float32 y][Float32 rot][UInt8 anim]
+    private enum PacketType: UInt8 { case playerState = 0x01 }
+
+    private var playerNode: SKNode? { controlledEntity?.spriteNode }
+
+    // Rate limit to avoid flooding the network
+    private static let sendInterval: TimeInterval = 1.0 / 30.0
+    private static var lastSentTime: TimeInterval = 0
+
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
+        guard currentTime - MultiplayerGameScene.lastSentTime >= MultiplayerGameScene.sendInterval else { return }
+        MultiplayerGameScene.lastSentTime = currentTime
         sendLocalPlayerState()
     }
 
     func sendLocalPlayerState() {
         guard let match = match,
-              let playerNode = controlledEntity?.spriteNode else { return }
-        
-        let position = playerNode.position
-        let data = try? JSONEncoder().encode(PlayerSyncData(
-            playerID: localPlayerID,
-            x: position.x,
-            y: position.y
-        ))
-        
-        if let data = data {
-            try? match.sendData(toAllPlayers: data, with: .unreliable)
+              let player = controlledEntity,
+              let node = player.component(ofType: GKSKNodeComponent.self)?.node else { return }
+
+        // Compose payload
+        var data = Data()
+        data.append(PacketType.playerState.rawValue)
+
+        var x = Float(node.position.x)
+        var y = Float(node.position.y)
+        var rot = Float(node.zRotation)
+        let isMoving = (player.moveComponent?.direction ?? .zero) != .zero
+        let anim: UInt8 = isMoving ? 1 : 0
+
+        withUnsafeBytes(of: &x) { data.append(contentsOf: $0) }
+        withUnsafeBytes(of: &y) { data.append(contentsOf: $0) }
+        withUnsafeBytes(of: &rot) { data.append(contentsOf: $0) }
+        data.append(anim)
+
+        do {
+            try match.sendData(toAllPlayers: data, with: .unreliable)
+        } catch {
+            print("[Sync] Failed to send player state: \(error)")
         }
     }
-}
-
-struct PlayerSyncData: Codable {
-    let playerID: String
-    let x: CGFloat
-    let y: CGFloat
 }
 
 // MARK: - Match Delegate
 extension MultiplayerGameScene: GKMatchDelegate {
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        guard let info = try? JSONDecoder().decode(PlayerSyncData.self, from: data),
-              let remoteNode = remotePlayerEntity?.spriteNode else { return }
-        
-        remoteNode.position = CGPoint(x: info.x, y: info.y)
+        guard data.count >= 1 else { return }
+        guard let type = PacketType(rawValue: data[0]) else { return }
+
+        switch type {
+        case .playerState:
+            // Expected size: 1 + 4 + 4 + 4 + 1
+            let expected = 1 + 4 + 4 + 4 + 1
+            guard data.count >= expected else { return }
+
+            var offset = 1
+            func readFloat() -> Float {
+                let range = offset..<(offset+4)
+                let value = data.subdata(in: range).withUnsafeBytes { $0.load(as: Float.self) }
+                offset += 4
+                return value
+            }
+
+            let fx = readFloat()
+            let fy = readFloat()
+            let frot = readFloat()
+            let anim = data[offset]
+
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                // Ensure remote entity exists
+                if self.remotePlayerEntity == nil {
+                    let remote = UnitEntity(team: self.remoteTeam)
+                    SKEntityManager.shared.add(remote)
+                    if remote.spriteNode.parent == nil { self.addChild(remote.spriteNode) }
+                    self.remotePlayerEntity = remote
+                }
+                guard let remote = self.remotePlayerEntity,
+                      let node = remote.component(ofType: GKSKNodeComponent.self)?.node else { return }
+
+                // Update transform
+                node.position = CGPoint(x: CGFloat(fx), y: CGFloat(fy))
+                node.zRotation = CGFloat(frot)
+
+                // Update simple animation state
+                if let sm = remote.component(ofType: StateMachineComponent.self) {
+                    if anim == 1 {
+                        sm.stateMachine.enter(WalkingState.self)
+                    } else {
+                        sm.stateMachine.enter(IdleState.self)
+                    }
+                }
+            }
+        }
     }
 }
-
