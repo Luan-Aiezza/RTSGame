@@ -49,7 +49,7 @@ public class BaseUnitEntity: GKEntity {
         }
         healthBar.updateBar(health: healthComponent.currentHealth, max: healthComponent.maxHealth)
 
-        let rangeComponent = RangeComponent(radius: 120)
+        let rangeComponent = RangeComponent(radius: 160)
         self.addComponent(rangeComponent)
 
         // Adiciona AgentComponent padrão (detalhes podem ser sobrescritos nas subclasses)
