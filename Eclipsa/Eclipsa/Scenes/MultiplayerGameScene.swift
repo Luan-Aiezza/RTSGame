@@ -11,6 +11,8 @@ import BehindGameKit
 import GameplayKit
 import Combine
 
+public func lerp(_ a: CGFloat, _ b: CGFloat, t: CGFloat) -> CGFloat { a + (b - a) * t }
+
 final class MultiplayerGameScene: GameScene {
     private(set) var match: GKMatch?
     public var localTeam: Team = .sun
@@ -21,6 +23,15 @@ final class MultiplayerGameScene: GameScene {
     // Identificador para sincronização
     public var localPlayerID: String = GKLocalPlayer.local.gamePlayerID
     public var remotePlayer: GKPlayer?
+
+    // Remote smoothing targets
+    public var remoteTargetPosition: CGPoint?
+    public var remoteTargetRotation: CGFloat?
+
+    // Troop ID management
+    public var nextLocalTroopID: UInt32 = 1
+    public var troopNodesByID: [UInt32: GKSKNodeComponent] = [:]
+    public var troopTeamByID: [UInt32: Team] = [:]
 
     // MARK: - Init
     init(size: CGSize, match: GKMatch) {
@@ -44,6 +55,8 @@ final class MultiplayerGameScene: GameScene {
         match.delegate = self
         configureTeams()
     }
+    
+    
 
     // MARK: - Lifecycle
     override func didMove(to view: SKView) {
@@ -76,128 +89,27 @@ final class MultiplayerGameScene: GameScene {
         
         // 5️⃣ Configura interface e câmera
         setupCamera()
-        setupUI()
+//        setupUI()
+        rewireButtonsForMultiplayer()
         setupRTSAiming()
+        
         
         print("✅ MultiplayerGameScene pronta com times: \(localTeam) vs \(remoteTeam)")
     }
-}
-
-// MARK: - Team Configuration
-extension MultiplayerGameScene {
-    func configureTeams() {
-        guard let match = match, match.players.count > 0 else { return }
-        let sortedPlayers = ([GKLocalPlayer.local] + match.players).sorted { $0.gamePlayerID < $1.gamePlayerID }
+    
+    // ✅ NOVA FUNÇÃO
+    private func rewireButtonsForMultiplayer() {
+        // A essa altura, `super.didMove` já criou os botões.
+        // Nós apenas trocamos o que eles fazem.
         
-        if sortedPlayers.first?.gamePlayerID == GKLocalPlayer.local.gamePlayerID {
-            localTeam = .sun
-            remoteTeam = .moon
-        } else {
-            localTeam = .moon
-            remoteTeam = .sun
+        buttons.invokeMeleeButton?.onTouch = { [weak self] in
+            self?.invokeTroop(type: .melee)
         }
         
-        remotePlayer = match.players.first(where: { $0.gamePlayerID != GKLocalPlayer.local.gamePlayerID })
-    }
-}
-
-// MARK: - Sync System
-extension MultiplayerGameScene {
-    // Simple binary protocol
-    // [UInt8 type][Float32 x][Float32 y][Float32 rot][UInt8 anim]
-    private enum PacketType: UInt8 { case playerState = 0x01 }
-
-    private var playerNode: SKNode? { controlledEntity?.spriteNode }
-
-    // Rate limit to avoid flooding the network
-    private static let sendInterval: TimeInterval = 1.0 / 30.0
-    private static var lastSentTime: TimeInterval = 0
-
-    override func update(_ currentTime: TimeInterval) {
-        super.update(currentTime)
-        guard currentTime - MultiplayerGameScene.lastSentTime >= MultiplayerGameScene.sendInterval else { return }
-        MultiplayerGameScene.lastSentTime = currentTime
-        sendLocalPlayerState()
-    }
-
-    func sendLocalPlayerState() {
-        guard let match = match,
-              let player = controlledEntity,
-              let node = player.component(ofType: GKSKNodeComponent.self)?.node else { return }
-
-        // Compose payload
-        var data = Data()
-        data.append(PacketType.playerState.rawValue)
-
-        var x = Float(node.position.x)
-        var y = Float(node.position.y)
-        var rot = Float(node.zRotation)
-        let isMoving = (player.moveComponent?.direction ?? .zero) != .zero
-        let anim: UInt8 = isMoving ? 1 : 0
-
-        withUnsafeBytes(of: &x) { data.append(contentsOf: $0) }
-        withUnsafeBytes(of: &y) { data.append(contentsOf: $0) }
-        withUnsafeBytes(of: &rot) { data.append(contentsOf: $0) }
-        data.append(anim)
-
-        do {
-            try match.sendData(toAllPlayers: data, with: .unreliable)
-        } catch {
-            print("[Sync] Failed to send player state: \(error)")
+        buttons.invokeRangedButton?.onTouch = { [weak self] in
+            // Adapte conforme sua necessidade
+            // Ex: self?.invokeTroop(type: .ranged)
         }
     }
-}
-
-// MARK: - Match Delegate
-extension MultiplayerGameScene: GKMatchDelegate {
-    func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        guard data.count >= 1 else { return }
-        guard let type = PacketType(rawValue: data[0]) else { return }
-
-        switch type {
-        case .playerState:
-            // Expected size: 1 + 4 + 4 + 4 + 1
-            let expected = 1 + 4 + 4 + 4 + 1
-            guard data.count >= expected else { return }
-
-            var offset = 1
-            func readFloat() -> Float {
-                let range = offset..<(offset+4)
-                let value = data.subdata(in: range).withUnsafeBytes { $0.load(as: Float.self) }
-                offset += 4
-                return value
-            }
-
-            let fx = readFloat()
-            let fy = readFloat()
-            let frot = readFloat()
-            let anim = data[offset]
-
-            DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                // Ensure remote entity exists
-                if self.remotePlayerEntity == nil {
-                    let remote = UnitEntity(team: self.remoteTeam)
-                    SKEntityManager.shared.add(remote)
-                    if remote.spriteNode.parent == nil { self.addChild(remote.spriteNode) }
-                    self.remotePlayerEntity = remote
-                }
-                guard let remote = self.remotePlayerEntity,
-                      let node = remote.component(ofType: GKSKNodeComponent.self)?.node else { return }
-
-                // Update transform
-                node.position = CGPoint(x: CGFloat(fx), y: CGFloat(fy))
-                node.zRotation = CGFloat(frot)
-
-                // Update simple animation state
-                if let sm = remote.component(ofType: StateMachineComponent.self) {
-                    if anim == 1 {
-                        sm.stateMachine.enter(WalkingState.self)
-                    } else {
-                        sm.stateMachine.enter(IdleState.self)
-                    }
-                }
-            }
-        }
-    }
+    
 }

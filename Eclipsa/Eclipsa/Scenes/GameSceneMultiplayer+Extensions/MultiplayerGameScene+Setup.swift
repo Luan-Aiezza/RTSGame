@@ -69,7 +69,8 @@ extension MultiplayerGameScene {
         if remote.spriteNode.parent == nil {
             addChild(remote.spriteNode)
         }
-
+        
         remotePlayerEntity = remote
     }
+    
 }
