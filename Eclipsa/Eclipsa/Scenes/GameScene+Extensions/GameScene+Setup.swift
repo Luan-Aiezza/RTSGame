@@ -52,12 +52,20 @@ extension GameScene {
     private func setupInhibitors() {
         for name in sceneConfiguration!.inhibitors {
             if let node = childNode(withName: name) as? SKSpriteNode {
-                let inhibitor = InhibitorEntity(node: node, team: .sun)
-                // Adiciona o indicador de ataque
+                let inhibitor = InhibitorEntity(
+                    node: node,
+                    team: .sun,
+                    respawnDelay: 5,
+                    scene: self)
+        
                 inhibitor.addComponent(IndicatorAttackComponent())
                 
                 inhibitor.onDestroyed = { [weak inhibitor] in
-                    inhibitor?.removeComponent(ofType: IndicatorAttackComponent.self)
+                    inhibitor?.removeComponent(ofType: SKPhysicsBodyComponent.self)
+                }
+                inhibitor.onRespawned = { [weak inhibitor] in
+                    let animationComponent = inhibitor?.component(ofType: AnimationComponent.self)
+                    animationComponent?.runAnimation(for: .custom("respawn"))
                 }
                 
                 SKEntityManager.shared.add(inhibitor)
