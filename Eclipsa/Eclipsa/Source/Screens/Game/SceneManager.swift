@@ -62,7 +62,7 @@ struct SceneManager {
         resetAllGameElements()
         guard let gkScene = GKScene(fileNamed: name),
               let sceneNode = gkScene.rootNode as? GameScene else { return nil}
-            sceneNode.scaleMode = .aspectFill
+            sceneNode.scaleMode = .resizeFill
             sceneNode.name = name
             sceneNode.sceneManager = self
             return sceneNode

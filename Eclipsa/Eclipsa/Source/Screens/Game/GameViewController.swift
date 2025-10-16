@@ -134,8 +134,8 @@ class GameViewController: UIViewController {
     func setupConstraints(){
         NSLayoutConstraint.activate([
             skView.topAnchor.constraint(equalTo: view.topAnchor),
-            skView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            skView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
+            skView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            skView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             skView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
             pauseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
@@ -143,10 +143,10 @@ class GameViewController: UIViewController {
             pauseButton.heightAnchor.constraint(equalToConstant: 36),
             pauseButton.widthAnchor.constraint(equalToConstant: 36),
             
-            pauseView.topAnchor.constraint(equalTo: view.topAnchor),
-            pauseView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
-            pauseView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor),
-            pauseView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+            pauseView.topAnchor.constraint(equalTo: skView.topAnchor),
+            pauseView.leadingAnchor.constraint(equalTo: skView.leadingAnchor),
+            pauseView.trailingAnchor.constraint(equalTo: skView.trailingAnchor),
+            pauseView.bottomAnchor.constraint(equalTo: skView.bottomAnchor)
             
         ])
     }
