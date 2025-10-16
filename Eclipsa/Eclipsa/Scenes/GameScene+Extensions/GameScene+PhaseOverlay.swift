@@ -21,6 +21,7 @@ extension GameScene {
         bg.name = "PhaseOverlayBG"
         bg.position = .zero
         bg.zPosition = 0.0
+        bg.setScale(2)
         overlay.addChild(bg)
         
         // Partículas de neve (à frente do fundo preto)
