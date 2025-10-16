@@ -37,6 +37,13 @@ public class HealthComponent: GKComponent {
         onHealthChanged?(currentHealth, maxHealth)
     }
     
+    func restoreFullHealth() {
+        DispatchQueue.main.async{
+            self.currentHealth = self.maxHealth
+            self.onHealthChanged?(self.currentHealth, self.maxHealth)
+        }
+    }
+    
     public func setHealth(_ value: Int) {
         currentHealth = min(max(value, 0), maxHealth)
         onHealthChanged?(currentHealth, maxHealth)
@@ -60,21 +67,25 @@ public class HealthComponent: GKComponent {
             let capturedNode = entity.component(ofType: GKSKNodeComponent.self)?.node
 
             // remove do EntityManager logo aqui (para sair de allTroops)
-            SKEntityManager.shared.remove(entity)
-
-            // espera só para remover o nó visual, sem depender da entidade existir
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                // Limpa ações e filhos, remove da cena
-                capturedNode?.removeAllActions()
-                capturedNode?.removeAllChildren()
-                capturedNode?.removeFromParent()
-                // Como o SKPhysicsBodyComponent zera physicsBody no willRemoveFromEntity,
-                // e a entidade pode já ter sido desalocada, garantimos aqui que o physicsBody não permaneça.
-                capturedNode?.physicsBody = nil
+            if !(entity is InhibitorEntity) {
+                SKEntityManager.shared.remove(entity)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    // Limpa ações e filhos, remove da cena
+                    capturedNode?.removeAllActions()
+                    capturedNode?.removeAllChildren()
+                    capturedNode?.removeFromParent()
+                    capturedNode?.physicsBody = nil
+                    // Como o SKPhysicsBodyComponent zera physicsBody no willRemoveFromEntity,
+                    // e a entidade pode já ter sido desalocada, garantimos aqui que o physicsBody não permaneça.
+                }
             }
+            // espera só para remover o nó visual, sem depender da entidade existir
+
         } else {
-            SKEntityManager.shared.remove(entity)
-            entity.destroy()
+            if !(entity is InhibitorEntity) {
+                SKEntityManager.shared.remove(entity)
+                entity.destroy()
+            }
         }
     }
 

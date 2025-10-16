@@ -89,5 +89,10 @@ public class HealthBarComponent: GKComponent {
             }
         }
     }
+    
+    public func hideHealthBar(_ bool: Bool) {
+        barNode.isHidden =  bool
+        backgroundNode.isHidden = bool
+    }
 }
 
