@@ -28,26 +28,24 @@ class PauseView: UIView {
         let label = UILabel()
         label.text = "Continue"
         label.font = UIFont(name: "CCPixelArcade-Joystick", size: 24)
-        label.textColor = .white
+        label.textColor = .systemGreen
         label.isUserInteractionEnabled = true
-        
         return label
     }()
     
     private let exitButton: UIButton = {
-       let button = UIButton(type: .system)
+        let button = UIButton(type: .system)
         button.setTitle("Exit", for: .normal)
         button.titleLabel?.font = UIFont(name: "CCPixelArcade-Joystick", size: 24)
-        button.setTitleColor(.white, for: .normal)
+        button.setTitleColor(.systemRed, for: .normal)
         button.tintColor = .white
-        
         return button
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()
-        startPulseAnimation()
+        startPulseAnimations()
     }
     
     required init?(coder: NSCoder) {
@@ -83,6 +81,7 @@ class PauseView: UIView {
             continueLabel.centerXAnchor.constraint(equalTo: centerXAnchor),
             continueLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
             
+            // Botão Exit logo abaixo
             exitButton.centerXAnchor.constraint(equalTo: continueLabel.centerXAnchor),
             exitButton.topAnchor.constraint(equalTo: continueLabel.bottomAnchor, constant: 20)
         ])
@@ -94,26 +93,33 @@ class PauseView: UIView {
         }
     }
     
-    private func startPulseAnimation() {
-        UIView.animate(withDuration: 0.8,
-                       delay: 0,
+    private func startPulseAnimations() {
+        // Continue pulsando
+        pulse(view: continueLabel, duration: 0.8, delay: 0)
+        // Exit pulsando com um pequeno delay para dar contraste
+        pulse(view: exitButton, duration: 0.8, delay: 0.4)
+    }
+    
+    private func pulse(view: UIView, duration: TimeInterval, delay: TimeInterval) {
+        UIView.animate(withDuration: duration,
+                       delay: delay,
                        options: [.repeat, .autoreverse, .allowUserInteraction],
                        animations: {
-            self.continueLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
-            self.continueLabel.alpha = 0.6
+            view.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+            view.alpha = 0.6
         }, completion: { _ in
-            self.continueLabel.transform = .identity
-            self.continueLabel.alpha = 1.0
+            view.transform = .identity
+            view.alpha = 1.0
         })
     }
     
     @objc
-    private func tapPause(){
+    private func tapPause() {
         delegate?.pauseViewDidTapContinue()
     }
     
     @objc
-    private func tapExit(){
+    private func tapExit() {
         delegate?.didTapExit()
     }
 }

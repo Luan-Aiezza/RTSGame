@@ -70,7 +70,7 @@ class GameViewController: UIViewController {
             if let scene = loadPhase(for: savedState.currentPhase) {
                 scene.pauseButtonDelegate = self
                 skView.presentScene(scene)
-                AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+                AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 1.0)
             }
         } else {
             // Primeira vez → intro + fase 1
@@ -80,7 +80,7 @@ class GameViewController: UIViewController {
                     DispatchQueue.main.async {
                         phaseOne.pauseButtonDelegate = self
                         self?.skView.presentScene(phaseOne)
-                        AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 3.0)
+                        AudioManager.shared.playLoopingBackgroundMusic(named: "OST_InGame", crossfadeDuration: 1.0)
                     }
                 }
             }
@@ -138,8 +138,8 @@ class GameViewController: UIViewController {
             skView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             skView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             
-            pauseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            pauseButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            pauseButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            pauseButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -8),
             pauseButton.heightAnchor.constraint(equalToConstant: 36),
             pauseButton.widthAnchor.constraint(equalToConstant: 36),
             

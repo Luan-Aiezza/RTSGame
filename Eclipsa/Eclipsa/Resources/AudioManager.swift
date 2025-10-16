@@ -169,7 +169,7 @@ class AudioManager {
         if let v = savedSFX { sfxVolume = max(0.0, min(v, 1.0)) }
         if let v = savedVoice { voiceVolume = max(0.0, min(v, 1.0)) } // <-- ADICIONADO
         
-        setVoiceVolume(0.5)
+        setVoiceVolume(0.6)
     }
 
     // MARK: - Fades para Música de Background

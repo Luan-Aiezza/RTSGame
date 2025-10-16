@@ -54,28 +54,29 @@ final class PhysicsSystem {
         }
     }
     
-//    static func setupBuildingPhysics(for entity: BuildingEntity, size: CGSize) {
-//        if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
-//           nodeComponent.node.physicsBody == nil {
-//            
-//            let reducedHeight = size.height * 0.7  // 70% da altura
-//            let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
-//            
-//            let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,
-//                                                         height: reducedHeight),
-//                                     center: CGPoint(x: 0, y: offsetY))
-//            
-//            body.affectedByGravity = false
-//            body.allowsRotation = false
-//            body.isDynamic = false // prédio não se move
-//            body.categoryBitMask = PhysicsCategory.wall
-//            body.collisionBitMask = UInt32.contactWithAllCategories()
-//            body.contactTestBitMask = UInt32.contactWithAllCategories()
-//            
-//            let physics = SKPhysicsBodyComponent(physicsBody: body)
-//            entity.addComponent(physics)
-//        }
-//    }
+    static func setupTreeBorderPhysics(for entity: BuildingEntity, size: CGSize) {
+        if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
+           nodeComponent.node.physicsBody == nil {
+            
+            let reducedHeight = size.height * 0.7  // 70% da altura
+            let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
+            
+            let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,
+                                                         height: reducedHeight),
+                                     center: CGPoint(x: 0, y: offsetY))
+            
+            body.affectedByGravity = false
+            body.allowsRotation = false
+            body.isDynamic = false // prédio não se move
+            body.categoryBitMask = PhysicsCategory.wall
+            body.collisionBitMask = UInt32.contactWithAllCategories()
+            body.contactTestBitMask = UInt32.contactWithAllCategories()
+            
+            let physics = SKPhysicsBodyComponent(physicsBody: body)
+            entity.addComponent(physics)
+        }
+    }
+    
     static func setupBuildingPhysics(for entity: BuildingEntity, size: CGSize) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
