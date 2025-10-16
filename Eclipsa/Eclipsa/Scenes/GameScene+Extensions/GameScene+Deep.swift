@@ -33,7 +33,8 @@ extension GameScene {
         let groundTileMapNames: Set<String> = [
             "Grass_1", "Grass_1_Variation",
             "Grass_2", "Grass_2_Variation",
-            "Grass_3", "Grass_3_Variation"
+            "Grass_3", "Grass_3_Variation",
+            "Decorations"
         ]
         
         // Nomes explícitos de botões/hud que conhecemos
@@ -243,6 +244,20 @@ extension GameScene {
                     node.zPosition = -5_000
                     return
                 }
+                
+                // 2.2) Pegadas (asset "step") → acima do chão, atrás do resto do mundo
+                // Identificação por nome explícito ou por sprite com textura chamada "step"
+                if name == "step" {
+                    // Chão está em -10_000; colocamos as pegadas em -9_500 para ficar acima do chão
+                    node.zPosition = -9_500
+                    return
+                }
+            }
+            
+            // 2.3) Pegadas por textura (quando o nó não tem nome), acima do chão
+            if let sprite = node as? SKSpriteNode, let textureName = sprite.texture?.description.lowercased(), textureName.contains("step") {
+                node.zPosition = -9_500
+                return
             }
             
             // 3) Tilemaps de chão → sempre no fundo

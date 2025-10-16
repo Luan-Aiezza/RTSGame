@@ -30,6 +30,10 @@ class TroopGeneratorComponent: GKComponent {
         if limitTroops > generatedTroops.count {
             let position = spawnPosition + spawnOffset
             let troop = TroopEntity.createTroop(at: position, team: Team.sun, troops: troops)
+            // Injeta FootprintComponent também no caminho genérico
+            if let scene = self.scene ?? (self.entity as? BaseUnitEntity)?.spriteNode.scene as? GameScene {
+                troop.addComponent(FootprintComponent(scene: scene))
+            }
             // Anexa o comportamento de follow ao jogador para tropas aliadas
             attachAutoFollowIfAllied(to: troop)
             generatedTroops.insert(troop)
@@ -63,6 +67,10 @@ class TroopGeneratorComponent: GKComponent {
             return Array(troops)
         }
         troop.spriteNode.position = position
+        
+        if let scene = self.scene ?? (self.entity as? BaseUnitEntity)?.spriteNode.scene as? GameScene {
+            troop.addComponent(FootprintComponent(scene: scene))
+        }
         // Anexa o comportamento de follow ao jogador para tropas aliadas
         attachAutoFollowIfAllied(to: troop)
         generatedTroops.insert(troop)
@@ -77,6 +85,12 @@ class TroopGeneratorComponent: GKComponent {
         }
         troop.spriteNode.position = position
         // Anexa o comportamento de follow ao jogador para tropas aliadas
+        
+        // ✅ Injeta o FootprintComponent aqui
+        if let scene = self.scene ?? (self.entity as? BaseUnitEntity)?.spriteNode.scene as? GameScene {
+            troop.addComponent(FootprintComponent(scene: scene))
+        }
+        
         attachAutoFollowIfAllied(to: troop)
         generatedTroops.insert(troop)
         completion(troop)

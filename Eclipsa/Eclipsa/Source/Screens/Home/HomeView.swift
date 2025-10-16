@@ -228,6 +228,28 @@ final class HomeView: UIView {
         snowView.presentScene(scene)
     }
     
+    override func didMoveToWindow() {
+        super.didMoveToWindow()
+        
+        // Garante que só será chamado quando a view estiver realmente visível
+        if window != nil {
+            unlockFirstTimeAchievementIfNeeded()
+        }
+    }
+
+    private func unlockFirstTimeAchievementIfNeeded() {
+        let key = "didUnlockHistoryAchievement"
+        let hasUnlocked = UserDefaults.standard.bool(forKey: key)
+        
+        guard !hasUnlocked else { return } // já desbloqueou antes
+        
+        // Reporta a conquista via Game Center
+        GameCenterManager.shared.reportAchievement(identifier: "history000")
+        
+        // Marca como concluído localmente
+        UserDefaults.standard.set(true, forKey: key)
+    }
+    
     @objc private func handlePlayTapped() {
         delegate?.didTapPlayButton()
     }
