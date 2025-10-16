@@ -31,7 +31,7 @@ final class FirstUserViewController: UIViewController {
         st.translatesAutoresizingMaskIntoConstraints = false
         st.axis = .vertical
         st.alignment = .center
-        st.spacing = 24
+        st.spacing = 40 // ⬆️ espaçamento vertical aumentado
         return st
     }()
     
@@ -61,7 +61,7 @@ final class FirstUserViewController: UIViewController {
         }
         bt.backgroundColor = UIColor.black.withAlphaComponent(0.4)
         bt.layer.cornerRadius = 8
-        bt.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
+        bt.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
         return bt
     }
     
@@ -81,7 +81,7 @@ final class FirstUserViewController: UIViewController {
         let st = UIStackView()
         st.translatesAutoresizingMaskIntoConstraints = false
         st.axis = .horizontal
-        st.spacing = 32
+        st.spacing = 40
         st.distribution = .fillEqually
         return st
     }()
@@ -112,6 +112,7 @@ final class FirstUserViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        startPulsing(view: titleLabel)
     }
     
     private func setupUI() {
@@ -148,12 +149,29 @@ final class FirstUserViewController: UIViewController {
         ])
     }
     
+    // MARK: - Animation
+    private func startPulsing(view: UIView,
+                              from: CGFloat = 1.0,
+                              to: CGFloat = 1.15,
+                              duration: CFTimeInterval = 1.2) {
+        let pulse = CABasicAnimation(keyPath: "transform.scale")
+        pulse.fromValue = from
+        pulse.toValue = to
+        pulse.duration = duration
+        pulse.autoreverses = true
+        pulse.repeatCount = .infinity
+        pulse.timingFunction = CAMediaTimingFunction(name: .easeInEaseOut)
+        view.layer.add(pulse, forKey: "pulse")
+    }
+    
     // MARK: - Actions
     @objc private func handleYes() {
+        AudioManager.shared.playSound(named: "Effect_Confirm_1") // ✅ som de confirmação
         flowDelegate?.firstUserGoTutorial()
     }
     
     @objc private func handleNo() {
+        AudioManager.shared.playSound(named: "Effect_Select_1") // ✅ som de seleção
         flowDelegate?.firstUserGoHome()
     }
 }
