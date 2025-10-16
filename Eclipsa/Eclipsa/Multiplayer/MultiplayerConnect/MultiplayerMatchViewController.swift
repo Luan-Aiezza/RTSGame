@@ -47,13 +47,13 @@ extension MultiplayerMatchViewController: GKMatchmakerViewControllerDelegate, GK
     }
 
     func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFailWithError error: Error) {
-        print("❌ Matchmaking error: \(error.localizedDescription)")
+        print("Matchmaking error: \(error.localizedDescription)")
         viewController.dismiss(animated: true)
         flowDelegate?.cancelMultiplayer()
     }
 
     func matchmakerViewController(_ viewController: GKMatchmakerViewController, didFind match: GKMatch) {
-        print("✅ Match found with \(match.players.count) players")
+        print("Match found with \(match.players.count) players")
         self.match = match
         match.delegate = self
         viewController.dismiss(animated: true)
@@ -62,6 +62,6 @@ extension MultiplayerMatchViewController: GKMatchmakerViewControllerDelegate, GK
 
     func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
         // Aqui você pode receber dados de jogo
-        print("📡 Recebido \(data.count) bytes de \(player.displayName)")
+        print("Recebido \(data.count) bytes de \(player.displayName)")
     }
 }

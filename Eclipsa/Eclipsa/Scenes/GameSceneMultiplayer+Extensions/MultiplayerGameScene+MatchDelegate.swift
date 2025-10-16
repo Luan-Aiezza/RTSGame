@@ -136,6 +136,28 @@ extension MultiplayerGameScene: GKMatchDelegate {
                 // If you have an attack system, you could trigger a local visual/effect here
                 _ = attackerID; _ = targetID
             }
+            
+            // Em MultiplayerGameScene+MatchDelegate.swift
+            
+            // Adicione este novo case dentro do switch
+        case .troopState:
+            // Expected: [type][UInt32 id][Float32 x][Float32 y]
+            let expected = 1 + 4 + 4 + 4
+            guard data.count >= expected else { return }
+            
+            var offset = 1
+            func readUInt32() -> UInt32 { defer { offset += 4 }; return data.subdata(in: offset..<(offset+4)).withUnsafeBytes { $0.load(as: UInt32.self) } }
+            func readFloat() -> Float { defer { offset += 4 }; return data.subdata(in: offset..<(offset+4)).withUnsafeBytes { $0.load(as: Float.self) } }
+            
+            let id = readUInt32()
+            let x = readFloat()
+            let y = readFloat()
+            
+            DispatchQueue.main.async { [weak self] in
+                // Não movemos a tropa diretamente. Apenas definimos o "alvo"
+                // para onde ela deve se mover suavemente no update().
+                self?.remoteTroopTargetPositions[id] = CGPoint(x: CGFloat(x), y: CGFloat(y))
+            }
         }
     }
 }

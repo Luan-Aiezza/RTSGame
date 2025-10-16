@@ -32,6 +32,7 @@ final class MultiplayerGameScene: GameScene {
     public var nextLocalTroopID: UInt32 = 1
     public var troopNodesByID: [UInt32: GKSKNodeComponent] = [:]
     public var troopTeamByID: [UInt32: Team] = [:]
+    public var deathMessageSentTroopIDs: Set<UInt32> = []
 
     // MARK: - Init
     init(size: CGSize, match: GKMatch) {
@@ -61,11 +62,11 @@ final class MultiplayerGameScene: GameScene {
     // MARK: - Lifecycle
     override func didMove(to view: SKView) {
         super.didMove(to: view)
-        print("🕹️ MultiplayerGameScene iniciada")
+        print("MultiplayerGameScene iniciada")
 
         // Se ainda não há match, espere até ser configurado
         guard let match = match else {
-            print("⚠️ Match ainda não configurado. Chame `configure(with:)` antes de apresentar a cena.")
+            print("Match ainda não configurado. Chame `configure(with:)` antes de apresentar a cena.")
             return
         }
 
@@ -89,15 +90,13 @@ final class MultiplayerGameScene: GameScene {
         
         // 5️⃣ Configura interface e câmera
         setupCamera()
-//        setupUI()
         rewireButtonsForMultiplayer()
         setupRTSAiming()
         
         
-        print("✅ MultiplayerGameScene pronta com times: \(localTeam) vs \(remoteTeam)")
+        print("MultiplayerGameScene pronta com times: \(localTeam) vs \(remoteTeam)")
     }
     
-    // ✅ NOVA FUNÇÃO
     private func rewireButtonsForMultiplayer() {
         // A essa altura, `super.didMove` já criou os botões.
         // Nós apenas trocamos o que eles fazem.
@@ -108,7 +107,7 @@ final class MultiplayerGameScene: GameScene {
         
         buttons.invokeRangedButton?.onTouch = { [weak self] in
             // Adapte conforme sua necessidade
-            // Ex: self?.invokeTroop(type: .ranged)
+            self?.invokeTroop(type: .ranged)
         }
     }
     

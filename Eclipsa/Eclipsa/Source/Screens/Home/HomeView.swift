@@ -128,7 +128,7 @@ final class HomeView: UIView {
         // Adiciona o título e o botão ao container
         container.addSubview(gameTitleImageView)
         container.addSubview(playButton)
-        container.addSubview(multiplayerButton)
+//        container.addSubview(multiplayerButton)
         
         setupConstraints()
         
@@ -171,11 +171,12 @@ final class HomeView: UIView {
             
             playButton.topAnchor.constraint(equalTo: gameTitleImageView.bottomAnchor, constant: 24),
             playButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
+            playButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
 
-            multiplayerButton.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 12),
-            multiplayerButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
-            multiplayerButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
-            
+//            multiplayerButton.topAnchor.constraint(equalTo: playButton.bottomAnchor, constant: 12),
+//            multiplayerButton.centerXAnchor.constraint(equalTo: container.centerXAnchor, constant: -8),
+//            multiplayerButton.bottomAnchor.constraint(equalTo: container.bottomAnchor),
+//            
             // Settings button at top-right
             settingsButton.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor, constant: 16),
             settingsButton.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor, constant: -16),

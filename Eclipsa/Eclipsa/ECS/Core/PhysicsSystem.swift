@@ -54,28 +54,57 @@ final class PhysicsSystem {
         }
     }
     
+//    static func setupBuildingPhysics(for entity: BuildingEntity, size: CGSize) {
+//        if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
+//           nodeComponent.node.physicsBody == nil {
+//            
+//            let reducedHeight = size.height * 0.7  // 70% da altura
+//            let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
+//            
+//            let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,
+//                                                         height: reducedHeight),
+//                                     center: CGPoint(x: 0, y: offsetY))
+//            
+//            body.affectedByGravity = false
+//            body.allowsRotation = false
+//            body.isDynamic = false // prédio não se move
+//            body.categoryBitMask = PhysicsCategory.wall
+//            body.collisionBitMask = UInt32.contactWithAllCategories()
+//            body.contactTestBitMask = UInt32.contactWithAllCategories()
+//            
+//            let physics = SKPhysicsBodyComponent(physicsBody: body)
+//            entity.addComponent(physics)
+//        }
+//    }
     static func setupBuildingPhysics(for entity: BuildingEntity, size: CGSize) {
         if let nodeComponent = entity.component(ofType: GKSKNodeComponent.self),
            nodeComponent.node.physicsBody == nil {
             
-            let reducedHeight = size.height * 0.7  // 70% da altura
-            let offsetY = -(size.height - reducedHeight) / 2  // move para baixo metade da parte cortada
+            // --- Define o raio proporcional ao tamanho do prédio ---
+            // usa a média entre largura e altura reduzida, para manter escala visual coerente
+            let reducedHeight = size.height * 0.7
+            let averageSize = (size.width + reducedHeight) / 2
+            let radius = averageSize / 2
             
-            let body = SKPhysicsBody(rectangleOf: CGSize(width: size.width,
-                                                         height: reducedHeight),
-                                     center: CGPoint(x: 0, y: offsetY))
+            // --- Ajuste vertical (para alinhar com a base visual do prédio) ---
+            let offsetY = -(size.height - reducedHeight) / 2
+            
+            // --- Cria corpo circular ---
+            let body = SKPhysicsBody(circleOfRadius: radius, center: CGPoint(x: 0, y: offsetY))
             
             body.affectedByGravity = false
             body.allowsRotation = false
-            body.isDynamic = false // prédio não se move
+            body.isDynamic = false
             body.categoryBitMask = PhysicsCategory.wall
             body.collisionBitMask = UInt32.contactWithAllCategories()
             body.contactTestBitMask = UInt32.contactWithAllCategories()
             
+            // --- Aplica o corpo físico ---
             let physics = SKPhysicsBodyComponent(physicsBody: body)
             entity.addComponent(physics)
         }
     }
+
 
 }
 
