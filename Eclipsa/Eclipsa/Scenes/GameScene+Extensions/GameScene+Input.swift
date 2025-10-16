@@ -108,7 +108,9 @@ extension GameScene {
                 aimingSystem?.finishAiming { [weak self] result in
                     
                     // ✅ Som aleatório
-                    AudioManager.shared.playSound(named: "Voice_\(Int.random(in: 1...5))")
+                    DispatchQueue.main.async {
+                        AudioManager.shared.playVoice(named: "Voice_\(Int.random(in: 1...5))")
+                    }
 
                     // ✅ Efeito visual
                     self!.showFollowEffect(at: result.endPoint)
