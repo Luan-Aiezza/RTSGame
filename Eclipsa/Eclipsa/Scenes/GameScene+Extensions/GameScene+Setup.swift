@@ -55,7 +55,7 @@ extension GameScene {
                 let inhibitor = InhibitorEntity(
                     node: node,
                     team: .sun,
-                    respawnDelay: 5,
+                    respawnDelay: 30,
                     scene: self)
         
                 inhibitor.addComponent(IndicatorAttackComponent())
