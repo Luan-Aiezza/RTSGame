@@ -11,6 +11,8 @@ import BehindGameKit
 import GameplayKit
 import Combine
 
+public func lerp(_ a: CGFloat, _ b: CGFloat, t: CGFloat) -> CGFloat { a + (b - a) * t }
+
 final class MultiplayerGameScene: GameScene {
     private(set) var match: GKMatch?
     public var localTeam: Team = .sun
@@ -21,6 +23,16 @@ final class MultiplayerGameScene: GameScene {
     // Identificador para sincronização
     public var localPlayerID: String = GKLocalPlayer.local.gamePlayerID
     public var remotePlayer: GKPlayer?
+
+    // Remote smoothing targets
+    public var remoteTargetPosition: CGPoint?
+    public var remoteTargetRotation: CGFloat?
+
+    // Troop ID management
+    public var nextLocalTroopID: UInt32 = 1
+    public var troopNodesByID: [UInt32: GKSKNodeComponent] = [:]
+    public var troopTeamByID: [UInt32: Team] = [:]
+    public var deathMessageSentTroopIDs: Set<UInt32> = []
 
     // MARK: - Init
     init(size: CGSize, match: GKMatch) {
@@ -44,15 +56,17 @@ final class MultiplayerGameScene: GameScene {
         match.delegate = self
         configureTeams()
     }
+    
+    
 
     // MARK: - Lifecycle
     override func didMove(to view: SKView) {
         super.didMove(to: view)
-        print("🕹️ MultiplayerGameScene iniciada")
+        print("MultiplayerGameScene iniciada")
 
         // Se ainda não há match, espere até ser configurado
         guard let match = match else {
-            print("⚠️ Match ainda não configurado. Chame `configure(with:)` antes de apresentar a cena.")
+            print("Match ainda não configurado. Chame `configure(with:)` antes de apresentar a cena.")
             return
         }
 
@@ -76,68 +90,25 @@ final class MultiplayerGameScene: GameScene {
         
         // 5️⃣ Configura interface e câmera
         setupCamera()
-        setupUI()
+        rewireButtonsForMultiplayer()
         setupRTSAiming()
         
-        print("✅ MultiplayerGameScene pronta com times: \(localTeam) vs \(remoteTeam)")
-    }
-}
-
-// MARK: - Team Configuration
-extension MultiplayerGameScene {
-    func configureTeams() {
-        guard let match = match, match.players.count > 0 else { return }
-        let sortedPlayers = ([GKLocalPlayer.local] + match.players).sorted { $0.gamePlayerID < $1.gamePlayerID }
         
-        if sortedPlayers.first?.gamePlayerID == GKLocalPlayer.local.gamePlayerID {
-            localTeam = .sun
-            remoteTeam = .moon
-        } else {
-            localTeam = .moon
-            remoteTeam = .sun
+        print("MultiplayerGameScene pronta com times: \(localTeam) vs \(remoteTeam)")
+    }
+    
+    private func rewireButtonsForMultiplayer() {
+        // A essa altura, `super.didMove` já criou os botões.
+        // Nós apenas trocamos o que eles fazem.
+        
+        buttons.invokeMeleeButton?.onTouch = { [weak self] in
+            self?.invokeTroop(type: .melee)
         }
         
-        remotePlayer = match.players.first(where: { $0.gamePlayerID != GKLocalPlayer.local.gamePlayerID })
-    }
-}
-
-// MARK: - Sync System
-extension MultiplayerGameScene {
-    override func update(_ currentTime: TimeInterval) {
-        super.update(currentTime)
-        sendLocalPlayerState()
-    }
-
-    func sendLocalPlayerState() {
-        guard let match = match,
-              let playerNode = controlledEntity?.spriteNode else { return }
-        
-        let position = playerNode.position
-        let data = try? JSONEncoder().encode(PlayerSyncData(
-            playerID: localPlayerID,
-            x: position.x,
-            y: position.y
-        ))
-        
-        if let data = data {
-            try? match.sendData(toAllPlayers: data, with: .unreliable)
+        buttons.invokeRangedButton?.onTouch = { [weak self] in
+            // Adapte conforme sua necessidade
+            self?.invokeTroop(type: .ranged)
         }
     }
+    
 }
-
-struct PlayerSyncData: Codable {
-    let playerID: String
-    let x: CGFloat
-    let y: CGFloat
-}
-
-// MARK: - Match Delegate
-extension MultiplayerGameScene: GKMatchDelegate {
-    func match(_ match: GKMatch, didReceive data: Data, fromRemotePlayer player: GKPlayer) {
-        guard let info = try? JSONDecoder().decode(PlayerSyncData.self, from: data),
-              let remoteNode = remotePlayerEntity?.spriteNode else { return }
-        
-        remoteNode.position = CGPoint(x: info.x, y: info.y)
-    }
-}
-

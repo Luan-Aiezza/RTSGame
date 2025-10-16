@@ -9,7 +9,7 @@ import GameplayKit
 import BehindGameKit
 
 public class HealthComponent: GKComponent {
-    public private(set) var currentHealth: Int
+    public var currentHealth: Int
     public let maxHealth: Int
     
     public var onHealthChanged: ((Int, Int) -> Void)?

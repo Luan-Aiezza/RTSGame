@@ -38,17 +38,39 @@ extension MultiplayerGameScene {
     }
     
     func setupPlayers() {
+        // Prevent duplicate setup if already configured
+        if controlledEntity != nil || remotePlayerEntity != nil {
+            // Already set up; avoid duplicating nodes
+            return
+        }
+
         // Local player
         controlledEntity = UnitEntity(team: localTeam)
         SKEntityManager.shared.add(controlledEntity)
-        addChild(controlledEntity.spriteNode)
+
+        // Ensure sprite node is not already attached elsewhere before adding
+        if let parent = controlledEntity.spriteNode.parent, parent !== self {
+            controlledEntity.spriteNode.removeFromParent()
+        }
+        if controlledEntity.spriteNode.parent == nil {
+            addChild(controlledEntity.spriteNode)
+        }
+
         physicsSystem.setupHeroPhysics(for: controlledEntity)
         cameraEntity?.followPlayer(player: controlledEntity)
-        
-        // Remote player (placeholder até sincronizar posição)
+
+        // Remote player (placeholder until position syncs)
         let remote = UnitEntity(team: remoteTeam)
         SKEntityManager.shared.add(remote)
-        addChild(remote.spriteNode)
+
+        if let parent = remote.spriteNode.parent, parent !== self {
+            remote.spriteNode.removeFromParent()
+        }
+        if remote.spriteNode.parent == nil {
+            addChild(remote.spriteNode)
+        }
+        
         remotePlayerEntity = remote
     }
+    
 }
