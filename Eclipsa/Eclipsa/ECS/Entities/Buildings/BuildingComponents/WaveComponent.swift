@@ -264,6 +264,12 @@ class TroopSpawnerComponent: GKComponent {
         // Define posição com offset
         troop.component(ofType: GKSKNodeComponent.self)?.node.position = position + spawnOffset
         
+        // ✅ Adiciona FootprintComponent
+        if let scene = scene {
+            troop.addComponent(FootprintComponent(scene: scene))
+        }
+
+        
         // Configura comportamento e alvo
         guard let nexusTarget = scene?.userData?["Nexus"] as? NexusEntity else { return nil }
         let behavior = TroopBehaviorComponent(
