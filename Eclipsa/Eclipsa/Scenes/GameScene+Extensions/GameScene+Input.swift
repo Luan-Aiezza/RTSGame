@@ -104,15 +104,15 @@ extension GameScene {
             }()
             
             if didMove {
-                // 👉 Só dispara comando manual se foi arrasto real
+                //Só dispara comando manual se foi arrasto real
                 aimingSystem?.finishAiming { [weak self] result in
                     
-                    // ✅ Som aleatório
+                    // Som aleatório
                     DispatchQueue.main.async {
                         AudioManager.shared.playVoice(named: "Voice_\(Int.random(in: 1...5))")
                     }
 
-                    // ✅ Efeito visual
+                    // Efeito visual
                     self!.showFollowEffect(at: result.endPoint)
                     
                     for troop in self?.troops ?? [] {
@@ -132,7 +132,7 @@ extension GameScene {
                     self?.cancelButton.toggleCommand(value: true)
                 }
             } else {
-                // 👉 Toque simples: ignora, tropas continuam seguindo
+                // Toque simples: ignora, tropas continuam seguindo
                 aimingSystem?.cancelAiming()
                 cancelButton.toggleCommand(value: true)
             }
