@@ -1,6 +1,9 @@
 import SpriteKit
 import GameplayKit
 import BehindGameKit
+#if os(iOS)
+import UIKit // NOVO: Importa UIKit para acessar os Haptics
+#endif
 
 public class IndicatorAttackComponent: GKComponent {
     
@@ -9,6 +12,13 @@ public class IndicatorAttackComponent: GKComponent {
     private let showDuration: TimeInterval = 1.0
     private let edgeInset: CGFloat = 24.0 // margem interna para posicionar na borda
     private let indicatorSize = CGSize(width: 32, height: 32)
+    
+    // MARK: - Haptics (NOVO)
+    #if os(iOS)
+    // NOVO: Gerador de feedback háptico.
+    // Usamos .warning, pois é um alerta de que sua base está sob ataque.
+    private let hapticGenerator = UINotificationFeedbackGenerator()
+    #endif
     
     // MARK: - State
     private var indicatorNode: SKSpriteNode?
@@ -27,6 +37,11 @@ public class IndicatorAttackComponent: GKComponent {
     public override func didAddToEntity() {
         super.didAddToEntity()
         setupHealthObservation()
+        
+        #if os(iOS)
+        // NOVO: Prepara o motor háptico para reduzir a latência na primeira vibração.
+        hapticGenerator.prepare()
+        #endif
     }
     
     public override func willRemoveFromEntity() {
@@ -62,6 +77,17 @@ public class IndicatorAttackComponent: GKComponent {
         }
     }
     
+    // MARK: - Haptics Trigger (NOVO)
+    private func triggerHapticFeedback() {
+        #if os(iOS)
+        // NOVO: Dispara a vibração de "aviso"
+        hapticGenerator.notificationOccurred(.warning)
+        
+        // NOVO: Prepara novamente para a próxima possível vibração
+        hapticGenerator.prepare()
+        #endif
+    }
+    
     // MARK: - Indicator logic
     private func showIndicatorIfOffscreen() {
         guard let scene = targetNode?.scene as? GameScene,
@@ -83,6 +109,10 @@ public class IndicatorAttackComponent: GKComponent {
         if visibleRect.contains(targetInCamera) {
             return
         }
+        
+        // NOVO: Aciona a vibração aqui!
+        // Ocorre apenas se a entidade tomou dano E está fora da tela.
+        triggerHapticFeedback()
         
         // Garante que o nó exista e esteja na câmera
         ensureIndicatorNode(on: camera)

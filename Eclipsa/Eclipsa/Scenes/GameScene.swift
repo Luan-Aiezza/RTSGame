@@ -193,13 +193,6 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         resourceHUD?.handleCameraOrSceneChange()
     }
 
-    private func removeCommandController() {
-        if let controller = commandController {
-            controller.analogNode.removeFromParent()
-            commandController = nil
-        }
-    }
-
     private func removeGameController() {
         if let controller = gameController {
             controller.analogNode.removeFromParent()
@@ -263,7 +256,6 @@ extension GameScene {
         aimingSystem?.player = nil
         troopControlSystem?.clearTargetEntity()
         cameraEntity?.followPlayer(player: nil)
-//        removeCommandController()
         removeGameController()
         controlledEntity = nil
     }

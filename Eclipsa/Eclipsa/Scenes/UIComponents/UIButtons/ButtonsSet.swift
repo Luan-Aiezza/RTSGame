@@ -8,6 +8,7 @@
 import SpriteKit
 import GameplayKit
 import BehindGameKit
+import Combine // 1. IMPORTAR COMBINE
 
 class ButtonsSet {
     var scene: GameScene
@@ -15,15 +16,31 @@ class ButtonsSet {
     var invokeMeleeButton: CommandButton?
     var invokeRangedButton: CommandButton?
     
+    // 2. ADICIONAR PROPRIEDADES PARA O FEEDBACK
+    private var cancellables = Set<AnyCancellable>()
+    private let disabledAlpha: CGFloat = 0.5 // Opacidade para quando estiver desabilitado
+
     init(scene: GameScene) {
         self.scene = scene
         
         self.setupButtons()
+        
+        // 3. OBSERVAR MUDANÇAS NOS RECURSOS
+        ResourceHandler.shared.$storedResources
+            .receive(on: RunLoop.main) // Garante que a UI rode na thread principal
+            .sink { [weak self] newResourceCount in
+                self?.updateButtonStates(newResourceCount)
+            }
+            .store(in: &cancellables)
+        
+        // 4. DEFINIR O ESTADO INICIAL DOS BOTÕES
+        updateButtonStates(ResourceHandler.shared.getStoredResources())
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
     var size: CGSize {
         scene.size
     }
@@ -39,6 +56,19 @@ class ButtonsSet {
     var troops: Set<TroopEntity> {
         scene.troops
     }
+    
+    // 5. NOVA FUNÇÃO PARA ATUALIZAR OPACIDADE
+    /// Atualiza o alfa (opacidade) dos botões com base na contagem atual de recursos.
+    private func updateButtonStates(_ currentResources: Int) {
+        // Cavaleiro (Melee) - Custo 2
+        let hasEnoughForMelee = currentResources >= TroopCost.meleeCost
+        invokeMeleeButton?.alpha = hasEnoughForMelee ? 1.0 : disabledAlpha
+        
+        // Mago (Ranged) - Custo 1
+        let hasEnoughForRanged = currentResources >= TroopCost.rangedCost
+        invokeRangedButton?.alpha = hasEnoughForRanged ? 1.0 : disabledAlpha
+    }
+    
     private func setupButtons(){
         //setupFollowButtonUI()
         setupInvokeRangedButtonUI()
@@ -59,6 +89,7 @@ class ButtonsSet {
 
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
+            // A verificação de custo aqui continua sendo a garantia final
             if ResourceHandler.shared.getStoredResources() >= TroopCost.meleeCost {
                 self.entity?.generator?.generateMelee(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
@@ -71,6 +102,7 @@ class ButtonsSet {
                 }
                 AudioManager.shared.playSound(named: "Invoke_Effect")
             }
+            // (Opcional: tocar um som de "erro" se não tiver recursos)
         }
         camera?.addChild(invokeMeleeButton)
     }
@@ -89,6 +121,7 @@ class ButtonsSet {
 
         invokeRangedButton.onTouch = { [weak self] in
             guard let self = self else { return }
+            // A verificação de custo aqui continua sendo a garantia final
             if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
                 self.entity?.generator?.generateRanged(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
@@ -101,6 +134,7 @@ class ButtonsSet {
                 }
                 AudioManager.shared.playSound(named: "Invoke_Effect")
             }
+             // (Opcional: tocar um som de "erro" se não tiver recursos)
         }
         invokeRangedButton.toggleCommand(value: false)
         camera?.addChild(invokeRangedButton)
@@ -129,4 +163,3 @@ class ButtonsSet {
     
     
 }
-

@@ -18,6 +18,10 @@ final class CreditsViewController: UIViewController {
     private var hasStarted = false
     private var hasFinished = false
     
+    // Controle de animação ativa
+    private var isShowingLine = false
+    private var currentWorkItem: DispatchWorkItem?
+    
     // MARK: - Lifecycle
     override func loadView() {
         super.loadView()
@@ -47,6 +51,10 @@ final class CreditsViewController: UIViewController {
             textLabel.leadingAnchor.constraint(greaterThanOrEqualTo: guide.leadingAnchor, constant: 24),
             textLabel.trailingAnchor.constraint(lessThanOrEqualTo: guide.trailingAnchor, constant: -24)
         ])
+        
+        // Toque em qualquer lugar = skip atual
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(viewTapped))
+        view.addGestureRecognizer(tapGesture)
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -71,7 +79,6 @@ final class CreditsViewController: UIViewController {
             skipButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -24)
         ])
         
-        // Efeito piscando infinito
         animateSkipBlink()
     }
     
@@ -92,6 +99,15 @@ final class CreditsViewController: UIViewController {
         })
     }
 
+    // MARK: - Actions
+    @objc private func viewTapped() {
+        // Se já acabou, ignora
+        guard !hasFinished else { return }
+        // Se está mostrando linha, apenas pula
+        if isShowingLine {
+            skipCurrentLine()
+        }
+    }
     
     @objc private func skipTapped() {
         finishSequence()
@@ -102,9 +118,7 @@ final class CreditsViewController: UIViewController {
         guard !hasStarted else { return }
         hasStarted = true
         currentIndex = 0
-        DispatchQueue.main.async { [weak self] in
-            self?.showNextLine()
-        }
+        showNextLine()
     }
     
     private func showNextLine() {
@@ -113,38 +127,59 @@ final class CreditsViewController: UIViewController {
             return
         }
         
+        isShowingLine = true
+        currentWorkItem?.cancel()
+        
         let line = creditLines[currentIndex]
         let fontSize: CGFloat = (currentIndex == 0 || currentIndex == creditLines.count - 1) ? titleFontSize : baseFontSize
         let font = UIFont(name: "CCPixelArcade-Display", size: fontSize) ?? UIFont.systemFont(ofSize: fontSize, weight: .regular)
         
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.textLabel.alpha = 0
-            self.textLabel.text = line
-            self.textLabel.font = font
-            self.textLabel.layoutIfNeeded()
-            
-            UIView.animate(withDuration: self.fadeDuration, animations: {
-                self.textLabel.alpha = 1.0
-            }, completion: { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + self.displayDuration) {
-                    UIView.animate(withDuration: self.fadeDuration, animations: {
-                        self.textLabel.alpha = 0.0
-                    }, completion: { _ in
-                        self.currentIndex += 1
-                        self.showNextLine()
-                    })
-                }
-            })
-        }
+        textLabel.alpha = 0
+        textLabel.text = line
+        textLabel.font = font
+        textLabel.layoutIfNeeded()
+        
+        UIView.animate(withDuration: fadeDuration, animations: {
+            self.textLabel.alpha = 1.0
+        }, completion: { _ in
+            // Espera displayDuration e troca de linha
+            let workItem = DispatchWorkItem { [weak self] in
+                guard let self = self else { return }
+                UIView.animate(withDuration: self.fadeDuration, animations: {
+                    self.textLabel.alpha = 0.0
+                }, completion: { _ in
+                    self.currentIndex += 1
+                    self.isShowingLine = false
+                    self.showNextLine()
+                })
+            }
+            self.currentWorkItem = workItem
+            DispatchQueue.main.asyncAfter(deadline: .now() + self.displayDuration, execute: workItem)
+        })
+    }
+    
+    // MARK: - Skip line instantâneo
+    private func skipCurrentLine() {
+        guard isShowingLine else { return }
+        // Cancela a espera programada
+        currentWorkItem?.cancel()
+        currentWorkItem = nil
+        
+        // Faz o fade-out atual rapidamente
+        UIView.animate(withDuration: 0.3, animations: {
+            self.textLabel.alpha = 0.0
+        }, completion: { _ in
+            self.isShowingLine = false
+            self.currentIndex += 1
+            self.showNextLine()
+        })
     }
     
     private func finishSequence() {
         guard !hasFinished else { return }
         hasFinished = true
-        let preStopDelay: TimeInterval = 1.0
         
-        AudioManager.shared.fadeOutBackgroundMusic(duration: preStopDelay, stopAfter: true)
+        AudioManager.shared.fadeOutBackgroundMusic(duration: 1.0, stopAfter: true)
         
         // Sumir texto + skip juntos
         UIView.animate(withDuration: 0.5) {
@@ -152,7 +187,7 @@ final class CreditsViewController: UIViewController {
             self.skipButton.alpha = 0
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + preStopDelay) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             self?.onFinished?()
         }
     }

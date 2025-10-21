@@ -133,3 +133,4 @@ final class UIResourceComponent: SKNode {
         updatePosition()
     }
 }
+
