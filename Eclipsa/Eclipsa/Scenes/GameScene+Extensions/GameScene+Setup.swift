@@ -76,6 +76,8 @@ extension GameScene {
     }
     
     private func setupSpawners() {
+        WaveManager.shared.resetWaveSystem()
+        
         WaveManager.shared.scene = self
         
         // Conta total de spawners e registra callbacks de destruição

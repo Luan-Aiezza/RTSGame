@@ -131,6 +131,9 @@ class WaveManager: NSObject {
         remainingTime = nil
         currentSpawnerIndex = 0
         print("WaveManager resetado")
+        
+        // 👇 ADICIONE ESTA LINHA 👇
+        enemyBuildings.removeAll()
     }
 
     // MARK: - Registro dos spawners
@@ -152,6 +155,8 @@ class WaveManager: NSObject {
             scheduleNextSpawn()
         }
     }
+    
+    
 
 }
 
@@ -244,6 +249,8 @@ class TroopSpawnerComponent: GKComponent {
             print("Tropa spawnada em \(buildingSprite.position)")
         }
     }
+    
+    
     
     private func createTroop(at position: CGPoint) -> TroopEntity? {
         let troop: TroopEntity
