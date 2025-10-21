@@ -48,47 +48,51 @@ class ButtonsSet {
     private func setupInvokeMeleeButtonUI(){
         invokeMeleeButton = CommandButton(position: Position.invokeMeleeButton(size: size), name: "Melee", color: .orange)
         invokeMeleeButton?.changeLabelToImage(with: "Knight_Invoke_Icon")
+        invokeMeleeButton?.setCostOverlayImage(named: "Button_Cost_2", position: CGPoint(x: 18, y: -18), scale: 0.1)
         invokeMeleeButton?.changeButtonColors(buttonColor: Colors.meleeButtonFillColor, strokeColor: .black)
         setupInvokeMeleeButton()
     }
     
-    private func setupInvokeMeleeButton(){
+    private func setupInvokeMeleeButton() {
         guard let invokeMeleeButton = invokeMeleeButton else { return }
         invokeMeleeButton.toggleCommand(value: false)
+
         invokeMeleeButton.onTouch = { [weak self] in
             guard let self = self else { return }
-            if ResourceHandler.shared.getStoredResources() >= TroopCost.meleeCost{
+            if ResourceHandler.shared.getStoredResources() >= TroopCost.meleeCost {
                 self.entity?.generator?.generateMelee(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
-                       let troop = troop{
+                       let troop = troop {
                         self.scene.addChild(node)
                         SKEntityManager.shared.add(troop)
                         ResourceHandler.shared.spendResources(TroopCost.meleeCost)
                         AchievementManager.shared.recordMeleeCreation()
                     }
-                    
                 }
                 AudioManager.shared.playSound(named: "Invoke_Effect")
             }
         }
         camera?.addChild(invokeMeleeButton)
     }
+
     
     private func setupInvokeRangedButtonUI(){
         invokeRangedButton = CommandButton(position: Position.invokeRangeButton(size: size), name: "Ranged", color: .orange)
         invokeRangedButton?.changeLabelToImage(with: "Mage_Invoke_Icon")
+        invokeRangedButton?.setCostOverlayImage(named: "Button_Cost_1", position: CGPoint(x: 18, y: -18), scale: 0.1)
         invokeRangedButton?.changeButtonColors(buttonColor: Colors.rangedButtonFillColor, strokeColor: .black)
         setupInvokeRangedButton()
     }
     
-    private func setupInvokeRangedButton(){
+    private func setupInvokeRangedButton() {
         guard let invokeRangedButton = invokeRangedButton else { return }
+
         invokeRangedButton.onTouch = { [weak self] in
             guard let self = self else { return }
             if ResourceHandler.shared.getStoredResources() >= TroopCost.rangedCost {
                 self.entity?.generator?.generateRanged(troops: self.troops) { troop in
                     if let node = troop?.component(ofType: AnimationComponent.self)?.node,
-                       let troop = troop{
+                       let troop = troop {
                         self.scene.addChild(node)
                         SKEntityManager.shared.add(troop)
                         ResourceHandler.shared.spendResources(TroopCost.rangedCost)
@@ -101,6 +105,7 @@ class ButtonsSet {
         invokeRangedButton.toggleCommand(value: false)
         camera?.addChild(invokeRangedButton)
     }
+
     
     private func setupFollowButtonUI(){
         followButton = CommandButton(position: Position.followButton(size: size), name: "", color: .green)
@@ -124,3 +129,4 @@ class ButtonsSet {
     
     
 }
+

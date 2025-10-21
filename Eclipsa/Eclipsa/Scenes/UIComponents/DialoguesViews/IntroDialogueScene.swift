@@ -17,6 +17,8 @@ final class IntroDialogueScene: SKScene {
     private let perParagraphVisibleDuration: TimeInterval = 4.0
     private let typeCharInterval: TimeInterval = 0.05
     
+    private var isTypewriterRunning = false
+    
     var onFinished: (() -> Void)?
     
     override func didMove(to view: SKView) {
@@ -101,6 +103,7 @@ final class IntroDialogueScene: SKScene {
             return
         }
         isPresentingParagraph = true
+        isTypewriterRunning = true
         let line = paragraphs[currentIndex]
         dialogueHUD.configure(line: line)
         applyLocalTextStyling()
@@ -111,6 +114,7 @@ final class IntroDialogueScene: SKScene {
         
         dialogueHUD.startTypewriter(charInterval: typeCharInterval) { [weak self] in
             guard let self = self else { return }
+            self.isTypewriterRunning = false
             self.run(.wait(forDuration: self.perParagraphVisibleDuration)) { [weak self] in
                 guard let self = self else { return }
                 self.dialogueHUD.dismiss(animated: true) { [weak self] in
@@ -143,11 +147,33 @@ final class IntroDialogueScene: SKScene {
         currentImage = nil
     }
     
+    private func completeTypewriterIfNeeded() {
+        if isTypewriterRunning {
+            dialogueHUD.skipTypewriter()
+            isTypewriterRunning = false
+        }
+    }
+    
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
         if let skip = skipLabel, skip.contains(location) {
             endIntro()
+            return
+        }
+        
+        if isTypewriterRunning {
+            completeTypewriterIfNeeded()
+        } else if isPresentingParagraph {
+            // Paragraph fully presented, dismiss current and advance immediately
+            // Only allow if not already dismissing (isPresentingParagraph guards this)
+            isPresentingParagraph = false
+            dialogueHUD.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.hideCurrentImage()
+                self.currentIndex += 1
+                self.presentNextParagraph()
+            }
         }
     }
     

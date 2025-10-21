@@ -5,7 +5,7 @@ import BehindGameKit
 
 public class AdaptedVirtualController: ObservableObject, AimAdapter{
     
-    private var analogNode: AdaptedAnalogNode
+    public var analogNode: AdaptedAnalogNode
 
     // Tap detection state
     private var touchBeganTimestamp: TimeInterval?

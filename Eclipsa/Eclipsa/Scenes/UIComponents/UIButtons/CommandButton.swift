@@ -11,6 +11,7 @@ class CommandButton: SKNode {
     private let button: SKShapeNode
     private var label: SKLabelNode?
     private var image: SKSpriteNode?
+    private var costOverlay: SKSpriteNode?
     
     var onTouch: (() -> Void)?
     
@@ -46,6 +47,10 @@ class CommandButton: SKNode {
         image!.name = name
         image!.texture?.filteringMode = .nearest
         button.addChild(image!)
+        if let overlay = costOverlay {
+            overlay.removeFromParent()
+            button.addChild(overlay)
+        }
     }
     
     public func changeButtonColors(buttonColor: UIColor?, strokeColor: UIColor?){
@@ -56,6 +61,23 @@ class CommandButton: SKNode {
         if let buttonColor = buttonColor{
             button.fillColor = buttonColor
         }
+    }
+    
+    public func setCostOverlayImage(named name: String?, position: CGPoint? = nil, scale: CGFloat = 0.1) {
+        costOverlay?.removeFromParent()
+        costOverlay = nil
+        guard let name, !name.isEmpty else { return }
+        let overlay = SKSpriteNode(imageNamed: name)
+        overlay.name = "CostOverlay_\(name)"
+        overlay.zPosition = 11 // must be above icon image
+        overlay.setScale(scale)
+        let buttonSize = button.frame.size
+        overlay.position = position ?? CGPoint(
+            x: buttonSize.width / 2 - overlay.size.width * 0.4,
+            y: -buttonSize.height / 2 + overlay.size.height * 0.4
+        )
+        button.addChild(overlay)
+        costOverlay = overlay
     }
     
     public func handleTouch(_ location: CGPoint){
@@ -74,3 +96,4 @@ class CommandButton: SKNode {
         self.run(.fadeAlpha(to: isHidden ? 0 : 1, duration: 0.4))
     }
 }
+

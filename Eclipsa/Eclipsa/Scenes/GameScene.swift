@@ -193,6 +193,20 @@ class GameScene: SKGameScene, SKPhysicsContactDelegate {
         resourceHUD?.handleCameraOrSceneChange()
     }
 
+    private func removeCommandController() {
+        if let controller = commandController {
+            controller.analogNode.removeFromParent()
+            commandController = nil
+        }
+    }
+
+    private func removeGameController() {
+        if let controller = gameController {
+            controller.analogNode.removeFromParent()
+            gameController = nil
+        }
+    }
+
 }
 
 extension GameScene {
@@ -209,6 +223,7 @@ extension GameScene {
 
 extension GameScene {
     func setupAdatpedVirtualController() {
+        removeGameController()
         gameController = AdaptedVirtualController(scene: self, analogRadius: 50, color: .systemBlue)
         gameController?.changePosition(Position.gameController(size: size))
         gameController?.setAnalogVisible(value: true)
@@ -248,6 +263,8 @@ extension GameScene {
         aimingSystem?.player = nil
         troopControlSystem?.clearTargetEntity()
         cameraEntity?.followPlayer(player: nil)
+//        removeCommandController()
+        removeGameController()
         controlledEntity = nil
     }
 

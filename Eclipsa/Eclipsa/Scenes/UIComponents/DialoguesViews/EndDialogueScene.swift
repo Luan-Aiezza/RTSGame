@@ -14,6 +14,7 @@ final class EndDialogueScene: SKScene {
     private var currentIndex: Int = 0
     private var isPresentingParagraph = false
     private var hasEnded = false
+    private var isTypewriterRunning = false
     
     // Aplica estilo local do texto apenas nesta cena
     private func applyLocalTextStyling() {
@@ -36,7 +37,7 @@ final class EndDialogueScene: SKScene {
     
     override func didMove(to view: SKView) {
         backgroundColor = .black
-        isUserInteractionEnabled = false // sem skip
+        isUserInteractionEnabled = true // habilitar interação para skip
         setupParagraphs()
         setupHUD()
         presentNextParagraph()
@@ -74,8 +75,10 @@ final class EndDialogueScene: SKScene {
         applyLocalTextStyling()
         dialogueHUD.present(animated: true)
         
+        isTypewriterRunning = true
         dialogueHUD.startTypewriter(charInterval: typeCharInterval) { [weak self] in
             guard let self = self else { return }
+            self.isTypewriterRunning = false
             self.run(.wait(forDuration: self.perParagraphVisibleDuration)) { [weak self] in
                 guard let self = self else { return }
                 self.dialogueHUD.dismiss(animated: true) { [weak self] in
@@ -88,6 +91,37 @@ final class EndDialogueScene: SKScene {
                     }
                 }
             }
+        }
+    }
+    
+    private func completeTypewriterIfNeeded() {
+        if isTypewriterRunning {
+            dialogueHUD.skipTypewriter()
+            isTypewriterRunning = false
+        }
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        if hasEnded {
+            return
+        }
+        
+        if isTypewriterRunning {
+            completeTypewriterIfNeeded()
+            return
+        }
+        
+        if isPresentingParagraph {
+            dialogueHUD.dismiss(animated: true) { [weak self] in
+                guard let self = self else { return }
+                self.currentIndex += 1
+                self.isPresentingParagraph = false
+                self.run(.wait(forDuration: 0.35)) { [weak self] in
+                    self?.dialogueHUD.present(animated: true)
+                    self?.presentNextParagraph()
+                }
+            }
+            return
         }
     }
     

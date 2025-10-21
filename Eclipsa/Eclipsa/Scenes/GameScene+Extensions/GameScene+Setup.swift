@@ -123,6 +123,15 @@ extension GameScene {
     }
     
     func setupPlayer() {
+        // Remove existing controlledEntity if any, to avoid duplicates
+        if let existingEntity = controlledEntity {
+            if let node = existingEntity.component(ofType: GKSKNodeComponent.self)?.node {
+                node.removeFromParent()
+            }
+            SKEntityManager.shared.remove(existingEntity)
+            controlledEntity = nil
+        }
+        
         setupInputControllerIfNeeded()
         controlledEntity = UnitEntity(team: .sun)
         SKEntityManager.shared.add(controlledEntity)
@@ -197,3 +206,4 @@ extension GameScene {
         camera?.addChild(releaseButton)
     }
 }
+

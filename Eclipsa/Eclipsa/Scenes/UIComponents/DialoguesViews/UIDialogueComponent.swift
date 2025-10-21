@@ -163,4 +163,26 @@ final class DialogueHUD: SKNode {
         let forever = SKAction.repeatForever(animate)
         starNode.run(forever, withKey: "starLoop")
     }
+    
+    // Pula a digitação e mostra o texto completo imediatamente
+    func skipTypewriter() {
+        // Se não estiver digitando, não faz nada
+        guard typingTimer != nil else { return }
+        
+        typingTimer?.invalidate()
+        typingTimer = nil
+        
+        // Mostra o texto completo de uma vez
+        textLabel.text = fullText
+        updateBoxSize()
+        
+        // Garante que a animação da estrela continue
+        if starNode.action(forKey: "starLoop") == nil {
+            startStarAnimation()
+        }
+        
+        // Chama o callback de conclusão, simulando o fim da digitação
+        onTypingCompleted?()
+    }
+
 }
