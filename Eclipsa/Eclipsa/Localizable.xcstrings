@@ -262,6 +262,40 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
+            "value" : "Carolina Parente - For design tips and post-launch feedback"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Carolina Parente - Pelas dicas de design e feedbacks pós lançamento"
+          }
+        }
+      }
+    },
+    "credits.10" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danilo Santana - For technical tips for the future of the project"
+          }
+        },
+        "pt-BR" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Danilo Santana - Pelas dicas técnicas para o futuro do projeto"
+          }
+        }
+      }
+    },
+    "credits.11" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "Luana Geber- Ariah's Voice"
           }
         },
@@ -273,7 +307,7 @@
         }
       }
     },
-    "credits.10" : {
+    "credits.12" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -290,7 +324,7 @@
         }
       }
     },
-    "credits.11" : {
+    "credits.13" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -307,7 +341,7 @@
         }
       }
     },
-    "credits.12" : {
+    "credits.14" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

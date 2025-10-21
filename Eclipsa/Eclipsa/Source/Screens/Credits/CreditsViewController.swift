@@ -6,9 +6,9 @@ final class CreditsViewController: UIViewController {
     private let baseFontSize: CGFloat = 20
     private let titleFontSize: CGFloat = 28
     private let fadeDuration: TimeInterval = 2
-    private let displayDuration: TimeInterval = 3.0
+    private let displayDuration: TimeInterval = 2.0
     
-    var creditLines: [String] = (0...11).map { NSLocalizedString("credits.\($0)", comment: "") }
+    var creditLines: [String] = (0...14).map { NSLocalizedString("credits.\($0)", comment: "") }
     var onFinished: (() -> Void)?
     
     // MARK: - Private Properties
@@ -25,7 +25,7 @@ final class CreditsViewController: UIViewController {
     // MARK: - Lifecycle
     override func loadView() {
         super.loadView()
-        AudioManager.shared.fadeInBackgroundMusic(named: "OST_Credits")
+        AudioManager.shared.playBackgroundMusic(named: "OST_Credits")
         view.backgroundColor = .black
         
         // Texto central dos créditos
