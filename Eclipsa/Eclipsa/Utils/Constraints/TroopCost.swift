@@ -6,6 +6,6 @@
 //
 
 enum TroopCost {
-    static let rangedCost: Int = 1
-    static let meleeCost: Int = 2
+    static let rangedCost: Int = 2
+    static let meleeCost: Int = 3
 }
