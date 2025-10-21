@@ -10,6 +10,6 @@ class Phase1: SceneConfiguration {
         super.init(inhibitorsQuantity: 2,
                    spawnersQuantity: 2,
                    spawnInterval: 20.0,   // fila anda a cada 12s
-                   troopsPerGroup: 2)     // 3 tropas por vez
+                   troopsPerGroup: 3)     // 3 tropas por vez
     }
 }
