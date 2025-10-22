@@ -8,76 +8,17 @@ extension Notification.Name {
 extension GameScene {
     func handleWin() {
         SKEntityManager.shared.removeAll()
+        self.isPaused = true
         WaveManager.shared.pauseWaveSystem()
         self.pauseButtonDelegate?.showPauseButton(nil)
         guard let camera = camera else { return }
-        guard camera.childNode(withName: "WinOverlay") == nil else { return }
-
-        let winOverlay = SKNode()
-        winOverlay.name = "WinOverlay"
-        winOverlay.zPosition = 1000
-
-        // Background dark overlay
-        let darkBackground = SKSpriteNode(color: .black, size: size)
-        darkBackground.alpha = 0.7
-        darkBackground.zPosition = 0
-        winOverlay.addChild(darkBackground)
-
-        // Title sprite
-        let titleSprite = SKSpriteNode(imageNamed: "Win_Title")
-        titleSprite.name = "WinTitle"
-        titleSprite.position = CGPoint(x: 0, y: 100)
-        titleSprite.setScale(0.3)
-        titleSprite.texture?.filteringMode = .nearest
-        titleSprite.zPosition = 2
-        winOverlay.addChild(titleSprite)
-
-        // Title pulse animation (scale 0.3 to 0.32 and back, repeated)
-        let pulseUp = SKAction.scale(to: 0.32, duration: 0.35)
-        let pulseDown = SKAction.scale(to: 0.3, duration: 0.35)
-        let pulseSequence = SKAction.sequence([pulseUp, pulseDown])
-        let pulseForever = SKAction.repeatForever(pulseSequence)
-        titleSprite.run(pulseForever)
-
-        // Animated star (reuse Star_Icon_1..4 animation from defeat)
-        let starFrames = (1...4).map { SKTexture(imageNamed: "Star_Icon_\($0)") }
-        let starNode = SKSpriteNode(texture: starFrames.first)
-        starNode.name = "WinStar"
-        starNode.position = CGPoint(x: 0, y: -80)
-        starNode.zPosition = 2
-        winOverlay.addChild(starNode)
-
-        let starAnimation = SKAction.animate(with: starFrames, timePerFrame: 0.2)
-        let starRepeat = SKAction.repeatForever(starAnimation)
-        starNode.run(starRepeat)
-
-        // Continue button (SKLabelNode)
-        let continueButton = SKLabelNode(fontNamed: "CCPixelArcade-Joystick")
-        continueButton.text = NSLocalizedString("continue", comment: "")
-        continueButton.name = "ContinueButton"
-        continueButton.fontSize = 24
-        continueButton.fontColor = .yellow
-        continueButton.position = CGPoint(x: 0, y: -125)
-        continueButton.zPosition = 2
-        winOverlay.addChild(continueButton)
-
-        // Button blinking animation (fade out to 0.3 alpha and back)
-        let fadeOut = SKAction.fadeAlpha(to: 0.3, duration: 0.8)
-        let fadeIn = SKAction.fadeAlpha(to: 1.0, duration: 0.8)
-        let blinkSequence = SKAction.sequence([fadeOut, fadeIn])
-        let blinkForever = SKAction.repeatForever(blinkSequence)
-        continueButton.run(blinkForever)
-
-        // Snow particle emitter setup
-        if let snowEmitter = SKEmitterNode(fileNamed: "Snow.sks")?.copy() as? SKEmitterNode {
-            snowEmitter.name = "WinSnow"
-            snowEmitter.position = CGPoint(x: 0, y: size.height / 2)
-            snowEmitter.zPosition = 3
-            snowEmitter.particlePositionRange.dx = size.width
-            winOverlay.addChild(snowEmitter)
-        }
-
-        camera.addChild(winOverlay)
+        
+        let winScene = WinScene(size: self.size)
+        winScene.scaleMode = .aspectFill
+        winScene.nextPhaseHandler = goToNextPhase
+        
+            self.view?.presentScene(winScene, transition: .crossFade(withDuration: 0.5))
+        
         depthSortNodes()
     }
 
@@ -87,19 +28,18 @@ extension GameScene {
         for node in nodesAtPoint {
             if node.name == "ContinueButton" {
                 AudioManager.shared.playSound(named: "Effect_Confirm_1")
-                goToNextPhase()
+                goToNextPhase(view: self.view!)
                 return true
             }
         }
         return false
     }
 
-    private func goToNextPhase() {
-        guard let view = self.view else { return }
-
+    private func goToNextPhase(view: SKView) {
+print("chamei o gotonextphase")
         // Determine current scene name
         let currentSceneName = self.name ?? self.scene?.name ?? (self.userData?["SceneName"] as? String)
-
+        print(currentSceneName)
         // Determine next scene based on currentSceneName
         var nextScene: SKScene?
 
