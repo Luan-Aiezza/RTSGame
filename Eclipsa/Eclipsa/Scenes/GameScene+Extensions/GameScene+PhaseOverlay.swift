@@ -47,14 +47,15 @@ extension GameScene {
         title.zPosition = 1.0
         overlay.addChild(title)
         
-        // 5 ícones de fase em linha (abaixo do título/coroa) — subidos e com espaçamento dobrado
+        // 5 ícones de fase em linha (abaixo do título/coroa)
+        // posição elevada para abrir espaço para o texto "loading"
         let phaseIconNames = (1...5).map { "Transition_Phase_Icon_\($0)" }
-        let iconsY: CGFloat = 50
+        let iconsY: CGFloat = 80
         let spacing: CGFloat = 16
         var iconNodes: [SKSpriteNode] = []
         for name in phaseIconNames {
             let node = SKSpriteNode(imageNamed: name)
-            node.name = "PhaseIcon" // base; renomearemos com índice
+            node.name = "PhaseIcon"
             node.texture?.filteringMode = .nearest
             node.zPosition = 1.0
             node.setScale(0.1)
@@ -67,12 +68,12 @@ extension GameScene {
         var phaseIconPositions: [Int: CGPoint] = [:]
         for (idx, node) in iconNodes.enumerated() {
             node.position = CGPoint(x: currentX + node.size.width / 2, y: iconsY)
-            node.name = "PhaseIcon_\(idx + 1)" // ex: PhaseIcon_1 ... PhaseIcon_5
+            node.name = "PhaseIcon_\(idx + 1)"
             phaseIconPositions[idx + 1] = node.position
             currentX += node.size.width + (idx < iconNodes.count - 1 ? spacing : 0)
         }
         
-        // Animação de pulsação nos ícones (igual ao título do HomeView: 1.0 -> 1.08, 1.2s, autoreverse, loop)
+        // Animação de pulsação nos ícones
         let baseScale: CGFloat = 0.1
         let targetScale: CGFloat = baseScale * 1.08
         let pulseUp = SKAction.scale(to: targetScale, duration: 1.2)
@@ -89,10 +90,7 @@ extension GameScene {
         crown.setScale(0.05)
         crown.texture?.filteringMode = .nearest
         
-        // Offset vertical da coroa para ficar "acima" do ícone
         let crownOffsetY: CGFloat = 48
-        
-        // Posição inicial (previous ou current)
         let startPhase = clampedPrevious ?? clampedCurrent
         let startPos = phaseIconPositions[startPhase] ?? .zero
         crown.position = CGPoint(x: startPos.x, y: startPos.y + crownOffsetY)
@@ -106,6 +104,29 @@ extension GameScene {
             move.timingMode = .easeInEaseOut
             crown.run(move, withKey: "moveToCurrentPhase")
         }
+        
+        // Texto "loading..." / "carregando..." (abaixo dos ícones)
+        let loadingLabel = SKLabelNode(text: NSLocalizedString("loading", comment: ""))
+        loadingLabel.name = "PhaseLoadingLabel"
+        loadingLabel.fontName = "CCPixelArcade-Joystick"
+        loadingLabel.fontSize = 18
+        loadingLabel.fontColor = .white
+        loadingLabel.position = CGPoint(x: 0, y: 10)
+        loadingLabel.zPosition = 1.0
+        overlay.addChild(loadingLabel)
+        
+        // Animação incremental de "..." em loop (1 a 3 pontos)
+        let baseText = NSLocalizedString("loading", comment: "")
+        let dots = [".", "..", "..."]
+        var dotIndex = 0
+        
+        let updateDots = SKAction.run {
+            loadingLabel.text = baseText + dots[dotIndex]
+            dotIndex = (dotIndex + 1) % dots.count
+        }
+        let wait = SKAction.wait(forDuration: 0.4)
+        let dotLoop = SKAction.repeatForever(SKAction.sequence([updateDots, wait]))
+        loadingLabel.run(dotLoop, withKey: "loadingDotsLoop")
         
         // Animação da garota caminhando (mais abaixo)
         let girlTextures: [SKTexture] = (1...12).map { SKTexture(imageNamed: "Transition_Walk_Girl_\($0)") }
@@ -131,6 +152,7 @@ extension GameScene {
         // Garante z-order conforme regras centralizadas
         depthSortNodes()
     }
+
     
     // Remover a overlay (quando terminar de carregar a fase) com fade-out
     func hidePhaseOverlay() {
