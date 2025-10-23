@@ -102,33 +102,49 @@ final class IntroDialogueScene: SKScene {
             endIntro()
             return
         }
+        
         isPresentingParagraph = true
         isTypewriterRunning = true
+        
         let line = paragraphs[currentIndex]
         dialogueHUD.configure(line: line)
         applyLocalTextStyling()
         dialogueHUD.present(animated: true)
         
-        // Troca a imagem correspondente (apenas se existir para esse índice)
+        // Troca a imagem correspondente
         showImage(forIndex: currentIndex)
         
         dialogueHUD.startTypewriter(charInterval: typeCharInterval) { [weak self] in
             guard let self = self else { return }
             self.isTypewriterRunning = false
-            self.run(.wait(forDuration: self.perParagraphVisibleDuration)) { [weak self] in
-                guard let self = self else { return }
-                self.dialogueHUD.dismiss(animated: true) { [weak self] in
-                    guard let self = self else { return }
-                    self.hideCurrentImage()
-                    self.currentIndex += 1
-                    self.isPresentingParagraph = false
-                    self.run(.wait(forDuration: 0.35)) { [weak self] in
-                        self?.presentNextParagraph()
-                    }
-                }
+            
+            // --- Novo: inicia auto avanço, mas permite cancelar com toque ---
+            let wait = SKAction.wait(forDuration: self.perParagraphVisibleDuration)
+            let advance = SKAction.run { [weak self] in
+                self?.advanceParagraph()
+            }
+            let sequence = SKAction.sequence([wait, advance])
+            self.run(sequence, withKey: "autoAdvance")
+        }
+    }
+    
+    private func advanceParagraph() {
+        guard isPresentingParagraph else { return }
+        
+        removeAction(forKey: "autoAdvance") // cancela o auto avanço se ainda estiver ativo
+        isPresentingParagraph = false
+        
+        dialogueHUD.dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            self.hideCurrentImage()
+            self.currentIndex += 1
+            self.run(.wait(forDuration: 0.35)) { [weak self] in
+                self?.presentNextParagraph()
             }
         }
     }
+
+
     
     private func showImage(forIndex index: Int) {
         // Último parágrafo não tem imagem
@@ -157,6 +173,7 @@ final class IntroDialogueScene: SKScene {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
+        
         if let skip = skipLabel, skip.contains(location) {
             endIntro()
             return
@@ -165,15 +182,7 @@ final class IntroDialogueScene: SKScene {
         if isTypewriterRunning {
             completeTypewriterIfNeeded()
         } else if isPresentingParagraph {
-            // Paragraph fully presented, dismiss current and advance immediately
-            // Only allow if not already dismissing (isPresentingParagraph guards this)
-            isPresentingParagraph = false
-            dialogueHUD.dismiss(animated: true) { [weak self] in
-                guard let self = self else { return }
-                self.hideCurrentImage()
-                self.currentIndex += 1
-                self.presentNextParagraph()
-            }
+            advanceParagraph()
         }
     }
     
