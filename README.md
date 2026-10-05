@@ -39,7 +39,7 @@ Requirements: Xcode and an iPhone or simulator. Game Center features need a devi
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/Luan-Aiezza/RTS-Game.git
+   git clone https://github.com/Luan-Aiezza/RTSGame.git
    ```
 2. Open `Eclipsa/Eclipsa.xcodeproj` in Xcode and let it resolve the Swift packages.
 3. Select an iPhone and press **Run** (⌘R).
